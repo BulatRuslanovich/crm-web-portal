@@ -1,0 +1,51 @@
+'use client';
+
+import axios from 'axios';
+
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+
+export const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 10000,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
+    if (error.response?.status === 401 && !original._retry) {
+      original._retry = true;
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('no refresh token');
+
+        const { data } = await axios.post(
+          `${BASE_URL}/api/auth/refresh`,
+          JSON.stringify(refreshToken),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        localStorage.setItem('accessToken', data.accessToken);
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
+        original.headers.Authorization = `Bearer ${data.accessToken}`;
+        return apiClient(original);
+      } catch {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        // Notify the AuthProvider to reset state and redirect to login
+        window.dispatchEvent(new Event('auth:expired'));
+      }
+    }
+    return Promise.reject(error);
+  }
+);
