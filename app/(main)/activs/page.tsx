@@ -3,16 +3,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { activsApi } from '@/lib/api/activs';
+import { STATUSES } from '@/lib/api/statuses';
 import type { ActivResponse } from '@/lib/api/types';
 import { StatusBadge, EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
 import { Search, SlidersHorizontal } from 'lucide-react';
-
-const STATUSES = [
-  { id: 1, name: 'Запланирован' },
-  { id: 2, name: 'Открыт' },
-  { id: 3, name: 'Сохранен' },
-  { id: 4, name: 'Закрыт' },
-];
 
 const PAGE_SIZE = 20;
 
@@ -82,18 +76,18 @@ export default function ActivsPage() {
         <div className="flex flex-wrap items-center gap-2">
           <SlidersHorizontal size={13} className="text-(--fg-subtle)" />
           {STATUSES.map((s) => {
-            const active = statusFilter.includes(s.id);
+            const active = statusFilter.includes(s.statusId);
             return (
               <button
-                key={s.id}
-                onClick={() => toggleStatus(s.id)}
+                key={s.statusId}
+                onClick={() => toggleStatus(s.statusId)}
                 className={`px-2.5 py-1 text-xs rounded-full border transition-colors cursor-pointer ${
                   active
                     ? 'bg-(--primary) text-(--primary-fg) border-(--primary)'
                     : 'bg-(--surface) text-(--fg-muted) border-(--border) hover:border-(--primary) hover:text-(--fg)'
                 }`}
               >
-                {s.name}
+                {s.statusName}
               </button>
             );
           })}

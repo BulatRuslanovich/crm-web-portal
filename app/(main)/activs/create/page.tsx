@@ -11,9 +11,7 @@ import {
   BackButton, Card, CardFooter, Label, Input, Select,
   Textarea, ErrorBox, BtnSecondary, BtnSuccess,
 } from '@/components/ui';
-
-// statusId=1 (Запланирован) всегда при создании — пользователь не выбирает
-const STATUS_PLANNED = 1;
+import { STATUS_PLANNED } from '@/lib/api/statuses';
 
 export default function CreateActivPage() {
   const router = useRouter();

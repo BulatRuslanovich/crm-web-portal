@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { activsApi } from '@/lib/api/activs';
 import { drugsApi } from '@/lib/api/drugs';
-import { STATUSES } from '@/lib/api/statuses';
+import { STATUSES, STATUS_PLANNED, STATUS_OPEN, STATUS_SAVED, STATUS_CLOSED } from '@/lib/api/statuses';
 import { useAuth } from '@/lib/auth-context';
 import type { ActivResponse, DrugResponse } from '@/lib/api/types';
 import { AxiosError } from 'axios';
@@ -14,11 +14,6 @@ import {
   BtnPrimary, BtnSecondary, BtnDanger,
 } from '@/components/ui';
 import { Lock, Play, Save, XCircle, Trash2, Pencil } from 'lucide-react';
-
-const STATUS_PLANNED = 1;
-const STATUS_OPEN    = 2;
-const STATUS_SAVED   = 3;
-const STATUS_CLOSED  = 4;
 
 export default function ActivDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
