@@ -1,19 +1,32 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
     }
   }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar-collapsed');
+    if (saved !== null) setCollapsed(saved === 'true');
+  }, []);
+
+  const toggle = () => {
+    setCollapsed((v) => {
+      localStorage.setItem('sidebar-collapsed', String(!v));
+      return !v;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -30,8 +43,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen bg-(--bg)">
-      <Navbar />
-      <main className="max-w-7xl mx-auto px-4 py-6 animate-fade-in">{children}</main>
+      <Sidebar collapsed={collapsed} onToggle={toggle} />
+      <main
+        className={`transition-all duration-200 px-4 py-6 pt-16 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
+      >
+        <div className="max-w-7xl mx-auto animate-fade-in">{children}</div>
+      </main>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { activsApi } from '@/lib/api/activs';
@@ -9,6 +9,19 @@ import { physesApi } from '@/lib/api/physes';
 import type { ActivResponse } from '@/lib/api/types';
 import { StatusBadge, Skeleton } from '@/components/ui';
 import { CalendarCheck, Building2, Stethoscope, ArrowRight } from 'lucide-react';
+
+/* ── helpers ──────────────────────────────────────────────────────────────── */
+
+function statusColor(name: string): string {
+  const n = name.toLowerCase();
+  if (n === 'запланирован') return 'var(--primary)';
+  if (n === 'открыт')      return 'var(--warn)';
+  if (n === 'сохранен')    return 'var(--violet-text)';
+  if (n === 'закрыт')      return 'var(--success)';
+  return 'var(--fg-muted)';
+}
+
+/* ── StatCard ─────────────────────────────────────────────────────────────── */
 
 function StatCard({
   label, value, href, icon: Icon, color, loading,
@@ -38,19 +51,135 @@ function StatCard({
   );
 }
 
+/* ── DonutChart ───────────────────────────────────────────────────────────── */
+
+function DonutChart({ slices, total }: {
+  slices: { name: string; count: number; color: string }[];
+  total: number;
+}) {
+  const r = 30;
+  const cx = 50, cy = 50;
+  const sw = 13;
+  const circ = 2 * Math.PI * r;
+
+  let acc = 0;
+  const segments = slices.map(sl => {
+    const len = total > 0 ? (sl.count / total) * circ : 0;
+    const seg = { ...sl, len, offset: acc };
+    acc += len;
+    return seg;
+  });
+
+  return (
+    <svg viewBox="0 0 100 100">
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--surface-raised)" strokeWidth={sw} />
+      {segments.map(({ name, color, len, offset }) => (
+        <circle
+          key={name}
+          cx={cx} cy={cy} r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth={sw}
+          strokeDasharray={`${Math.max(len - 2, 0)} ${circ}`}
+          strokeDashoffset={-offset}
+          transform={`rotate(-90 ${cx} ${cy})`}
+        />
+      ))}
+      <text
+        x={cx} y={cy}
+        textAnchor="middle" dominantBaseline="middle"
+        style={{ fontSize: '15px', fontWeight: 700, fill: 'var(--fg)' }}
+      >
+        {total}
+      </text>
+      <text
+        x={cx} y={cy + 13}
+        textAnchor="middle"
+        style={{ fontSize: '7px', fill: 'var(--fg-muted)' }}
+      >
+        визитов
+      </text>
+    </svg>
+  );
+}
+
+/* ── StatusBreakdown ──────────────────────────────────────────────────────── */
+
+function StatusBreakdown({ activs, totalCount, loading }: { activs: ActivResponse[]; totalCount: number; loading: boolean }) {
+  const statuses = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const a of activs) {
+      map.set(a.statusName, (map.get(a.statusName) ?? 0) + 1);
+    }
+    return Array.from(map.entries())
+      .map(([name, count]) => ({ name, count, color: statusColor(name) }))
+      .sort((a, b) => b.count - a.count);
+  }, [activs]);
+
+  return (
+    <div className="bg-(--surface) border border-(--border) rounded-xl p-5" style={{ boxShadow: 'var(--shadow-sm)' }}>
+      <h3 className="text-base font-semibold text-(--fg) mb-4">По статусам</h3>
+      {loading ? (
+        <div className="flex gap-6 items-center">
+          <Skeleton className="w-28 h-28 rounded-full shrink-0" />
+          <div className="flex-1 space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-4 w-full" />)}
+          </div>
+        </div>
+      ) : statuses.length === 0 ? (
+        <p className="text-sm text-(--fg-muted)">Нет данных</p>
+      ) : (
+        <div className="flex items-center gap-6">
+          <div className="w-28 shrink-0">
+            <DonutChart slices={statuses} total={totalCount} />
+          </div>
+          <div className="flex-1 space-y-2.5">
+            {statuses.map(({ name, count, color }) => {
+              const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+              return (
+                <div key={name} className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: color }} />
+                    <span className="text-sm text-(--fg) truncate">{name}</span>
+                  </div>
+                  <span className="text-xs text-(--fg-muted) tabular-nums shrink-0">{count} ({pct}%)</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── DashboardPage ────────────────────────────────────────────────────────── */
+
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [activs, setActivs] = useState<ActivResponse[]>([]);
+  const [allActivs, setAllActivs] = useState<ActivResponse[]>([]);
+  const [recentActivs, setRecentActivs] = useState<ActivResponse[]>([]);
   const [stats, setStats] = useState({ activs: 0, orgs: 0, physes: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      activsApi.getAll(1, 50),
+      activsApi.getAll(1, 200),
       orgsApi.getAll(1, 1),
       physesApi.getAll(1, 1),
     ]).then(([activsRes, orgsRes, physesRes]) => {
-      setActivs(activsRes.data.items.slice(0, 5));
+      const items = activsRes.data.items;
+      setAllActivs(items);
+      setRecentActivs(
+        [...items]
+          .sort((a, b) => {
+            if (!a.start && !b.start) return 0;
+            if (!a.start) return 1;
+            if (!b.start) return -1;
+            return new Date(b.start).getTime() - new Date(a.start).getTime();
+          })
+          .slice(0, 5),
+      );
       setStats({
         activs: activsRes.data.totalCount,
         orgs: orgsRes.data.totalCount,
@@ -64,7 +193,7 @@ export default function DashboardPage() {
   const name = user?.firstName ?? user?.login ?? '';
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-(--fg)">
           {greeting}{name ? `, ${name}` : ''}
@@ -77,6 +206,8 @@ export default function DashboardPage() {
         <StatCard loading={loading} label="Организаций"   value={stats.orgs}   href="/orgs"   icon={Building2}    color="bg-(--success-subtle) text-(--success-text)" />
         <StatCard loading={loading} label="Врачей"        value={stats.physes} href="/physes" icon={Stethoscope}   color="bg-(--warn-subtle) text-(--warn-text)" />
       </div>
+
+      <StatusBreakdown activs={allActivs} totalCount={stats.activs} loading={loading} />
 
       <div>
         <div className="flex items-center justify-between mb-3">
@@ -99,11 +230,11 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          ) : activs.length === 0 ? (
+          ) : recentActivs.length === 0 ? (
             <div className="px-5 py-8 text-center text-sm text-(--fg-muted)">Визитов пока нет</div>
           ) : (
             <div className="divide-y divide-(--border)">
-              {activs.map((a) => (
+              {recentActivs.map(a => (
                 <Link
                   key={a.activId}
                   href={`/activs/${a.activId}`}

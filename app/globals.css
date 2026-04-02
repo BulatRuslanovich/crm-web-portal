@@ -166,6 +166,11 @@ input, textarea, select {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position: 200% 0; }
@@ -181,6 +186,10 @@ input, textarea, select {
 
 .animate-slide-down {
   animation: slide-down 0.2s ease-out both;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.2s ease-out both;
 }
 
 .animate-skeleton {
