@@ -2,8 +2,21 @@ import { apiClient } from './client';
 import type { ActivResponse, CreateActivRequest, UpdateActivRequest, PagedResponse } from './types';
 
 export const activsApi = {
-  getAll: (page = 1, pageSize = 20) =>
-    apiClient.get<PagedResponse<ActivResponse>>('/api/activs', { params: { page, pageSize } }),
+  getAll: (page = 1, 
+    pageSize = 20,
+    search?: string, 
+    sortBy?: string, 
+    sortDesc?: boolean, 
+    statusesFilter?: number[]) =>
+    apiClient.get<PagedResponse<ActivResponse>>('/api/activs', 
+      { params: { page, 
+        pageSize, 
+        search, 
+        sortBy, 
+        sortDesc, 
+        statuses: statusesFilter 
+      } 
+    }),
 
   getById: (id: number) => apiClient.get<ActivResponse>(`/api/activs/${id}`),
 

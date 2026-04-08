@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useApi } from '@/lib/use-api';
 import { usersApi } from '@/lib/api/users';
 import { drugsApi } from '@/lib/api/drugs';
 import { specsApi } from '@/lib/api/specs';
-import type { UserResponse, DrugResponse, SpecResponse, PolicyResponse } from '@/lib/api/types';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import {
   Card, CardSkeleton, Input, Label, ErrorBox,
   BtnSuccess, BtnDanger,
@@ -15,23 +15,15 @@ import {
 
 type Tab = 'users' | 'drugs' | 'specs';
 
-/* ── Users ── */
 function UsersSection() {
-  const [users, setUsers] = useState<UserResponse[]>([]);
-  const [policies, setPolicies] = useState<PolicyResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, loading, reload } = useApi(() =>
+    Promise.all([usersApi.getAll(1, 100), usersApi.getPolicies()])
+      .then(([u, p]) => ({ users: u.data.items, policies: p.data })),
+  );
+  const users = data?.users ?? [];
+  const policies = data?.policies ?? [];
   const [showCreate, setShowCreate] = useState(false);
   const [error, setError] = useState('');
-
-  async function load() {
-    setLoading(true);
-    const [u, p] = await Promise.all([usersApi.getAll(1, 100), usersApi.getPolicies()]);
-    setUsers(u.data.items);
-    setPolicies(p.data);
-    setLoading(false);
-  }
-
-  useEffect(() => { load(); }, []);
 
   async function handleCreate(fd: FormData) {
     setError('');
@@ -39,29 +31,28 @@ function UsersSection() {
       await usersApi.create({
         login: fd.get('login') as string,
         password: fd.get('password') as string,
-        firstName: (fd.get('firstName') as string) || null,
-        lastName: (fd.get('lastName') as string) || null,
-        email: (fd.get('email') as string) || null,
-        phone: null,
+        firstName: (fd.get('firstName') as string) || '',
+        lastName: (fd.get('lastName') as string) || '',
+        email: (fd.get('email') as string) || '',
+        phone: '',
         policyIds: [],
       });
       setShowCreate(false);
-      await load();
+      await reload();
     } catch (err) {
-      const e = err as AxiosError<{ message?: string }>;
-      setError(e.response?.data?.message ?? 'Ошибка');
+      setError(extractApiError(err));
     }
   }
 
   async function togglePolicy(userId: number, policyId: number, has: boolean) {
     has ? await usersApi.unlinkPolicy(userId, policyId) : await usersApi.linkPolicy(userId, policyId);
-    await load();
+    await reload();
   }
 
   async function handleDelete(userId: number) {
     if (!confirm('Удалить пользователя?')) return;
     await usersApi.delete(userId);
-    await load();
+    await reload();
   }
 
   if (loading) return <CardSkeleton />;
@@ -132,43 +123,32 @@ function UsersSection() {
   );
 }
 
-/* ── Drugs ── */
 function DrugsSection() {
-  const [drugs, setDrugs] = useState<DrugResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: drugs = [], loading, reload } = useApi(() =>
+    drugsApi.getAll(1, 200).then(({ data }) => data.items),
+  );
   const [showCreate, setShowCreate] = useState(false);
   const [error, setError] = useState('');
-
-  async function load() {
-    setLoading(true);
-    const { data } = await drugsApi.getAll(1, 200);
-    setDrugs(data.items);
-    setLoading(false);
-  }
-
-  useEffect(() => { load(); }, []);
 
   async function handleCreate(fd: FormData) {
     setError('');
     try {
       await drugsApi.create({
         drugName: fd.get('drugName') as string,
-        brand: (fd.get('brand') as string) || null,
-        form: (fd.get('form') as string) || null,
-        description: (fd.get('description') as string) || null,
+        brand: fd.get('brand') as string,
+        form: fd.get('form') as string,
       });
       setShowCreate(false);
-      await load();
+      await reload();
     } catch (err) {
-      const e = err as AxiosError<{ message?: string }>;
-      setError(e.response?.data?.message ?? 'Ошибка');
+      setError(extractApiError(err));
     }
   }
 
   async function handleDelete(id: number) {
     if (!confirm('Удалить препарат?')) return;
     await drugsApi.delete(id);
-    await load();
+    await reload();
   }
 
   if (loading) return <CardSkeleton />;
@@ -187,9 +167,8 @@ function DrugsSection() {
             <div className="p-5 space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><Label required>Название</Label><Input name="drugName" type="text" required /></div>
-                <div><Label>Бренд</Label><Input name="brand" type="text" /></div>
-                <div><Label>Форма</Label><Input name="form" type="text" /></div>
-                <div><Label>Описание</Label><Input name="description" type="text" /></div>
+                <div><Label required>Бренд</Label><Input name="brand" type="text" required /></div>
+                <div><Label required>Форма</Label><Input name="form" type="text" required /></div>
               </div>
               {error && <ErrorBox message={error} />}
             </div>
@@ -218,31 +197,22 @@ function DrugsSection() {
   );
 }
 
-/* ── Specs ── */
 function SpecsSection() {
-  const [specs, setSpecs] = useState<SpecResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function load() {
-    setLoading(true);
-    const { data } = await specsApi.getAll();
-    setSpecs(data);
-    setLoading(false);
-  }
-
-  useEffect(() => { load(); }, []);
+  const { data: specs = [], loading, reload } = useApi(() =>
+    specsApi.getAll().then(({ data }) => data),
+  );
 
   async function handleCreate(fd: FormData) {
     const name = (fd.get('specName') as string).trim();
     if (!name) return;
     await specsApi.create(name);
-    await load();
+    await reload();
   }
 
   async function handleDelete(id: number) {
     if (!confirm('Удалить специальность?')) return;
     await specsApi.delete(id);
-    await load();
+    await reload();
   }
 
   if (loading) return <CardSkeleton />;
@@ -269,7 +239,6 @@ function SpecsSection() {
   );
 }
 
-/* ── Page ── */
 export default function AdminPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -278,7 +247,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (user && !isAdmin) router.push('/dashboard');
-  }, [user, isAdmin]);
+  }, [user, isAdmin, router]);
 
   if (!isAdmin) return null;
 
@@ -292,7 +261,7 @@ export default function AdminPage() {
     <div className="max-w-4xl mx-auto">
       <h2 className="text-xl font-semibold text-(--fg) mb-5">Администрирование</h2>
 
-      <div className="flex border-b border-(--border) mb-5 overflow-x-auto">
+      <div className="flex border-b border-(--border) mb-5">
         {tabs.map((t) => (
           <button
             key={t.key}

@@ -6,8 +6,10 @@
 /* ── Light ──────────────────────────────────────────────────────────────── */
 :root {
   --bg:              #f8fafc;
+  --bg-dot:          #e2e8f0;
   --surface:         #ffffff;
   --surface-raised:  #f1f5f9;
+  --surface-glass:   rgba(255,255,255,0.7);
   --border:          #e2e8f0;
   --border-muted:    #f1f5f9;
   --fg:              #0f172a;
@@ -57,13 +59,18 @@
   --shadow:          0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md:       0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg:       0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --gradient-hero:   linear-gradient(135deg, #eef2ff 0%, #faf5ff 50%, #ecfdf5 100%);
+  --gradient-card:   linear-gradient(180deg, rgba(99,102,241,0.04) 0%, transparent 100%);
 }
 
 /* ── Dark ───────────────────────────────────────────────────────────────── */
 .dark {
   --bg:              #020617;
+  --bg-dot:          #1e293b;
   --surface:         #0f172a;
   --surface-raised:  #1e293b;
+  --surface-glass:   rgba(15,23,42,0.7);
   --border:          #1e293b;
   --border-muted:    #0f172a;
   --fg:              #f1f5f9;
@@ -112,6 +119,9 @@
   --shadow:          0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
   --shadow-md:       0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
   --shadow-lg:       0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+
+  --gradient-hero:   linear-gradient(135deg, #1e1b4b 0%, #1e1433 50%, #022c22 100%);
+  --gradient-card:   linear-gradient(180deg, rgba(129,140,248,0.06) 0%, transparent 100%);
 }
 
 /* ── Tailwind token bridge ───────────────────────────────────────────────── */
@@ -133,6 +143,18 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Subtle dot pattern background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(var(--bg-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 input, textarea, select {
@@ -174,6 +196,12 @@ input, textarea, select {
 @keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position: 200% 0; }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .animate-fade-in {

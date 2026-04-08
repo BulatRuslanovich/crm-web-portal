@@ -17,7 +17,6 @@ export interface ActivResponse {
   start: string | null;
   end: string | null;
   description: string | null;
-  result: string | null;
   drugs: string[];
 }
 
@@ -27,7 +26,6 @@ export interface CreateActivRequest {
   start: string | null;
   end: string | null;
   description: string | null;
-  result: string | null;
   drugIds: number[];
 }
 
@@ -36,7 +34,6 @@ export interface UpdateActivRequest {
   start: string | null;
   end: string | null;
   description: string | null;
-  result: string | null;
 }
 
 export interface DrugResponse {
@@ -44,14 +41,12 @@ export interface DrugResponse {
   drugName: string;
   brand: string | null;
   form: string | null;
-  description: string | null;
 }
 
 export interface CreateDrugRequest {
   drugName: string;
-  brand: string | null;
-  form: string | null;
-  description: string | null;
+  brand: string;
+  form: string;
 }
 
 export interface UpdateDrugRequest {
@@ -66,19 +61,19 @@ export interface OrgResponse {
   orgTypeId: number;
   orgTypeName: string;
   orgName: string;
-  inn: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  address: string | null;
+  inn: string;
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
 export interface CreateOrgRequest {
   orgTypeId: number;
   orgName: string;
-  inn: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  address: string | null;
+  inn: string;
+  latitude: number;
+  longitude: number;
+  address: string;
 }
 
 export interface UpdateOrgRequest {
@@ -91,13 +86,13 @@ export interface UpdateOrgRequest {
 }
 
 export interface CreatePhysRequest {
-  specId: number | null;
-  firstName: string | null;
+  specId: number;
+  firstName: string;
   lastName: string;
-  middleName: string | null;
-  phone: string | null;
-  email: string | null;
-  position: string | null;
+  middleName: string;
+  phone: string;
+  email: string;
+  position: string;
 }
 
 export interface UpdatePhysRequest {
@@ -117,14 +112,14 @@ export interface OrgTypeResponse {
 
 export interface PhysResponse {
   physId: number;
-  specId: number | null;
-  specName: string | null;
-  firstName: string | null;
+  specId: number;
+  specName: string;
+  firstName: string;
   lastName: string;
-  middleName: string | null;
-  phone: string | null;
-  email: string | null;
-  position: string | null;
+  middleName: string;
+  phone: string;
+  email: string;
+  position: string;
   orgs: string[];
 }
 
@@ -140,10 +135,10 @@ export interface StatusResponse {
 
 export interface UserResponse {
   usrId: number;
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  phone: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   login: string;
   policies: string[];
 }
@@ -154,10 +149,10 @@ export interface PolicyResponse {
 }
 
 export interface CreateUserRequest {
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  phone: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   login: string;
   password: string;
   policyIds: number[];

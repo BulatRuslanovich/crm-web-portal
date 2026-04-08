@@ -44,8 +44,8 @@ export function Field({ label, value }: { label: string; value?: string | null }
 export function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`bg-(--surface) border border-(--border) rounded-xl ${className}`}
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      className={`bg-(--surface) border border-(--border) rounded-xl overflow-hidden ${className}`}
+      style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
     >
       {children}
     </div>
@@ -109,8 +109,7 @@ export function Label({ required, children }: { required?: boolean; children: Re
 
 export function ErrorBox({ message }: { message: string }) {
   return (
-    <div className="flex items-start gap-2 px-3 py-2.5 bg-(--danger-subtle) border border-(--danger-border) rounded-xl text-sm text-(--danger-text) animate-fade-in">
-      <span className="shrink-0 mt-px">!</span>
+    <div className="flex items-start gap-2 px-3 py-2.5 bg-(--danger-subtle) border border-(--danger-border) rounded-xl text-sm text-(--danger-text) animate-fade-in whitespace-pre-line">
       {message}
     </div>
   );

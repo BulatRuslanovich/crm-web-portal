@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { Card, Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 
 export default function LoginPage() {
@@ -28,8 +28,7 @@ export default function LoginPage() {
               );
               router.push('/dashboard');
             } catch (err) {
-              const axiosErr = err as AxiosError<{ message?: string }>;
-              setError(axiosErr.response?.data?.message ?? 'Неверный логин или пароль');
+              setError(extractApiError(err, 'Неизвестная ошибка при входе'));
             } finally {
               setLoading(false);
             }

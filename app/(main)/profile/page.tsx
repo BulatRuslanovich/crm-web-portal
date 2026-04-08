@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { usersApi } from '@/lib/api/users';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import {
   Card, CardFooter, Field, Label, Input,
   ErrorBox, SuccessBox, BtnPrimary, BtnSecondary, BtnDanger,
@@ -39,8 +39,7 @@ export default function ProfilePage() {
       setEditingProfile(false);
       setProfileSuccess('Профиль обновлён');
     } catch (err) {
-      const e = err as AxiosError<{ message?: string }>;
-      setProfileError(e.response?.data?.message ?? 'Ошибка обновления');
+      setProfileError(extractApiError(err, 'Ошибка обновления'));
     } finally { setSaving(false); }
   }
 
@@ -62,8 +61,7 @@ export default function ProfilePage() {
       setEditingPassword(false);
       setPasswordSuccess('Пароль изменён');
     } catch (err) {
-      const e = err as AxiosError<{ message?: string }>;
-      setPasswordError(e.response?.data?.message ?? 'Ошибка смены пароля');
+      setPasswordError(extractApiError(err, 'Ошибка смены пароля'));
     } finally { setSaving(false); }
   }
 

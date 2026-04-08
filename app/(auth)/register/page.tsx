@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { Card, Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 
 export default function RegisterPage() {
@@ -25,15 +25,14 @@ export default function RegisterPage() {
               const { email } = await register({
                 login: formData.get('login') as string,
                 password: formData.get('password') as string,
-                firstName: (formData.get('firstName') as string) || null,
-                lastName: (formData.get('lastName') as string) || null,
-                email: (formData.get('email') as string) || null,
-                phone: (formData.get('phone') as string) || null,
+                firstName: (formData.get('firstName') as string) || '',
+                lastName: (formData.get('lastName') as string) || '',
+                email: (formData.get('email') as string) || '',
+                phone: (formData.get('phone') as string) || '',
               });
               router.push(`/verify-email?email=${encodeURIComponent(email)}`);
             } catch (err) {
-              const axiosErr = err as AxiosError<{ message?: string }>;
-              setError(axiosErr.response?.data?.message ?? 'Ошибка регистрации');
+              setError(extractApiError(err, 'Ошибка регистрации'));
             } finally {
               setLoading(false);
             }
@@ -51,8 +50,8 @@ export default function RegisterPage() {
             </div>
           </div>
           <div>
-            <Label required>Логин</Label>
-            <Input name="login" type="text" required placeholder="ivanov" />
+            <Label>Логин</Label>
+            <Input name="login" type="text" placeholder="ivanov" />
           </div>
           <div>
             <Label>Email</Label>
@@ -63,8 +62,8 @@ export default function RegisterPage() {
             <Input name="phone" type="tel" placeholder="+7 999 000 00 00" />
           </div>
           <div>
-            <Label required>Пароль</Label>
-            <Input name="password" type="password" required placeholder="Минимум 8 символов" />
+            <Label>Пароль</Label>
+            <Input name="password" type="password" placeholder="12345678" />
           </div>
           {error && <ErrorBox message={error} />}
           <BtnSuccess type="submit" disabled={loading} className="w-full">

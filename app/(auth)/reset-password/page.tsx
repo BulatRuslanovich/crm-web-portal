@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authApi } from '@/lib/api/auth';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { Card, CardSkeleton, Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 
 function ResetPasswordForm() {
@@ -31,8 +31,7 @@ function ResetPasswordForm() {
               );
               router.push('/login');
             } catch (err) {
-              const axiosErr = err as AxiosError<{ message?: string }>;
-              setError(axiosErr.response?.data?.message ?? 'Ошибка сброса пароля');
+              setError(extractApiError(err, 'Ошибка сброса пароля'));
             } finally {
               setLoading(false);
             }

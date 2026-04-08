@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useApi } from '@/lib/use-api';
 import { physesApi } from '@/lib/api/physes';
 import { specsApi } from '@/lib/api/specs';
-import type { SpecResponse } from '@/lib/api/types';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { BackButton, Card, CardFooter, Label, Input, Select, ErrorBox, BtnSecondary, BtnSuccess } from '@/components/ui';
 
 export default function CreatePhysPage() {
   const router = useRouter();
-  const [specs, setSpecs] = useState<SpecResponse[]>([]);
+  const { data: specs = [] } = useApi(() =>
+    specsApi.getAll().then(({ data }) => data),
+  );
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => { specsApi.getAll().then(({ data }) => setSpecs(data)); }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -29,18 +29,17 @@ export default function CreatePhysPage() {
           setLoading(true);
           try {
             const { data } = await physesApi.create({
-              specId: fd.get('specId') ? Number(fd.get('specId')) : null,
+              specId: Number(fd.get('specId')),
               lastName: fd.get('lastName') as string,
-              firstName: (fd.get('firstName') as string) || null,
-              middleName: (fd.get('middleName') as string) || null,
-              phone: (fd.get('phone') as string) || null,
-              email: (fd.get('email') as string) || null,
-              position: (fd.get('position') as string) || null,
+              firstName: (fd.get('firstName') as string) || '',
+              middleName: (fd.get('middleName') as string) || '',
+              phone: (fd.get('phone') as string) || '',
+              email: (fd.get('email') as string) || '',
+              position: (fd.get('position') as string) || '',
             });
             router.push(`/physes/${data.physId}`);
           } catch (err) {
-            const e = err as AxiosError<{ message?: string }>;
-            setError(e.response?.data?.message ?? 'Ошибка создания');
+            setError(extractApiError(err, 'Ошибка создания'));
           } finally { setLoading(false); }
         }}
       >
@@ -61,9 +60,9 @@ export default function CreatePhysPage() {
               </div>
             </div>
             <div>
-              <Label>Специальность</Label>
-              <Select name="specId">
-                <option value="">Не указана</option>
+              <Label required>Специальность</Label>
+              <Select name="specId" required>
+                <option value="">Выберите специальность</option>
                 {specs.map((s) => <option key={s.specId} value={s.specId}>{s.specName}</option>)}
               </Select>
             </div>

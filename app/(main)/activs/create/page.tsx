@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useApi } from '@/lib/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { orgsApi } from '@/lib/api/orgs';
 import { drugsApi } from '@/lib/api/drugs';
-import type { OrgResponse, DrugResponse } from '@/lib/api/types';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import {
   BackButton, Card, CardFooter, Label, Input, Select,
   Textarea, ErrorBox, BtnSecondary, BtnSuccess,
@@ -15,19 +15,16 @@ import { STATUS_PLANNED } from '@/lib/api/statuses';
 
 export default function CreateActivPage() {
   const router = useRouter();
-  const [orgs, setOrgs] = useState<OrgResponse[]>([]);
-  const [drugs, setDrugs] = useState<DrugResponse[]>([]);
+  const { data: refData, loading: loadingData } = useApi(() =>
+    Promise.all([orgsApi.getAll(), drugsApi.getAll()])
+      .then(([o, d]) => ({ orgs: o.data.items, drugs: d.data.items })),
+  );
+  const orgs = refData?.orgs ?? [];
+  const drugs = refData?.drugs ?? [];
   const [selectedDrugIds, setSelectedDrugIds] = useState<number[]>([]);
   const [drugQuery, setDrugQuery] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loadingData, setLoadingData] = useState(true);
-
-  useEffect(() => {
-    Promise.all([orgsApi.getAll(1, 200), drugsApi.getAll(1, 200)])
-      .then(([o, d]) => { setOrgs(o.data.items); setDrugs(d.data.items); })
-      .finally(() => setLoadingData(false));
-  }, []);
 
   const filteredDrugs = drugs.filter(
     (d) => !drugQuery || d.drugName.toLowerCase().includes(drugQuery.toLowerCase()),
@@ -47,17 +44,15 @@ export default function CreateActivPage() {
           try {
             const { data } = await activsApi.create({
               orgId: Number(fd.get('orgId')),
-              statusId: STATUS_PLANNED,     // всегда «Запланирован»
+              statusId: STATUS_PLANNED,
               start: (fd.get('start') as string) || null,
-              end: null,                    // дату окончания назначает только admin
+              end: null,                    
               description: (fd.get('description') as string) || null,
-              result: (fd.get('result') as string) || null,
               drugIds: selectedDrugIds,
             });
             router.push(`/activs/${data.activId}`);
           } catch (err) {
-            const e = err as AxiosError<{ message?: string }>;
-            setError(e.response?.data?.message ?? 'Ошибка создания визита');
+            setError(extractApiError(err, 'Ошибка создания визита'));
           } finally {
             setLoading(false);
           }
@@ -90,12 +85,6 @@ export default function CreateActivPage() {
             <div>
               <Label>Описание</Label>
               <Textarea name="description" rows={3} placeholder="Описание визита..." />
-            </div>
-
-            {/* Результат */}
-            <div>
-              <Label>Результат</Label>
-              <Textarea name="result" rows={3} placeholder="Результат визита..." />
             </div>
 
             {/* Препараты */}

@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useApi } from '@/lib/use-api';
 import { orgsApi } from '@/lib/api/orgs';
-import type { OrgTypeResponse } from '@/lib/api/types';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { BackButton, Card, CardFooter, Label, Input, Select, ErrorBox, BtnSecondary, BtnSuccess } from '@/components/ui';
 
 export default function CreateOrgPage() {
   const router = useRouter();
-  const [types, setTypes] = useState<OrgTypeResponse[]>([]);
+  const { data: types = [] } = useApi(() =>
+    orgsApi.getTypes().then(({ data }) => data),
+  );
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => { orgsApi.getTypes().then(({ data }) => setTypes(data)); }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -30,15 +30,14 @@ export default function CreateOrgPage() {
             const { data } = await orgsApi.create({
               orgTypeId: Number(fd.get('orgTypeId')),
               orgName: fd.get('orgName') as string,
-              inn: (fd.get('inn') as string) || null,
-              address: (fd.get('address') as string) || null,
-              latitude: fd.get('latitude') ? Number(fd.get('latitude')) : null,
-              longitude: fd.get('longitude') ? Number(fd.get('longitude')) : null,
+              inn: (fd.get('inn') as string) || '',
+              address: (fd.get('address') as string) || '',
+              latitude: fd.get('latitude') ? Number(fd.get('latitude')) : 0,
+              longitude: fd.get('longitude') ? Number(fd.get('longitude')) : 0,
             });
             router.push(`/orgs/${data.orgId}`);
           } catch (err) {
-            const e = err as AxiosError<{ message?: string }>;
-            setError(e.response?.data?.message ?? 'Ошибка создания');
+            setError(extractApiError(err, 'Ошибка создания'));
           } finally {
             setLoading(false);
           }

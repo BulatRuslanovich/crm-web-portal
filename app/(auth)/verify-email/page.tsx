@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { authApi } from '@/lib/api/auth';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { Card, CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
 
 function VerifyEmailForm() {
@@ -40,8 +40,7 @@ function VerifyEmailForm() {
               await confirmEmail(email, formData.get('code') as string);
               router.push('/dashboard');
             } catch (err) {
-              const axiosErr = err as AxiosError<{ message?: string }>;
-              setError(axiosErr.response?.data?.message ?? 'Неверный код');
+              setError(extractApiError(err, 'Неверный код'));
             } finally {
               setLoading(false);
             }

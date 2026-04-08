@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api/auth';
-import { AxiosError } from 'axios';
+import { extractApiError } from '@/lib/api/errors';
 import { Card, Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 
 export default function ForgotPasswordPage() {
@@ -26,8 +26,7 @@ export default function ForgotPasswordPage() {
               await authApi.forgotPassword(email);
               router.push(`/reset-password?email=${encodeURIComponent(email)}`);
             } catch (err) {
-              const axiosErr = err as AxiosError<{ message?: string }>;
-              setError(axiosErr.response?.data?.message ?? 'Ошибка отправки письма');
+              setError(extractApiError(err, 'Ошибка отправки письма'));
             } finally {
               setLoading(false);
             }
