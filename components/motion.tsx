@@ -4,7 +4,13 @@ import { motion, type Variants } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 /* ── Fade-in page wrapper ─────────────────────────────────────────────── */
-export function PageTransition({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function PageTransition({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -28,20 +34,27 @@ const staggerItem: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 };
 
-export function StaggerList({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function StaggerList({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="show"
-      className={className}
-    >
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className={className}>
       {children}
     </motion.div>
   );
 }
 
-export function StaggerItem({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function StaggerItem({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
     <motion.div variants={staggerItem} className={className}>
       {children}
@@ -50,7 +63,13 @@ export function StaggerItem({ children, className = '' }: { children: ReactNode;
 }
 
 /* ── Hover-lift card ──────────────────────────────────────────────────── */
-export function HoverCard({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function HoverCard({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
     <motion.div
       whileHover={{ y: -2, boxShadow: 'var(--shadow-md)' }}
@@ -63,13 +82,15 @@ export function HoverCard({ children, className = '' }: { children: ReactNode; c
 }
 
 /* ── Scale-tap button wrapper ─────────────────────────────────────────── */
-export function TapScale({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function TapScale({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <motion.div
-      whileTap={{ scale: 0.97 }}
-      transition={{ duration: 0.1 }}
-      className={className}
-    >
+    <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.1 }} className={className}>
       {children}
     </motion.div>
   );

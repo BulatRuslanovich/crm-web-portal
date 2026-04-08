@@ -8,10 +8,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  * @param fetcher  — async function that returns data
  * @param deps     — re-fetch when these change (default: fetch once on mount)
  */
-export function useApi<T>(
-  fetcher: () => Promise<T>,
-  deps: React.DependencyList = [],
-) {
+export function useApi<T>(fetcher: () => Promise<T>, deps: React.DependencyList = []) {
   const [data, setData] = useState<T | undefined>();
   const [loading, setLoading] = useState(true);
   const fetcherRef = useRef(fetcher);
@@ -28,7 +25,9 @@ export function useApi<T>(
   }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { reload(); }, deps);
+  useEffect(() => {
+    reload();
+  }, deps);
 
   return { data, loading, reload } as const;
 }

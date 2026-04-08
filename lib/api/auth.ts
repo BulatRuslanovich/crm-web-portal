@@ -38,9 +38,13 @@ export const authApi = {
     }),
 
   confirmEmail: (email: string, code: string) =>
-    axios.post<AuthResponse>(`${BASE_URL}/api/auth/confirm-email`, { email, code }, {
-      headers: { 'Content-Type': 'application/json' },
-    }),
+    axios.post<AuthResponse>(
+      `${BASE_URL}/api/auth/confirm-email`,
+      { email, code },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    ),
 
   resendConfirmation: (email: string) =>
     axios.post(`${BASE_URL}/api/auth/resend-confirmation`, JSON.stringify(email), {
@@ -48,14 +52,22 @@ export const authApi = {
     }),
 
   forgotPassword: (email: string) =>
-    axios.post(`${BASE_URL}/api/auth/forgot-password`, { email }, {
-      headers: { 'Content-Type': 'application/json' },
-    }),
+    axios.post(
+      `${BASE_URL}/api/auth/forgot-password`,
+      { email },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    ),
 
   resetPassword: (email: string, code: string, newPassword: string) =>
-    axios.post(`${BASE_URL}/api/auth/reset-password`, { email, code, newPassword }, {
-      headers: { 'Content-Type': 'application/json' },
-    }),
+    axios.post(
+      `${BASE_URL}/api/auth/reset-password`,
+      { email, code, newPassword },
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    ),
 
   logout: (refreshToken: string) =>
     apiClient.post('/api/auth/logout', JSON.stringify(refreshToken)),

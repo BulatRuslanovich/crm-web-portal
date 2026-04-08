@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import type { Metadata } from 'next';
+import { Geist } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from '@/lib/auth-context';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Pharmo CRM",
-  description: "Pharmaceutical CRM system",
+  title: 'Pharmo CRM',
+  description: 'Pharmaceutical CRM system',
 };
 
 export default function RootLayout({

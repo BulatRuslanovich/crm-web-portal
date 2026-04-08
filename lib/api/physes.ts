@@ -14,8 +14,7 @@ export const physesApi = {
 
   delete: (id: number) => apiClient.delete(`/api/physes/${id}`),
 
-  linkOrg: (physId: number, orgId: number) =>
-    apiClient.post(`/api/physes/${physId}/orgs/${orgId}`),
+  linkOrg: (physId: number, orgId: number) => apiClient.post(`/api/physes/${physId}/orgs/${orgId}`),
 
   unlinkOrg: (physId: number, orgId: number) =>
     apiClient.delete(`/api/physes/${physId}/orgs/${orgId}`),

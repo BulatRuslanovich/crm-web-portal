@@ -5,19 +5,35 @@ import { useRouter } from 'next/navigation';
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/use-entity';
 import {
-  BackButton, Card, CardFooter, CardSkeleton, Field,
-  BtnSecondary, BtnDanger,
+  BackButton,
+  Card,
+  CardFooter,
+  CardSkeleton,
+  Field,
+  SectionLabel,
+  BtnSecondary,
+  BtnDanger,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
+import { Trash2, Pencil, User, Phone, Mail, Briefcase, Building2 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function PhysViewPage({ params }: { params: Promise<{ id: string }> }) {
+  const { user } = useAuth();
+  const isAdmin = user?.policies?.includes('Admin');
   const { id } = use(params);
   const router = useRouter();
   const { data: phys, numId } = useEntity(physesApi.getById, id, '/physes');
 
-  if (!phys) return <div className="max-w-2xl mx-auto"><CardSkeleton /></div>;
+  if (!phys)
+    return (
+      <div className="mx-auto max-w-2xl">
+        <CardSkeleton />
+      </div>
+    );
 
   const fullName = [phys.lastName, phys.firstName, phys.middleName].filter(Boolean).join(' ');
+  const initials = ((phys.lastName?.[0] ?? '') + (phys.firstName?.[0] ?? '')).toUpperCase();
 
   async function handleDelete() {
     if (!confirm('Удалить врача?')) return;
@@ -26,37 +42,66 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <PageTransition className="max-w-2xl mx-auto space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
+    <PageTransition className="mx-auto max-w-2xl space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
         <BackButton onClick={() => router.push('/physes')} />
-        <h2 className="text-xl font-semibold text-(--fg) flex-1">{fullName}</h2>
-        {phys.specName && (
-          <span className="text-xs px-2.5 py-0.5 bg-(--surface-raised) border border-(--border) text-(--fg-muted) rounded-full">
-            {phys.specName}
-          </span>
-        )}
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary-subtle) text-sm font-bold text-(--primary-text)">
+          {initials}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-xl font-bold text-(--fg)">{fullName}</h2>
+          {phys.specName && (
+            <span className="rounded-full border border-(--border) bg-(--surface-raised) px-2.5 py-0.5 text-xs font-medium text-(--fg-muted)">
+              {phys.specName}
+            </span>
+          )}
+        </div>
       </div>
 
       <Card>
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Должность" value={phys.position} />
-          <Field label="Телефон" value={phys.phone} />
-          <Field label="Email" value={phys.email} />
+        <div className="space-y-5 p-5">
+          <div>
+            <SectionLabel icon={User}>Информация</SectionLabel>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Должность" value={phys.position} icon={Briefcase} />
+              <Field label="Специальность" value={phys.specName} />
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel icon={Phone}>Контакты</SectionLabel>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Телефон" value={phys.phone} icon={Phone} />
+              <Field label="Email" value={phys.email} icon={Mail} />
+            </div>
+          </div>
+
           {phys.orgs.length > 0 && (
-            <div className="col-span-2">
-              <p className="text-xs font-semibold text-(--fg-muted) uppercase tracking-wide mb-1.5">Организации</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div>
+              <SectionLabel icon={Building2}>Организации</SectionLabel>
+              <div className="flex flex-wrap gap-2">
                 {phys.orgs.map((o) => (
-                  <span key={o} className="text-xs px-2.5 py-0.5 bg-(--primary-subtle) text-(--primary-text) border border-(--primary-border) rounded-full">{o}</span>
+                  <span
+                    key={o}
+                    className="rounded-full border border-(--primary-border) bg-(--primary-subtle) px-3 py-1 text-xs font-medium text-(--primary-text)"
+                  >
+                    {o}
+                  </span>
                 ))}
               </div>
             </div>
           )}
         </div>
-        <CardFooter>
-          <BtnDanger onClick={handleDelete}>Удалить</BtnDanger>
-          <BtnSecondary onClick={() => router.push(`/physes/${id}/edit`)}>Редактировать</BtnSecondary>
-        </CardFooter>
+        {isAdmin && (
+          <CardFooter>
+            <BtnDanger onClick={handleDelete}>
+              <Trash2 size={14} /> Удалить
+            </BtnDanger>
+            <BtnSecondary onClick={() => router.push(`/physes/${id}/edit`)}>
+              <Pencil size={14} /> Редактировать
+            </BtnSecondary>
+          </CardFooter>
+        )}
       </Card>
     </PageTransition>
   );

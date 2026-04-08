@@ -5,25 +5,35 @@ import { useRouter } from 'next/navigation';
 import { useApi } from '@/lib/use-api';
 import { orgsApi } from '@/lib/api/orgs';
 import { extractApiError } from '@/lib/api/errors';
-import { BackButton, Card, CardFooter, Label, Input, Select, ErrorBox, BtnSecondary, BtnSuccess } from '@/components/ui';
+import {
+  BackButton,
+  Card,
+  CardFooter,
+  Label,
+  Input,
+  Select,
+  ErrorBox,
+  BtnSecondary,
+  BtnSuccess,
+} from '@/components/ui';
 
 export default function CreateOrgPage() {
   const router = useRouter();
-  const { data: types = [] } = useApi(() =>
-    orgsApi.getTypes().then(({ data }) => data),
-  );
+  const { data: types = [] } = useApi(() => orgsApi.getTypes().then(({ data }) => data));
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-3 mb-5">
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-5 flex items-center gap-3">
         <BackButton onClick={() => router.back()} />
         <h2 className="text-xl font-semibold text-(--fg)">Новая организация</h2>
       </div>
 
       <form
-        action={async (fd: FormData) => {
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
           setError('');
           setLoading(true);
           try {
@@ -37,24 +47,28 @@ export default function CreateOrgPage() {
             });
             router.push(`/orgs/${data.orgId}`);
           } catch (err) {
-            setError(extractApiError(err, 'Ошибка создания'));
+            setError(extractApiError(err, 'Неизвестная ошибка при создании организации'));
           } finally {
             setLoading(false);
           }
         }}
       >
         <Card>
-          <div className="p-4 space-y-4">
+          <div className="space-y-4 p-4">
             <div>
-              <Label required>Тип организации</Label>
-              <Select name="orgTypeId" required>
+              <Label>Тип организации</Label>
+              <Select name="orgTypeId">
                 <option value="">Выберите тип</option>
-                {types.map((t) => <option key={t.orgTypeId} value={t.orgTypeId}>{t.orgTypeName}</option>)}
+                {types.map((t) => (
+                  <option key={t.orgTypeId} value={t.orgTypeId}>
+                    {t.orgTypeName}
+                  </option>
+                ))}
               </Select>
             </div>
             <div>
-              <Label required>Название</Label>
-              <Input name="orgName" type="text" required placeholder="Городская больница №1" />
+              <Label>Название</Label>
+              <Input name="orgName" type="text" placeholder="Городская больница №1" />
             </div>
             <div>
               <Label>ИНН</Label>
@@ -77,8 +91,12 @@ export default function CreateOrgPage() {
             {error && <ErrorBox message={error} />}
           </div>
           <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.back()}>Отмена</BtnSecondary>
-            <BtnSuccess type="submit" disabled={loading}>{loading ? 'Создание...' : 'Создать'}</BtnSuccess>
+            <BtnSecondary type="button" onClick={() => router.back()}>
+              Отмена
+            </BtnSecondary>
+            <BtnSuccess type="submit" disabled={loading}>
+              {loading ? 'Создание...' : 'Создать'}
+            </BtnSuccess>
           </CardFooter>
         </Card>
       </form>

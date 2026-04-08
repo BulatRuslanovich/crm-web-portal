@@ -5,9 +5,19 @@ import { useAuth } from '@/lib/auth-context';
 import { usersApi } from '@/lib/api/users';
 import { extractApiError } from '@/lib/api/errors';
 import {
-  Card, CardFooter, Field, Label, Input,
-  ErrorBox, SuccessBox, BtnPrimary, BtnSecondary, BtnDanger,
+  Card,
+  CardFooter,
+  Field,
+  Label,
+  Input,
+  ErrorBox,
+  SuccessBox,
+  BtnPrimary,
+  BtnSecondary,
+  BtnDanger,
 } from '@/components/ui';
+import { PageTransition } from '@/components/motion';
+import { User, Shield, KeyRound, LogOut } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, refreshUser, logout } = useAuth();
@@ -21,7 +31,9 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const displayName = user.firstName ? `${user.firstName} ${user.lastName ?? ''}`.trim() : user.login;
+  const displayName = user.firstName
+    ? `${user.firstName} ${user.lastName ?? ''}`.trim()
+    : user.login;
   const initials = (user.firstName?.[0] ?? user.login[0]).toUpperCase();
 
   async function handleProfileSave(fd: FormData) {
@@ -40,7 +52,9 @@ export default function ProfilePage() {
       setProfileSuccess('Профиль обновлён');
     } catch (err) {
       setProfileError(extractApiError(err, 'Ошибка обновления'));
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handlePasswordSave(fd: FormData) {
@@ -62,25 +76,32 @@ export default function ProfilePage() {
       setPasswordSuccess('Пароль изменён');
     } catch (err) {
       setPasswordError(extractApiError(err, 'Ошибка смены пароля'));
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
-      <h2 className="text-xl font-semibold text-(--fg)">Профиль</h2>
+    <PageTransition className="mx-auto max-w-2xl space-y-4">
+      <h2 className="text-xl font-bold text-(--fg)">Профиль</h2>
 
       {/* Identity card */}
       <Card>
-        <div className="p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-(--primary) flex items-center justify-center text-(--primary-fg) text-lg font-semibold shrink-0">
+        <div className="flex items-center gap-4 p-5">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-(--primary) to-(--violet-text) text-xl font-bold text-(--primary-fg) shadow-md">
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-(--fg) truncate">{displayName}</p>
-            <p className="text-xs text-(--fg-muted)">{user.login}</p>
-            <div className="flex flex-wrap gap-1 mt-1">
+            <p className="truncate text-base font-bold text-(--fg)">{displayName}</p>
+            <p className="text-sm text-(--fg-muted)">{user.login}</p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
               {user.policies.map((p) => (
-                <span key={p} className="text-xs px-1.5 py-0.5 bg-(--warn-subtle) text-(--warn-text) border border-(--warn-border) rounded">{p}</span>
+                <span
+                  key={p}
+                  className="rounded-full border border-(--warn-border) bg-(--warn-subtle) px-2 py-0.5 text-xs font-medium text-(--warn-text)"
+                >
+                  {p}
+                </span>
               ))}
             </div>
           </div>
@@ -89,13 +110,16 @@ export default function ProfilePage() {
 
       {/* Profile info */}
       <Card>
-        <div className="px-5 py-3.5 border-b border-(--border)">
-          <p className="text-sm font-semibold text-(--fg)">Личные данные</p>
+        <div className="border-b border-(--border) px-5 py-3.5">
+          <div className="flex items-center gap-2">
+            <User size={15} className="text-(--fg-muted)" />
+            <p className="text-sm font-bold text-(--fg)">Личные данные</p>
+          </div>
         </div>
 
         {!editingProfile ? (
           <>
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
               <Field label="Имя" value={user.firstName} />
               <Field label="Фамилия" value={user.lastName} />
               <Field label="Email" value={user.email} />
@@ -107,25 +131,46 @@ export default function ProfilePage() {
               </div>
             )}
             <CardFooter>
-              <BtnSecondary onClick={() => { setEditingProfile(true); setProfileSuccess(''); }}>
+              <BtnSecondary
+                onClick={() => {
+                  setEditingProfile(true);
+                  setProfileSuccess('');
+                }}
+              >
                 Редактировать
               </BtnSecondary>
             </CardFooter>
           </>
         ) : (
           <form action={handleProfileSave}>
-            <div className="p-5 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><Label>Имя</Label><Input name="firstName" type="text" defaultValue={user.firstName ?? ''} /></div>
-                <div><Label>Фамилия</Label><Input name="lastName" type="text" defaultValue={user.lastName ?? ''} /></div>
-                <div><Label>Email</Label><Input name="email" type="email" defaultValue={user.email ?? ''} /></div>
-                <div><Label>Телефон</Label><Input name="phone" type="tel" defaultValue={user.phone ?? ''} /></div>
+            <div className="space-y-3 p-5">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Имя</Label>
+                  <Input name="firstName" type="text" defaultValue={user.firstName ?? ''} />
+                </div>
+                <div>
+                  <Label>Фамилия</Label>
+                  <Input name="lastName" type="text" defaultValue={user.lastName ?? ''} />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input name="email" type="email" defaultValue={user.email ?? ''} />
+                </div>
+                <div>
+                  <Label>Телефон</Label>
+                  <Input name="phone" type="tel" defaultValue={user.phone ?? ''} />
+                </div>
               </div>
               {profileError && <ErrorBox message={profileError} />}
             </div>
             <CardFooter>
-              <BtnSecondary type="button" onClick={() => setEditingProfile(false)}>Отмена</BtnSecondary>
-              <BtnPrimary type="submit" disabled={saving}>{saving ? 'Сохранение...' : 'Сохранить'}</BtnPrimary>
+              <BtnSecondary type="button" onClick={() => setEditingProfile(false)}>
+                Отмена
+              </BtnSecondary>
+              <BtnPrimary type="submit" disabled={saving}>
+                {saving ? 'Сохранение...' : 'Сохранить'}
+              </BtnPrimary>
             </CardFooter>
           </form>
         )}
@@ -133,8 +178,11 @@ export default function ProfilePage() {
 
       {/* Password */}
       <Card>
-        <div className="px-5 py-3.5 border-b border-(--border)">
-          <p className="text-sm font-semibold text-(--fg)">Безопасность</p>
+        <div className="border-b border-(--border) px-5 py-3.5">
+          <div className="flex items-center gap-2">
+            <Shield size={15} className="text-(--fg-muted)" />
+            <p className="text-sm font-bold text-(--fg)">Безопасность</p>
+          </div>
         </div>
 
         {!editingPassword ? (
@@ -145,22 +193,40 @@ export default function ProfilePage() {
               </div>
             )}
             <CardFooter>
-              <BtnSecondary onClick={() => { setEditingPassword(true); setPasswordSuccess(''); }}>
-                Изменить пароль
+              <BtnSecondary
+                onClick={() => {
+                  setEditingPassword(true);
+                  setPasswordSuccess('');
+                }}
+              >
+                <KeyRound size={14} /> Изменить пароль
               </BtnSecondary>
             </CardFooter>
           </>
         ) : (
           <form action={handlePasswordSave}>
-            <div className="p-5 space-y-3">
-              <div><Label required>Текущий пароль</Label><Input name="oldPassword" type="password" required /></div>
-              <div><Label required>Новый пароль</Label><Input name="newPassword" type="password" required /></div>
-              <div><Label required>Повторите пароль</Label><Input name="confirm" type="password" required /></div>
+            <div className="space-y-3 p-5">
+              <div>
+                <Label required>Текущий пароль</Label>
+                <Input name="oldPassword" type="password" required />
+              </div>
+              <div>
+                <Label required>Новый пароль</Label>
+                <Input name="newPassword" type="password" required />
+              </div>
+              <div>
+                <Label required>Повторите пароль</Label>
+                <Input name="confirm" type="password" required />
+              </div>
               {passwordError && <ErrorBox message={passwordError} />}
             </div>
             <CardFooter>
-              <BtnSecondary type="button" onClick={() => setEditingPassword(false)}>Отмена</BtnSecondary>
-              <BtnPrimary type="submit" disabled={saving}>{saving ? 'Сохранение...' : 'Изменить'}</BtnPrimary>
+              <BtnSecondary type="button" onClick={() => setEditingPassword(false)}>
+                Отмена
+              </BtnSecondary>
+              <BtnPrimary type="submit" disabled={saving}>
+                {saving ? 'Сохранение...' : 'Изменить'}
+              </BtnPrimary>
             </CardFooter>
           </form>
         )}
@@ -169,9 +235,11 @@ export default function ProfilePage() {
       {/* Logout */}
       <Card>
         <div className="p-5">
-          <BtnDanger onClick={logout} className="w-full">Выйти из аккаунта</BtnDanger>
+          <BtnDanger onClick={logout} className="w-full">
+            <LogOut size={15} /> Выйти из аккаунта
+          </BtnDanger>
         </div>
       </Card>
-    </div>
+    </PageTransition>
   );
 }

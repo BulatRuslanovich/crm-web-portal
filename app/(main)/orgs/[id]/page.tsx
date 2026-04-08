@@ -6,9 +6,17 @@ import { orgsApi } from '@/lib/api/orgs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/use-entity';
 import {
-  BackButton, Card, CardFooter, CardSkeleton, Field,
-  BtnSecondary, BtnDanger,
+  BackButton,
+  Card,
+  CardFooter,
+  CardSkeleton,
+  Field,
+  SectionLabel,
+  BtnSecondary,
+  BtnDanger,
 } from '@/components/ui';
+import { PageTransition } from '@/components/motion';
+import { Trash2, Pencil, Building2, MapPin } from 'lucide-react';
 
 export default function OrgViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -17,7 +25,12 @@ export default function OrgViewPage({ params }: { params: Promise<{ id: string }
   const isAdmin = user?.policies?.includes('Admin');
   const { data: org, numId } = useEntity(orgsApi.getById, id, '/orgs');
 
-  if (!org) return <div className="max-w-2xl mx-auto"><CardSkeleton /></div>;
+  if (!org)
+    return (
+      <div className="mx-auto max-w-2xl">
+        <CardSkeleton />
+      </div>
+    );
 
   async function handleDelete() {
     if (!confirm('Удалить организацию?')) return;
@@ -26,30 +39,47 @@ export default function OrgViewPage({ params }: { params: Promise<{ id: string }
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <PageTransition className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton onClick={() => router.push('/orgs')} />
-        <h2 className="text-xl font-semibold text-(--fg) flex-1">{org.orgName}</h2>
-        <span className="text-xs px-2.5 py-0.5 bg-(--surface-raised) border border-(--border) text-(--fg-muted) rounded-full">
+        <h2 className="flex-1 text-xl font-bold text-(--fg)">{org.orgName}</h2>
+        <span className="rounded-full border border-(--border) bg-(--surface-raised) px-2.5 py-1 text-xs font-medium text-(--fg-muted)">
           {org.orgTypeName}
         </span>
       </div>
 
       <Card>
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="ИНН" value={org.inn} />
-          <Field label="Адрес" value={org.address} />
-          {org.latitude != null && (
-            <Field label="Координаты" value={`${org.latitude}, ${org.longitude}`} />
-          )}
+        <div className="space-y-5 p-5">
+          <div>
+            <SectionLabel icon={Building2}>Реквизиты</SectionLabel>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="ИНН" value={org.inn} />
+              <Field label="Тип" value={org.orgTypeName} />
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel icon={MapPin}>Местоположение</SectionLabel>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Адрес" value={org.address} />
+              {org.latitude != null && org.latitude !== 0 && (
+                <Field label="Координаты" value={`${org.latitude}, ${org.longitude}`} />
+              )}
+            </div>
+          </div>
         </div>
+
         {isAdmin && (
           <CardFooter>
-            <BtnDanger onClick={handleDelete}>Удалить</BtnDanger>
-            <BtnSecondary onClick={() => router.push(`/orgs/${id}/edit`)}>Редактировать</BtnSecondary>
+            <BtnDanger onClick={handleDelete}>
+              <Trash2 size={14} /> Удалить
+            </BtnDanger>
+            <BtnSecondary onClick={() => router.push(`/orgs/${id}/edit`)}>
+              <Pencil size={14} /> Редактировать
+            </BtnSecondary>
           </CardFooter>
         )}
       </Card>
-    </div>
+    </PageTransition>
   );
 }

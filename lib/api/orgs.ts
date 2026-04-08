@@ -1,5 +1,11 @@
 import { apiClient } from './client';
-import type { OrgResponse, OrgTypeResponse, CreateOrgRequest, UpdateOrgRequest, PagedResponse } from './types';
+import type {
+  OrgResponse,
+  OrgTypeResponse,
+  CreateOrgRequest,
+  UpdateOrgRequest,
+  PagedResponse,
+} from './types';
 
 export const orgsApi = {
   getAll: (page = 1, pageSize = 20) =>

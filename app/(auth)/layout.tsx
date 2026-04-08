@@ -14,26 +14,54 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(next)}
-      className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-xl text-(--fg-muted) hover:text-(--fg) hover:bg-(--surface) transition-colors border border-(--border)"
+      className="glass absolute top-5 right-5 flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-(--border) text-(--fg-muted) transition-all duration-200 hover:border-(--fg-subtle)/30 hover:text-(--fg)"
     >
       <Icon size={16} strokeWidth={1.75} />
     </button>
   );
 }
 
+function FloatingOrb({ className, style }: { className: string; style?: React.CSSProperties }) {
+  return (
+    <div
+      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl ${className}`}
+      style={style}
+    />
+  );
+}
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-(--bg) relative px-4">
+    <div
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
+      style={{ background: 'var(--gradient-auth)' }}
+    >
+      {/* Floating orbs for visual depth */}
+      <FloatingOrb className="animate-float -top-48 -left-48 h-96 w-96 bg-(--primary)" />
+      <FloatingOrb
+        className="animate-float -right-40 -bottom-40 h-80 w-80 bg-(--success)"
+        style={{ animationDelay: '1.5s' } as React.CSSProperties}
+      />
+      <FloatingOrb
+        className="animate-float top-1/3 -right-32 h-64 w-64 bg-(--violet-text)"
+        style={{ animationDelay: '3s' } as React.CSSProperties}
+      />
+
       <ThemeToggle />
-      <div className="w-full max-w-sm animate-fade-in">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-(--primary) mb-4 shadow-sm">
+
+      <div className="animate-fade-in relative z-10 w-full max-w-sm">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-(--primary) shadow-lg">
             <span className="text-2xl font-bold text-(--primary-fg)">P</span>
+            <div className="animate-spin-slow absolute inset-0 rounded-2xl bg-(--primary) opacity-20 blur-md" />
           </div>
           <h1 className="text-2xl font-bold text-(--fg)">Pharmo CRM</h1>
-          <p className="text-sm text-(--fg-muted) mt-1">Система управления визитами</p>
+          <p className="mt-1.5 text-sm text-(--fg-muted)">Система управления визитами</p>
         </div>
-        {children}
+
+        {/* Glass card wrapper */}
+        <div className="glass rounded-2xl border border-(--border) shadow-lg">{children}</div>
       </div>
     </div>
   );

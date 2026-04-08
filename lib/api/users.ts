@@ -1,5 +1,12 @@
 import { apiClient } from './client';
-import type { UserResponse, CreateUserRequest, UpdateUserRequest, ChangePasswordRequest, PolicyResponse, PagedResponse } from './types';
+import type {
+  UserResponse,
+  CreateUserRequest,
+  UpdateUserRequest,
+  ChangePasswordRequest,
+  PolicyResponse,
+  PagedResponse,
+} from './types';
 
 export const usersApi = {
   getMe: () => apiClient.get<UserResponse>('/api/users/me'),

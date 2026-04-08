@@ -9,18 +9,18 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
   paramsSerializer: (params) => {
-  const searchParams = new URLSearchParams();
+    const searchParams = new URLSearchParams();
 
-  Object.entries(params).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => searchParams.append(key, String(v)));
-    } else if (value !== undefined && value !== null) {
-      searchParams.append(key, String(value));
-    }
-  });
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => searchParams.append(key, String(v)));
+      } else if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    });
 
-  return searchParams.toString();
-}
+    return searchParams.toString();
+  },
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
         const { data } = await axios.post(
           `${BASE_URL}/api/auth/refresh`,
           JSON.stringify(refreshToken),
-          { headers: { 'Content-Type': 'application/json' } }
+          { headers: { 'Content-Type': 'application/json' } },
         );
         localStorage.setItem('accessToken', data.accessToken);
         if (data.refreshToken) {
@@ -60,5 +60,5 @@ apiClient.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );

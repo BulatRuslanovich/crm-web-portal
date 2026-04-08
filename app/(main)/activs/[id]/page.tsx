@@ -7,10 +7,30 @@ import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/use-entity';
 import { STATUS_PLANNED, STATUS_OPEN, STATUS_SAVED, STATUS_CLOSED } from '@/lib/api/statuses';
 import {
-  StatusBadge, BackButton, Card, CardFooter, CardSkeleton, Field,
-  BtnPrimary, BtnSecondary, BtnDanger,
+  StatusBadge,
+  BackButton,
+  Card,
+  CardFooter,
+  CardSkeleton,
+  Field,
+  BtnPrimary,
+  BtnSecondary,
+  BtnDanger,
+  SectionLabel,
 } from '@/components/ui';
-import { Lock, Play, Save, XCircle, Trash2, Pencil } from 'lucide-react';
+import {
+  Lock,
+  Play,
+  Save,
+  Trash2,
+  Pencil,
+  Sticker,
+  Clock,
+  User,
+  FileText,
+  Pill,
+} from 'lucide-react';
+import { PageTransition } from '@/components/motion';
 
 export default function ActivViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -21,11 +41,16 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
 
   const { data: activ, numId, reload } = useEntity(activsApi.getById, id, '/activs');
 
-  if (!activ) return <div className="max-w-2xl mx-auto"><CardSkeleton /></div>;
+  if (!activ)
+    return (
+      <div className="mx-auto max-w-2xl">
+        <CardSkeleton />
+      </div>
+    );
 
   const isClosed = activ.statusId === STATUS_CLOSED;
   const isLocked = isClosed && !isAdmin;
-  const canEdit  = isAdmin || (activ.usrId === user?.usrId && !isLocked);
+  const canEdit = isAdmin || (activ.usrId === user?.usrId && !isLocked);
 
   async function quickAction(statusId: number, extra: { start?: string; end?: string } = {}) {
     setActing(true);
@@ -33,12 +58,15 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
       await activsApi.update(numId, {
         statusId,
         start: extra.start !== undefined ? extra.start : activ!.start,
-        end:   extra.end   !== undefined ? extra.end   : activ!.end,
+        end: extra.end !== undefined ? extra.end : activ!.end,
         description: activ!.description,
       });
       await reload();
-    } catch { /* ignore */ }
-    finally { setActing(false); }
+    } catch {
+      /* ignore */
+    } finally {
+      setActing(false);
+    }
   }
 
   function nowIso() {
@@ -52,35 +80,69 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
+    <PageTransition className="mx-auto max-w-2xl space-y-4">
+      {/* Header */}
       <div className="flex flex-wrap items-center gap-2">
         <BackButton onClick={() => router.push('/activs')} />
-        <h2 className="text-xl font-semibold text-(--fg) flex-1 min-w-0 truncate">{activ.orgName}</h2>
+        <h2 className="min-w-0 flex-1 truncate text-xl font-bold text-(--fg)">{activ.orgName}</h2>
         <StatusBadge name={activ.statusName} />
       </div>
 
+      {/* Lock warning */}
       {isLocked && (
-        <div className="flex items-center gap-2 px-4 py-3 bg-(--warn-subtle) border border-(--warn-border) rounded-xl text-sm text-(--warn-text) animate-fade-in">
-          <Lock size={14} />
-          Визит закрыт — редактирование недоступно
+        <div className="animate-fade-in flex items-center gap-2.5 rounded-xl border border-(--warn-border) bg-(--warn-subtle) px-4 py-3 text-sm text-(--warn-text)">
+          <Lock size={15} />
+          <span>Визит закрыт — редактирование недоступно</span>
         </div>
       )}
 
+      {/* Main card */}
       <Card>
-        <div className="p-5 grid grid-cols-2 gap-4">
-          <Field label="Начало"    value={activ.start ? new Date(activ.start).toLocaleString('ru-RU') : null} />
-          <Field label="Конец"     value={activ.end   ? new Date(activ.end).toLocaleString('ru-RU')   : null} />
-          <Field label="Сотрудник" value={activ.usrLogin} />
-          <Field label="Статус"    value={activ.statusName} />
+        <div className="space-y-5 p-5">
+          {/* Time section */}
+          <div>
+            <SectionLabel icon={Clock}>Время</SectionLabel>
+            <div className="grid grid-cols-2 gap-4">
+              <Field
+                label="Начало"
+                value={activ.start ? new Date(activ.start).toLocaleString('ru-RU') : null}
+              />
+              <Field
+                label="Конец"
+                value={activ.end ? new Date(activ.end).toLocaleString('ru-RU') : null}
+              />
+            </div>
+          </div>
+
+          {/* Info section */}
+          <div>
+            <SectionLabel icon={User}>Информация</SectionLabel>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Сотрудник" value={activ.usrLogin} />
+              <Field label="Статус" value={activ.statusName} />
+            </div>
+          </div>
+
+          {/* Description */}
           {activ.description && (
-            <div className="col-span-2"><Field label="Описание" value={activ.description} /></div>
+            <div>
+              <SectionLabel icon={FileText}>Описание</SectionLabel>
+              <p className="rounded-xl bg-(--surface-raised) px-4 py-3 text-sm leading-relaxed text-(--fg)">
+                {activ.description}
+              </p>
+            </div>
           )}
+
+          {/* Drugs */}
           {activ.drugs.length > 0 && (
-            <div className="col-span-2">
-              <p className="text-xs font-semibold text-(--fg-muted) uppercase tracking-wide mb-1.5">Препараты</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div>
+              <SectionLabel icon={Pill}>Препараты</SectionLabel>
+              <div className="flex flex-wrap gap-2">
                 {activ.drugs.map((d) => (
-                  <span key={d} className="text-xs px-2.5 py-0.5 bg-(--violet-subtle) text-(--violet-text) border border-(--violet-border) rounded-full">
+                  <span
+                    key={d}
+                    className="rounded-full border border-(--violet-border) bg-(--violet-subtle) px-3 py-1 text-xs font-medium text-(--violet-text)"
+                  >
                     {d}
                   </span>
                 ))}
@@ -89,6 +151,7 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
           )}
         </div>
 
+        {/* Actions */}
         <CardFooter>
           <div className="flex-1">
             {isAdmin && (
@@ -98,9 +161,12 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
             )}
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             {activ.statusId === STATUS_PLANNED && !isLocked && (
-              <BtnPrimary onClick={() => quickAction(STATUS_OPEN, { start: nowIso() })} disabled={acting}>
+              <BtnPrimary
+                onClick={() => quickAction(STATUS_OPEN, { start: nowIso() })}
+                disabled={acting}
+              >
                 <Play size={14} /> Открыть визит
               </BtnPrimary>
             )}
@@ -110,9 +176,12 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
                 <BtnSecondary onClick={() => quickAction(STATUS_SAVED)} disabled={acting}>
                   <Save size={14} /> Сохранить
                 </BtnSecondary>
-                <BtnDanger onClick={() => quickAction(STATUS_CLOSED, { end: nowIso() })} disabled={acting}>
-                  <XCircle size={14} /> Закрыть
-                </BtnDanger>
+                <BtnPrimary
+                  onClick={() => quickAction(STATUS_CLOSED, { end: nowIso() })}
+                  disabled={acting}
+                >
+                  <Sticker size={14} /> Закрыть
+                </BtnPrimary>
               </>
             )}
 
@@ -124,6 +193,6 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </PageTransition>
   );
 }

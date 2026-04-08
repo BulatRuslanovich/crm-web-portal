@@ -30,10 +30,18 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-(--bg)">
-        <div className="flex flex-col items-center gap-3 animate-fade-in">
-          <div className="w-10 h-10 rounded-2xl bg-(--primary) animate-skeleton" />
-          <p className="text-sm text-(--fg-muted)">Загрузка...</p>
+      <div className="flex min-h-screen items-center justify-center bg-(--bg)">
+        <div className="animate-fade-in flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-(--primary) shadow-lg">
+              <span className="text-lg font-bold text-(--primary-fg)">P</span>
+            </div>
+            <div className="animate-skeleton absolute inset-0 rounded-2xl bg-(--primary) opacity-40" />
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-sm font-medium text-(--fg)">Pharmo CRM</p>
+            <p className="text-xs text-(--fg-muted)">Загрузка...</p>
+          </div>
         </div>
       </div>
     );
@@ -45,9 +53,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-(--bg)">
       <Sidebar collapsed={collapsed} onToggle={toggle} />
       <main
-        className={`transition-all duration-200 px-4 py-6 pt-16 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
+        className={`px-4 py-6 pt-16 transition-all duration-300 sm:px-6 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
       >
-        <div className="max-w-7xl mx-auto animate-fade-in">{children}</div>
+        <div className="animate-fade-in mx-auto max-w-7xl">{children}</div>
       </main>
     </div>
   );

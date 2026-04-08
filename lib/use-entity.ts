@@ -33,7 +33,9 @@ export function useEntity<T>(
     }
   }, [fetcher, numId, redirect, router]);
 
-  useEffect(() => { reload(); }, [reload]);
+  useEffect(() => {
+    reload();
+  }, [reload]);
 
   return { data, numId, reload } as const;
 }
