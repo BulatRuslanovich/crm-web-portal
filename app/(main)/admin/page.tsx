@@ -46,9 +46,11 @@ function UsersSection() {
   }
 
   async function togglePolicy(userId: number, policyId: number, has: boolean) {
-    has
-      ? await usersApi.unlinkPolicy(userId, policyId)
-      : await usersApi.linkPolicy(userId, policyId);
+    if (has) {
+      await usersApi.unlinkPolicy(userId, policyId);
+    } else {
+      await usersApi.linkPolicy(userId, policyId);
+    }
     await reload();
   }
 

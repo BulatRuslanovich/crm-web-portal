@@ -51,7 +51,7 @@ function ResetPasswordForm() {
       setResendMsg('Код отправлен повторно');
       startCooldown(60);
     } catch (err) {
-      setError(extractApiError(err, 'Неизвестная ошибка'));
+      setError(extractApiError(err));
     } finally {
       setResendLoading(false);
     }
@@ -75,7 +75,7 @@ function ResetPasswordForm() {
       await authApi.resetPassword(email, code.trim(), password);
       router.push('/login');
     } catch (err) {
-      setError(extractApiError(err, 'Неизвестная ошибка при сбросе пароля'));
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,10 @@ function ResetPasswordForm() {
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Новый пароль</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Введите код из письма и новый пароль</p>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
         className="space-y-4"
       >
         <div>
@@ -104,24 +107,25 @@ function ResetPasswordForm() {
 
         <div>
           <Label>Новый пароль</Label>
-          <Input name="newPassword"
-           type="password"
-           placeholder="••••••••"
-           value={password}
-           onChange={(e) => setPassword(e.target.value)}
-             />
+          <Input
+            name="newPassword"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
 
         <div>
           <Label>Подтвердите пароль</Label>
-          <Input name="confirmPassword" 
-          type="password"
-           placeholder="••••••••"
-           value={confirmPassword}
-           onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+          <Input
+            name="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
         </div>
-
 
         {error && <ErrorBox message={error} />}
 
@@ -131,7 +135,6 @@ function ResetPasswordForm() {
           <KeyRound size={15} />
           {loading ? 'Cбрасывание...' : 'Сбросить пароль'}
         </BtnSuccess>
-
       </form>
 
       <button

@@ -22,7 +22,6 @@ import {
   BtnPrimary,
   BtnSecondary,
 } from '@/components/ui';
-import { PageTransition } from '@/components/motion';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

@@ -19,17 +19,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   async function handleSubmit() {
-      setError(null);
-      setLoading(true);
+    setError(null);
+    setLoading(true);
 
-      try {
-        await login(loginValue, password);
-        router.push('/dashboard');
-      } catch (err) {
-        setError(extractApiError(err, 'Неизвестная ошибка при входе'));
-      } finally {
-        setLoading(false);
-      }
+    try {
+      await login(loginValue, password);
+      router.push('/dashboard');
+    } catch (err) {
+      setError(extractApiError(err));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -37,28 +37,32 @@ export default function LoginPage() {
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Вход</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Войдите в свой аккаунт</p>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
         className="space-y-4"
       >
-
         <div>
           <Label>Логин</Label>
-          <Input name="login"
-           type="text"
-           placeholder="Введите логин"
+          <Input
+            name="login"
+            type="text"
+            placeholder="Введите логин"
             value={loginValue}
-            onChange={e => setLoginValue(e.target.value)}
-            />
+            onChange={(e) => setLoginValue(e.target.value)}
+          />
         </div>
 
         <div>
           <Label>Пароль</Label>
-          <Input name="password"
-           type="password"
-           placeholder="Введите пароль"
+          <Input
+            name="password"
+            type="password"
+            placeholder="Введите пароль"
             value={password}
-            onChange={e => setPassword(e.target.value)}
-            />
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
 
         {error && <ErrorBox message={error} />}
@@ -67,7 +71,6 @@ export default function LoginPage() {
           <LogIn size={15} />
           {loading ? 'Вход...' : 'Войти'}
         </BtnSuccess>
-
       </form>
 
       <div className="mt-5 flex flex-col gap-2 border-t border-(--border) pt-5 text-center text-sm">
@@ -82,7 +85,6 @@ export default function LoginPage() {
           </Link>
         </span>
       </div>
-
     </div>
   );
 }

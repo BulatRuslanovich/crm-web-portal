@@ -29,24 +29,25 @@ export default function ForgotPasswordPage() {
       setLoading(false);
       return;
     }
-    
+
     try {
       await authApi.forgotPassword(email.trim());
       router.push(`/reset-password?email=${encodeURIComponent(email.trim())}`);
     } catch (err) {
-      setError(extractApiError(err, 'Неизвестная ошибка'));
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }
-  } 
+  }
 
   return (
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Восстановление пароля</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Введите email для получения кода сброса</p>
       <form
-        onSubmit={async () => {
-          await handleSubmit();
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
         }}
         className="space-y-4"
       >
@@ -67,9 +68,8 @@ export default function ForgotPasswordPage() {
           <Mail size={15} />
           {loading ? 'Отправка...' : 'Отправить код'}
         </BtnSuccess>
-
       </form>
-      
+
       <div className="mt-5 border-t border-(--border) pt-5 text-center text-sm">
         <Link href="/login" className="text-(--primary-text) hover:underline">
           Вернуться ко входу

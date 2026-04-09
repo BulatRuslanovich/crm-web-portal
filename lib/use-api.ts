@@ -20,7 +20,7 @@ export function useApi<T>(fetcher: () => Promise<T>, deps: React.DependencyList 
 
   useEffect(() => {
     reload();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { data, loading, reload } as const;

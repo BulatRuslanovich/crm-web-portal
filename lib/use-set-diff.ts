@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 /**
  * Tracks a mutable Set of ids, remembers the initial state, and computes the diff on demand.
@@ -8,16 +8,17 @@ import { useState, useEffect, useRef, useCallback } from 'react';
  * @param sourceIds — ids to initialize from (typically derived from loaded entity + reference list)
  */
 export function useSetDiff(sourceIds: number[]) {
-  const initial = useRef<Set<number>>(new Set());
+  const [initialSet, setInitialSet] = useState<Set<number>>(new Set());
+  const [prevSourceKey, setPrevSourceKey] = useState('');
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    if (sourceIds.length > 0) {
-      const s = new Set(sourceIds);
-      initial.current = new Set(s);
-      setSelected(s);
-    }
-  }, [sourceIds]);
+  const sourceKey = sourceIds.join(',');
+  if (sourceKey !== prevSourceKey && sourceIds.length > 0) {
+    setPrevSourceKey(sourceKey);
+    const s = new Set(sourceIds);
+    setInitialSet(new Set(s));
+    setSelected(s);
+  }
 
   const add = useCallback((id: number) => {
     setSelected((prev) => new Set(prev).add(id));
@@ -34,7 +35,7 @@ export function useSetDiff(sourceIds: number[]) {
   const toggle = useCallback((id: number) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
       return next;
     });
   }, []);
@@ -43,8 +44,8 @@ export function useSetDiff(sourceIds: number[]) {
 
   /** Returns { toAdd, toRemove } — only the changes since initialization. */
   function diff() {
-    const toAdd = [...selected].filter((id) => !initial.current.has(id));
-    const toRemove = [...initial.current].filter((id) => !selected.has(id));
+    const toAdd = [...selected].filter((id) => !initialSet.has(id));
+    const toRemove = [...initialSet].filter((id) => !selected.has(id));
     return { toAdd, toRemove };
   }
 

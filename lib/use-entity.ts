@@ -21,7 +21,26 @@ export function useEntity<T>(
   const numId = Number(id);
   const [data, setData] = useState<T | null>(null);
   const onLoadRef = useRef(onLoad);
-  onLoadRef.current = onLoad;
+
+  useEffect(() => {
+    onLoadRef.current = onLoad;
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetcher(numId)
+      .then((res) => {
+        if (cancelled) return;
+        setData(res.data);
+        onLoadRef.current?.(res.data);
+      })
+      .catch(() => {
+        if (!cancelled) router.push(redirect);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetcher, numId, redirect, router]);
 
   const reload = useCallback(async () => {
     try {
@@ -32,10 +51,6 @@ export function useEntity<T>(
       router.push(redirect);
     }
   }, [fetcher, numId, redirect, router]);
-
-  useEffect(() => {
-    reload();
-  }, [reload]);
 
   return { data, numId, reload } as const;
 }

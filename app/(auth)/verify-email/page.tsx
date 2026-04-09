@@ -53,7 +53,7 @@ function VerifyEmailForm() {
       setResendMsg('Код отправлен повторно');
       startCooldown(60);
     } catch (err) {
-      setError(extractApiError(err, 'Неизвестная ошибка'));
+      setError(extractApiError(err));
     } finally {
       setResendLoading(false);
     }
@@ -80,7 +80,10 @@ function VerifyEmailForm() {
         Код отправлен на <span className="font-medium text-(--fg)">{email}</span>
       </p>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
         className="space-y-4"
       >
         <div>
