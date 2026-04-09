@@ -1,0 +1,85 @@
+name: Production CI/CD
+
+on:
+  push:
+    branches: [master]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/bulatruslanovich/crm-web-portal
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get commit SHA
+        id: meta
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Login to GHCR
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u bulatruslanovich --password-stdin
+
+      - name: Build image
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
+            -t $IMAGE_NAME:${{ steps.meta.outputs.sha }} .
+          docker tag $IMAGE_NAME:${{ steps.meta.outputs.sha }} $IMAGE_NAME:latest
+
+      - name: Push image
+        run: |
+          docker push $IMAGE_NAME:${{ steps.meta.outputs.sha }}
+          docker push $IMAGE_NAME:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            IMAGE=${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.tag }}
+
+            echo "Deploying $IMAGE"
+
+            docker login ghcr.io -u bulatruslanovich -p ${{ secrets.CR_PAT }}
+
+            cd /root/CrmWebApi
+
+            sed -i '/^FRONTEND_IMAGE=/d' .env
+            echo "FRONTEND_IMAGE=$IMAGE" >> .env
+
+            docker compose pull frontend
+            docker compose up -d frontend
+
+            docker image prune -f
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [build-and-push, deploy]
+    if: always()
+
+    steps:
+      - name: Telegram
+        uses: appleboy/telegram-action@v1.0.0
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ${{ needs.deploy.result == 'success' && 'Front OK ;)' || 'Front FAILED :(' }}
+
+            Image: ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.tag }}
+            Commit: ${{ github.event.head_commit.message }}
+            Author: ${{ github.actor }}

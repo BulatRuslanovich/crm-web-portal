@@ -11,48 +11,70 @@ import { LogIn } from 'lucide-react';
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [error, setError] = useState('');
+
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [loginValue, setLoginValue] = useState('');
+  const [password, setPassword] = useState('');
+
+  async function handleSubmit() {
+      setError(null);
+      setLoading(true);
+
+      try {
+        await login(loginValue, password);
+        router.push('/dashboard');
+      } catch (err) {
+        setError(extractApiError(err, 'Неизвестная ошибка при входе'));
+      } finally {
+        setLoading(false);
+      }
+  }
 
   return (
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Вход</h2>
-      <p className="mb-5 text-sm text-(--fg-muted)">Войдите в свой аккаунт для продолжения</p>
+      <p className="mb-5 text-sm text-(--fg-muted)">Войдите в свой аккаунт</p>
       <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          setError('');
-          setLoading(true);
-          try {
-            await login(formData.get('login') as string, formData.get('password') as string);
-            router.push('/dashboard');
-          } catch (err) {
-            setError(extractApiError(err, 'Неизвестная ошибка при входе'));
-          } finally {
-            setLoading(false);
-          }
-        }}
+        onSubmit={handleSubmit}
         className="space-y-4"
       >
+
         <div>
           <Label>Логин</Label>
-          <Input name="login" type="text" required placeholder="Введите логин" />
+          <Input name="login"
+           type="text"
+           placeholder="Введите логин"
+            value={loginValue}
+            onChange={e => setLoginValue(e.target.value)}
+            />
         </div>
+
         <div>
           <Label>Пароль</Label>
-          <Input name="password" type="password" required placeholder="Введите пароль" />
+          <Input name="password"
+           type="password"
+           placeholder="Введите пароль"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            />
         </div>
+
         {error && <ErrorBox message={error} />}
+
         <BtnSuccess type="submit" disabled={loading} className="w-full">
           <LogIn size={15} />
           {loading ? 'Вход...' : 'Войти'}
         </BtnSuccess>
+
       </form>
+
       <div className="mt-5 flex flex-col gap-2 border-t border-(--border) pt-5 text-center text-sm">
         <Link href="/forgot-password" className="text-(--primary-text) hover:underline">
           Забыли пароль?
         </Link>
+
         <span className="text-(--fg-muted)">
           Нет аккаунта?{' '}
           <Link href="/register" className="font-medium text-(--primary-text) hover:underline">
@@ -60,6 +82,7 @@ export default function LoginPage() {
           </Link>
         </span>
       </div>
+
     </div>
   );
 }

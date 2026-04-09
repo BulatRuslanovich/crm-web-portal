@@ -2,12 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-/**
- * Lightweight hook that replaces the repetitive useState/useEffect/load() pattern.
- *
- * @param fetcher  — async function that returns data
- * @param deps     — re-fetch when these change (default: fetch once on mount)
- */
 export function useApi<T>(fetcher: () => Promise<T>, deps: React.DependencyList = []) {
   const [data, setData] = useState<T | undefined>();
   const [loading, setLoading] = useState(true);
@@ -24,9 +18,9 @@ export function useApi<T>(fetcher: () => Promise<T>, deps: React.DependencyList 
     }
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     reload();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { data, loading, reload } as const;

@@ -7,6 +7,7 @@ import { Sun, Moon, Monitor } from 'lucide-react';
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
   const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
@@ -52,10 +53,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="animate-fade-in relative z-10 w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="relative mb-5 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-(--primary) shadow-lg">
-            <span className="text-2xl font-bold text-(--primary-fg)">P</span>
-            <div className="animate-spin-slow absolute inset-0 rounded-2xl bg-(--primary) opacity-20 blur-md" />
-          </div>
           <h1 className="text-2xl font-bold text-(--fg)">Pharmo CRM</h1>
           <p className="mt-1.5 text-sm text-(--fg-muted)">Система управления визитами</p>
         </div>
