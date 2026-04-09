@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CRM Web Portal
 
-## Getting Started
+Веб-интерфейс фармацевтической CRM-системы.
 
-First, run the development server:
+## Содержание
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Стек технологий](#стек-технологий)
+- [Архитектура](#архитектура)
+- [Запуск](#запуск)
+- [Структура проекта](#структура-проекта)
+- [Переменные окружения](#переменные-окружения)
+
+---
+
+## Стек технологий
+
+| Категория | Технологии |
+|---|---|
+| Фреймворк | Next.js 16, React 19 |
+| Язык | TypeScript 5 |
+| Стилизация | Tailwind CSS 4 |
+| Анимации | Framer Motion |
+| Графики | Recharts |
+| Иконки | Lucide React |
+| HTTP-клиент | Axios |
+| Темы | next-themes (светлая / тёмная) |
+| Линтинг | ESLint, Prettier |
+| Инфраструктура | Docker, Node 20 |
+
+---
+
+## Архитектура
+
+```
+app/
+├── (auth)/          ← страницы авторизации (login, register, ...)
+└── (main)/          ← защищённые страницы (dashboard, activs, ...)
+
+components/          ← переиспользуемые UI-компоненты
+lib/
+├── api/             ← API-клиенты для работы с бэкендом
+├── auth-context.tsx ← контекст авторизации (JWT + refresh)
+├── use-api.ts       ← хук для запросов к API
+├── use-entity.ts    ← хук для CRUD-операций
+└── use-set-diff.ts  ← хук для отслеживания изменений
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Паттерны:**
+- App Router — файловая маршрутизация Next.js с route groups
+- Context API — глобальное состояние авторизации через `AuthContext`
+- Кастомные хуки — `useApi`, `useEntity` для переиспользуемой логики работы с данными
+- JWT + auto-refresh — автоматическое обновление токенов через Axios interceptors
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Запуск
 
-## Learn More
+### Через Docker (в составе CRM)
 
-To learn more about Next.js, take a look at the following resources:
+Портал собирается и запускается автоматически через `docker compose` в директории `CrmWebApi/`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd CrmWebApi
+docker compose up -d
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Фронтенд доступен через Caddy на порту 443 (HTTPS).
 
-## Deploy on Vercel
+### Локально (для разработки)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm install
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Приложение будет доступно на [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Структура проекта
+
+| Раздел | Путь | Описание |
+|---|---|---|
+| Авторизация | `app/(auth)/` | Логин, регистрация, подтверждение email, сброс пароля |
+| Дашборд | `app/(main)/dashboard/` | Главная страница с аналитикой |
+| Активности | `app/(main)/activs/` | Управление активностями |
+| Организации | `app/(main)/orgs/` | Справочник организаций |
+| Контакты | `app/(main)/physes/` | Справочник физических лиц |
+| Профиль | `app/(main)/profile/` | Профиль пользователя |
+| Администрирование | `app/(main)/admin/` | Панель администратора |
+
+---
+
+## Переменные окружения
+
+| Переменная | Описание |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | URL бэкенда (например `https://crmwebapi.ru`) |
