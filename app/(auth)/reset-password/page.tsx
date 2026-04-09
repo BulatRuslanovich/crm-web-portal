@@ -1,11 +1,11 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { CardSkeleton, Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
+import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
 import { KeyRound } from 'lucide-react';
 
 function ResetPasswordForm() {
@@ -15,8 +15,48 @@ function ResetPasswordForm() {
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
+  const [cooldown, setCooldown] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  const startCooldown = useCallback((seconds: number) => {
+    setCooldown(seconds);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  async function handleResend() {
+    setResendLoading(true);
+    setResendMsg('');
+    setError(null);
+
+    try {
+      await authApi.forgotPassword(email);
+      setResendMsg('Код отправлен повторно');
+      startCooldown(60);
+    } catch (err) {
+      setError(extractApiError(err, 'Неизвестная ошибка'));
+    } finally {
+      setResendLoading(false);
+    }
+  }
+
   const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -85,13 +125,27 @@ function ResetPasswordForm() {
 
         {error && <ErrorBox message={error} />}
 
+        {resendMsg && <SuccessBox message={resendMsg} />}
+
         <BtnSuccess type="submit" disabled={loading} className="w-full">
           <KeyRound size={15} />
           {loading ? 'Cбрасывание...' : 'Сбросить пароль'}
         </BtnSuccess>
 
       </form>
-      
+
+      <button
+        onClick={handleResend}
+        disabled={resendLoading || cooldown > 0}
+        className="mt-4 w-full cursor-pointer text-sm text-(--fg-muted) transition-colors hover:text-(--primary-text) disabled:cursor-default disabled:opacity-50 disabled:hover:text-(--fg-muted)"
+      >
+        {resendLoading
+          ? 'Отправка...'
+          : cooldown > 0
+            ? `Отправить код повторно через ${cooldown} сек`
+            : 'Отправить код повторно'}
+      </button>
+
       <div className="mt-5 border-t border-(--border) pt-5 text-center text-sm">
         <Link href="/login" className="text-(--primary-text) hover:underline">
           Вернуться ко входу

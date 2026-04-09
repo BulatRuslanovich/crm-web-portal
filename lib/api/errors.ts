@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
  * 1. ProblemDetails:  { title: "...", errors?: { Field: ["msg"] } }
  * 2. Validation dict: { Field: ["msg1", "msg2"] }
  */
-export function extractApiError(err: unknown, fallback = 'Ошибка'): string {
+export function extractApiError(err: unknown, fallback = 'Неизвестная ошибка'): string {
   const data = (err as AxiosError)?.response?.data as Record<string, unknown> | undefined;
   if (!data) return fallback;
 
