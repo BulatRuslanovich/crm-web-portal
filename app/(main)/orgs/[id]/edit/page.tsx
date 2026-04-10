@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/lib/use-api';
-import { useEntity } from '@/lib/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
 import { extractApiError } from '@/lib/api/errors';
 import {
@@ -34,16 +33,27 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const { data: org, numId } = useEntity(orgsApi.getById, id, '/orgs', (data) => {
+  const numId = Number(id);
+  const { data: org, error: orgError } = useApi(
+    () => orgsApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (orgError) router.push('/orgs');
+  }, [orgError, router]);
+
+  useEffect(() => {
+    if (!org) return;
     setForm({
-      orgTypeId: String(data.orgTypeId),
-      orgName: data.orgName,
-      inn: data.inn ?? '',
-      address: data.address ?? '',
-      latitude: data.latitude != null ? String(data.latitude) : '',
-      longitude: data.longitude != null ? String(data.longitude) : '',
+      orgTypeId: String(org.orgTypeId),
+      orgName: org.orgName,
+      inn: org.inn ?? '',
+      address: org.address ?? '',
+      latitude: org.latitude != null ? String(org.latitude) : '',
+      longitude: org.longitude != null ? String(org.longitude) : '',
     });
-  });
+  }, [org]);
 
   const { data: types = [] } = useApi(() => orgsApi.getTypes().then(({ data }) => data), []);
 

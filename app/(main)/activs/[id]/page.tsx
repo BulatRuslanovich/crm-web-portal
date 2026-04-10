@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
-import { useEntity } from '@/lib/use-entity';
+import { useApi } from '@/lib/use-api';
 import { STATUS_PLANNED, STATUS_OPEN, STATUS_SAVED, STATUS_CLOSED } from '@/lib/api/statuses';
 import {
   StatusBadge,
@@ -39,7 +39,15 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
   const isAdmin = user?.policies?.includes('Admin') ?? false;
   const [acting, setActing] = useState(false);
 
-  const { data: activ, numId, reload } = useEntity(activsApi.getById, id, '/activs');
+  const numId = Number(id);
+  const { data: activ, error: activError, reload } = useApi(
+    () => activsApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (activError) router.push('/activs');
+  }, [activError, router]);
 
   if (!activ)
     return (

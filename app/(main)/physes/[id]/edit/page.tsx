@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useMemo, use } from 'react';
+import { useState, useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/lib/use-api';
-import { useEntity } from '@/lib/use-entity';
 import { useSetDiff } from '@/lib/use-set-diff';
 import { physesApi } from '@/lib/api/physes';
 import { orgsApi } from '@/lib/api/orgs';
@@ -40,17 +39,28 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   const [saving, setSaving] = useState(false);
   const [selectedOrgId, setSelectedOrgId] = useState('');
 
-  const { data: phys, numId } = useEntity(physesApi.getById, id, '/physes', (data) => {
+  const numId = Number(id);
+  const { data: phys, error: physError } = useApi(
+    () => physesApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (physError) router.push('/physes');
+  }, [physError, router]);
+
+  useEffect(() => {
+    if (!phys) return;
     setForm({
-      specId: data.specId != null ? String(data.specId) : '',
-      lastName: data.lastName,
-      firstName: data.firstName ?? '',
-      middleName: data.middleName ?? '',
-      phone: data.phone ?? '',
-      email: data.email ?? '',
-      position: data.position ?? '',
+      specId: phys.specId != null ? String(phys.specId) : '',
+      lastName: phys.lastName,
+      firstName: phys.firstName ?? '',
+      middleName: phys.middleName ?? '',
+      phone: phys.phone ?? '',
+      email: phys.email ?? '',
+      position: phys.position ?? '',
     });
-  });
+  }, [phys]);
 
   const { data: specs = [] } = useApi(() => specsApi.getAll().then(({ data }) => data), []);
   const { data: allOrgs = [] } = useApi(

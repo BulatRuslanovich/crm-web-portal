@@ -1,10 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { orgsApi } from '@/lib/api/orgs';
 import { useAuth } from '@/lib/auth-context';
-import { useEntity } from '@/lib/use-entity';
+import { useApi } from '@/lib/use-api';
 import {
   BackButton,
   Card,
@@ -23,7 +23,15 @@ export default function OrgViewPage({ params }: { params: Promise<{ id: string }
   const router = useRouter();
   const { user } = useAuth();
   const isAdmin = user?.policies?.includes('Admin');
-  const { data: org, numId } = useEntity(orgsApi.getById, id, '/orgs');
+  const numId = Number(id);
+  const { data: org, error: orgError } = useApi(
+    () => orgsApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (orgError) router.push('/orgs');
+  }, [orgError, router]);
 
   if (!org)
     return (

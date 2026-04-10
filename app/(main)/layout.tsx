@@ -8,6 +8,7 @@ import Sidebar from '@/components/Sidebar';
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sidebar-collapsed');

@@ -76,6 +76,7 @@ function NavContent({
           </div>
           {!compact && <span className="truncate text-sm font-bold text-(--fg)">Pharmo CRM</span>}
         </Link>
+        
         {!compact && (
           <button
             onClick={onToggle}
@@ -205,7 +206,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop sidebar */}
       <aside
         className="fixed top-0 bottom-0 left-0 z-40 hidden overflow-hidden transition-all duration-300 md:block"
         style={{ width: collapsed ? 64 : 240, ...sidebarStyle }}
@@ -213,7 +213,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <NavContent compact={collapsed} {...contentProps} />
       </aside>
 
-      {/* Mobile: hamburger toggle */}
       <button
         onClick={() => setMobileOpen((v) => !v)}
         className="glass fixed top-3 left-3 z-50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-(--border) text-(--fg-muted) shadow-sm transition-all duration-200 hover:text-(--fg) md:hidden"
@@ -221,7 +220,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {mobileOpen ? <X size={17} /> : <Menu size={17} />}
       </button>
 
-      {/* Mobile: overlay + sidebar */}
       {mobileOpen && (
         <>
           <div

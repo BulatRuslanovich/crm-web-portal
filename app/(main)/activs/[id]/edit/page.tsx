@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useMemo, use } from 'react';
+import { useState, useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/lib/use-api';
-import { useEntity } from '@/lib/use-entity';
 import { useSetDiff } from '@/lib/use-set-diff';
 import { activsApi } from '@/lib/api/activs';
 import { drugsApi } from '@/lib/api/drugs';
@@ -36,14 +35,25 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const { data: activ, numId } = useEntity(activsApi.getById, id, '/activs', (data) => {
+  const numId = Number(id);
+  const { data: activ, error: activError } = useApi(
+    () => activsApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (activError) router.push('/activs');
+  }, [activError, router]);
+
+  useEffect(() => {
+    if (!activ) return;
     setAdminForm({
-      statusId: data.statusId,
-      start: data.start ? data.start.slice(0, 16) : '',
-      end: data.end ? data.end.slice(0, 16) : '',
+      statusId: activ.statusId,
+      start: activ.start ? activ.start.slice(0, 16) : '',
+      end: activ.end ? activ.end.slice(0, 16) : '',
     });
-    setDescription(data.description ?? '');
-  });
+    setDescription(activ.description ?? '');
+  }, [activ]);
 
   const { data: allDrugs = [] } = useApi(
     () => drugsApi.getAll(1, 200).then(({ data }) => data.items),

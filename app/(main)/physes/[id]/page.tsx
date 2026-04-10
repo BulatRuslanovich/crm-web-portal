@@ -1,9 +1,9 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { physesApi } from '@/lib/api/physes';
-import { useEntity } from '@/lib/use-entity';
+import { useApi } from '@/lib/use-api';
 import {
   BackButton,
   Card,
@@ -23,7 +23,15 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
   const isAdmin = user?.policies?.includes('Admin');
   const { id } = use(params);
   const router = useRouter();
-  const { data: phys, numId } = useEntity(physesApi.getById, id, '/physes');
+  const numId = Number(id);
+  const { data: phys, error: physError } = useApi(
+    () => physesApi.getById(numId).then((r) => r.data),
+    [],
+  );
+
+  useEffect(() => {
+    if (physError) router.push('/physes');
+  }, [physError, router]);
 
   if (!phys)
     return (

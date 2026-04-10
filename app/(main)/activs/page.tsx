@@ -59,7 +59,6 @@ export default function ActivsPage() {
         </LinkButton>
       </div>
 
-      {/* Search + Filters */}
       <div className="space-y-2.5">
         <div className="relative">
           <Search
@@ -107,7 +106,6 @@ export default function ActivsPage() {
         </div>
       </div>
 
-      {/* Content */}
       {loading ? (
         <ListSkeleton rows={5} />
       ) : activs.length === 0 ? (
