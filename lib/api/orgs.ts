@@ -8,8 +8,8 @@ import type {
 } from './types';
 
 export const orgsApi = {
-  getAll: (page = 1, pageSize = 20) =>
-    apiClient.get<PagedResponse<OrgResponse>>('/api/orgs', { params: { page, pageSize } }),
+  getAll: (page = 1, pageSize = 20, search?: string) =>
+    apiClient.get<PagedResponse<OrgResponse>>('/api/orgs', { params: { page, pageSize, search } }),
 
   getById: (id: number) => apiClient.get<OrgResponse>(`/api/orgs/${id}`),
 

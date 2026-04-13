@@ -3,40 +3,33 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { Mail } from 'lucide-react';
 
+interface FormValues {
+  email: string;
+}
+
 export default function ForgotPasswordForm() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({ defaultValues: { email: '' } });
 
-    if (!email.trim()) {
-      setError('Введите email');
-      setLoading(false);
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Некорректный email');
-      setLoading(false);
-      return;
-    }
-
+  async function onSubmit(values: FormValues) {
+    setApiError(null);
     try {
-      await authApi.forgotPassword(email.trim());
-      router.push(`/reset-password?email=${encodeURIComponent(email.trim())}`);
+      await authApi.forgotPassword(values.email.trim());
+      router.push(`/reset-password?email=${encodeURIComponent(values.email.trim())}`);
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setLoading(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -44,29 +37,17 @@ export default function ForgotPasswordForm() {
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Восстановление пароля</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Введите email для получения кода сброса</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Email</Label>
-          <Input
-            name="email"
-            type="email"
-            placeholder="ivan@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <Input type="email" placeholder="ivan@example.com" {...register('email')} />
         </div>
 
-        {error && <ErrorBox message={error} />}
+        {apiError && <ErrorBox message={apiError} />}
 
-        <BtnSuccess type="submit" disabled={loading} className="w-full">
+        <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <Mail size={15} />
-          {loading ? 'Отправка...' : 'Отправить код'}
+          {isSubmitting ? 'Отправка...' : 'Отправить код'}
         </BtnSuccess>
       </form>
 

@@ -3,51 +3,64 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { UserPlus } from 'lucide-react';
 
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  login: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export default function RegisterForm() {
-  const { register } = useAuth();
+  const { register: authRegister } = useAuth();
   const router = useRouter();
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      login: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [emailValue, setEmailValue] = useState('');
-  const [phone, setPhone] = useState('');
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  async function onSubmit(values: FormValues) {
+    setApiError(null);
 
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
-
-    if (password !== confirmPassword) {
-      setError('Пароли не совпадают');
-      setLoading(false);
+    if (values.password !== values.confirmPassword) {
+      setApiError('Пароли не совпадают');
       return;
     }
 
     try {
-      const { email } = await register({
-        login: login.trim(),
-        password,
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        email: emailValue.trim(),
-        phone: phone.trim(),
+      const { email } = await authRegister({
+        login: values.login.trim(),
+        password: values.password,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        phone: values.phone.trim(),
       });
 
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setLoading(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -55,91 +68,47 @@ export default function RegisterForm() {
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Регистрация</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Создайте аккаунт для работы с системой</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Имя</Label>
-            <Input
-              name="firstName"
-              type="text"
-              placeholder="Иван"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
+            <Input type="text" placeholder="Иван" {...register('firstName')} />
           </div>
           <div>
             <Label>Фамилия</Label>
-            <Input
-              name="lastName"
-              type="text"
-              placeholder="Иванов"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
+            <Input type="text" placeholder="Иванов" {...register('lastName')} />
           </div>
         </div>
         <div>
           <Label>Логин</Label>
-          <Input
-            name="login"
-            type="text"
-            placeholder="ivanov"
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
-          />
+          <Input type="text" placeholder="ivanov" {...register('login')} />
         </div>
         <div>
           <Label>Email</Label>
-          <Input
-            name="email"
-            type="email"
-            placeholder="ivan@example.com"
-            value={emailValue}
-            onChange={(e) => setEmailValue(e.target.value)}
-          />
+          <Input type="email" placeholder="ivan@example.com" {...register('email')} />
         </div>
         <div>
           <Label>Телефон</Label>
-          <Input
-            name="phone"
-            type="tel"
-            placeholder="+7 999 000 00 00"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
+          <Input type="tel" placeholder="+7 999 000 00 00" {...register('phone')} />
         </div>
         <div>
           <Label>Пароль</Label>
-          <Input
-            name="password"
-            type="password"
-            placeholder="Минимум 8 символов"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Input type="password" placeholder="Минимум 8 символов" {...register('password')} />
         </div>
         <div>
           <Label>Подтвердите пароль</Label>
           <Input
-            name="confirmPassword"
             type="password"
             placeholder="Минимум 8 символов"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            {...register('confirmPassword')}
           />
         </div>
 
-        {error && <ErrorBox message={error} />}
+        {apiError && <ErrorBox message={apiError} />}
 
-        <BtnSuccess type="submit" disabled={loading} className="w-full">
+        <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <UserPlus size={15} />
-          {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+          {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
         </BtnSuccess>
       </form>
       <div className="mt-5 border-t border-(--border) pt-5 text-center text-sm text-(--fg-muted)">

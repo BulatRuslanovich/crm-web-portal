@@ -18,18 +18,19 @@ export default function ActivsPage() {
   const [statusFilter, setStatusFilter] = useState<number[]>([]);
 
   const { data, loading } = useApi(
+    ['activs', page, search, statusFilter],
     () =>
       activsApi
         .getAll(page, PAGE_SIZE, search, 'start', true, statusFilter)
         .then((res) => res.data),
-    [page, search, statusFilter],
+    { keepPreviousData: true },
   );
 
   useEffect(() => {
     const t = setTimeout(() => {
       setSearch(searchInput);
       setPage(1);
-    }, 900);
+    }, 500);
     return () => clearTimeout(t);
   }, [searchInput]);
 

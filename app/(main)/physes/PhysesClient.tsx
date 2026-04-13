@@ -15,8 +15,9 @@ export default function PhysesPage() {
   const [page, setPage] = useState(1);
 
   const { data, loading } = useApi(
+    ['physes', page],
     () => physesApi.getAll(page, 20).then(({ data }) => data),
-    [page],
+    { keepPreviousData: true },
   );
   const physes = data?.items ?? [];
   const totalPages = data?.totalPages ?? 1;

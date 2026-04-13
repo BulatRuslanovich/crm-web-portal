@@ -15,11 +15,13 @@ import { ShieldCheck, Users, Pill, GraduationCap, Plus, X } from 'lucide-react';
 type Tab = 'users' | 'drugs' | 'specs';
 
 function UsersSection() {
-  const { data, loading, reload } = useApi(() =>
-    Promise.all([usersApi.getAll(), usersApi.getPolicies()]).then(([u, p]) => ({
-      users: u.data.items,
-      policies: p.data,
-    })),
+  const { data, loading, reload } = useApi(
+    'admin-users',
+    () =>
+      Promise.all([usersApi.getAll(), usersApi.getPolicies()]).then(([u, p]) => ({
+        users: u.data.items,
+        policies: p.data,
+      })),
   );
   const users = data?.users ?? [];
   const policies = data?.policies ?? [];
@@ -169,7 +171,7 @@ function DrugsSection() {
     data: drugs = [],
     loading,
     reload,
-  } = useApi(() => drugsApi.getAll(1, 200).then(({ data }) => data.items));
+  } = useApi('admin-drugs', () => drugsApi.getAll(1, 200).then(({ data }) => data.items));
   const [showCreate, setShowCreate] = useState(false);
   const [error, setError] = useState('');
 
@@ -266,7 +268,7 @@ function SpecsSection() {
     data: specs = [],
     loading,
     reload,
-  } = useApi(() => specsApi.getAll().then(({ data }) => data));
+  } = useApi('admin-specs', () => specsApi.getAll().then(({ data }) => data));
 
   async function handleCreate(fd: FormData) {
     const name = (fd.get('specName') as string).trim();

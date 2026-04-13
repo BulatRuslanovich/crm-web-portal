@@ -25,8 +25,8 @@ export default function OrgViewPage({ params }: { params: Promise<{ id: string }
   const isAdmin = user?.policies?.includes('Admin');
   const numId = Number(id);
   const { data: org, error: orgError } = useApi(
+    ['org', numId],
     () => orgsApi.getById(numId).then((r) => r.data),
-    [],
   );
 
   useEffect(() => {

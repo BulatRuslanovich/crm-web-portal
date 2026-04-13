@@ -3,32 +3,35 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { LogIn } from 'lucide-react';
 
+interface FormValues {
+  login: string;
+  password: string;
+}
+
 export default function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({ defaultValues: { login: '', password: '' } });
 
-  const [loginValue, setLoginValue] = useState('');
-  const [password, setPassword] = useState('');
-
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
-
+  async function onSubmit(values: FormValues) {
+    setApiError(null);
     try {
-      await login(loginValue, password);
+      await login(values.login, values.password);
       router.push('/dashboard');
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setLoading(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -36,40 +39,22 @@ export default function LoginForm() {
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Вход</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Войдите в свой аккаунт</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Логин</Label>
-          <Input
-            name="login"
-            type="text"
-            placeholder="Введите логин"
-            value={loginValue}
-            onChange={(e) => setLoginValue(e.target.value)}
-          />
+          <Input type="text" placeholder="Введите логин" {...register('login')} />
         </div>
 
         <div>
           <Label>Пароль</Label>
-          <Input
-            name="password"
-            type="password"
-            placeholder="Введите пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Input type="password" placeholder="Введите пароль" {...register('password')} />
         </div>
 
-        {error && <ErrorBox message={error} />}
+        {apiError && <ErrorBox message={apiError} />}
 
-        <BtnSuccess type="submit" disabled={loading} className="w-full">
+        <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <LogIn size={15} />
-          {loading ? 'Вход...' : 'Войти'}
+          {isSubmitting ? 'Вход...' : 'Войти'}
         </BtnSuccess>
       </form>
 

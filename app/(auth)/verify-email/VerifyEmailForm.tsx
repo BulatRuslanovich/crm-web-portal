@@ -2,11 +2,16 @@
 
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
 import { ShieldCheck } from 'lucide-react';
+
+interface FormValues {
+  code: string;
+}
 
 function VerifyEmailInner() {
   const { confirmEmail } = useAuth();
@@ -14,13 +19,17 @@ function VerifyEmailInner() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') ?? '';
 
-  const [code, setCode] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
   const [cooldown, setCooldown] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({ defaultValues: { code: '' } });
 
   useEffect(() => {
     return () => {
@@ -46,30 +55,25 @@ function VerifyEmailInner() {
   async function handleResend() {
     setResendLoading(true);
     setResendMsg('');
-    setError(null);
-
+    setApiError(null);
     try {
       await authApi.resendConfirmation(email);
       setResendMsg('Код отправлен повторно');
       startCooldown(60);
     } catch (err) {
-      setError(extractApiError(err));
+      setApiError(extractApiError(err));
     } finally {
       setResendLoading(false);
     }
   }
 
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
-
+  async function onSubmit(values: FormValues) {
+    setApiError(null);
     try {
-      await confirmEmail(email, code);
+      await confirmEmail(email, values.code);
       router.push('/dashboard');
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setLoading(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -79,35 +83,24 @@ function VerifyEmailInner() {
       <p className="mb-5 text-sm text-(--fg-muted)">
         Код отправлен на <span className="font-medium text-(--fg)">{email}</span>
       </p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Код подтверждения</Label>
           <Input
-            name="code"
             type="text"
             maxLength={6}
             className="h-12! text-center! font-mono! text-xl! tracking-widest!"
             placeholder="000000"
-            value={code}
-            onChange={(e) => {
-              setCode(e.target.value.replace(/\D/g, '').slice(0, 6));
-            }}
+            {...register('code')}
           />
         </div>
 
-        {error && <ErrorBox message={error} />}
-
+        {apiError && <ErrorBox message={apiError} />}
         {resendMsg && <SuccessBox message={resendMsg} />}
 
-        <BtnSuccess type="submit" disabled={loading} className="w-full">
+        <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <ShieldCheck size={15} />
-          {loading ? 'Проверка...' : 'Подтвердить'}
+          {isSubmitting ? 'Проверка...' : 'Подтвердить'}
         </BtnSuccess>
       </form>
       <button

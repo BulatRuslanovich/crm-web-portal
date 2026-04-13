@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { usersApi } from '@/lib/api/users';
 import { extractApiError } from '@/lib/api/errors';
@@ -19,15 +20,38 @@ import {
 import { PageTransition } from '@/components/motion';
 import { User, Shield, KeyRound, LogOut } from 'lucide-react';
 
+interface ProfileFormValues {
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
+
+interface PasswordFormValues {
+  oldPassword: string;
+  newPassword: string;
+  confirm: string;
+}
+
 export default function ProfilePage() {
   const { user, refreshUser, logout } = useAuth();
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
-  const [profileError, setProfileError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [profileApiError, setProfileApiError] = useState('');
+  const [passwordApiError, setPasswordApiError] = useState('');
+
+  const profileForm = useForm<ProfileFormValues>({
+    defaultValues: {
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
+      phone: user?.phone ?? '',
+    },
+  });
+
+  const passwordForm = useForm<PasswordFormValues>({
+    defaultValues: { oldPassword: '', newPassword: '', confirm: '' },
+  });
 
   if (!user) return null;
 
@@ -36,47 +60,40 @@ export default function ProfilePage() {
     : user.login;
   const initials = (user.firstName?.[0] ?? user.login[0]).toUpperCase();
 
-  async function handleProfileSave(fd: FormData) {
-    setProfileError('');
+  async function onProfileSubmit(values: ProfileFormValues) {
+    setProfileApiError('');
     setProfileSuccess('');
-    setSaving(true);
     try {
       await usersApi.update(user!.usrId, {
-        firstName: (fd.get('firstName') as string) || null,
-        lastName: (fd.get('lastName') as string) || null,
-        phone: (fd.get('phone') as string) || null,
+        firstName: values.firstName || null,
+        lastName: values.lastName || null,
+        phone: values.phone || null,
       });
       await refreshUser();
       setEditingProfile(false);
       setProfileSuccess('Профиль обновлён');
     } catch (err) {
-      setProfileError(extractApiError(err, 'Ошибка обновления'));
-    } finally {
-      setSaving(false);
+      setProfileApiError(extractApiError(err, 'Ошибка обновления'));
     }
   }
 
-  async function handlePasswordSave(fd: FormData) {
-    setPasswordError('');
+  async function onPasswordSubmit(values: PasswordFormValues) {
+    setPasswordApiError('');
     setPasswordSuccess('');
-    const newPassword = fd.get('newPassword') as string;
-    const confirm = fd.get('confirm') as string;
-    if (newPassword !== confirm) {
-      setPasswordError('Пароли не совпадают');
+    if (values.newPassword !== values.confirm) {
+      setPasswordApiError('Пароли не совпадают');
       return;
     }
-    setSaving(true);
     try {
       await usersApi.changePassword(user!.usrId, {
-        oldPassword: fd.get('oldPassword') as string,
-        newPassword,
+        oldPassword: values.oldPassword,
+        newPassword: values.newPassword,
       });
       setEditingPassword(false);
       setPasswordSuccess('Пароль изменён');
+      passwordForm.reset();
     } catch (err) {
-      setPasswordError(extractApiError(err, 'Ошибка смены пароля'));
-    } finally {
-      setSaving(false);
+      setPasswordApiError(extractApiError(err, 'Ошибка смены пароля'));
     }
   }
 
@@ -107,7 +124,6 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Profile info */}
       <Card>
         <div className="border-b border-(--border) px-5 py-3.5">
           <div className="flex items-center gap-2">
@@ -134,6 +150,11 @@ export default function ProfilePage() {
                 onClick={() => {
                   setEditingProfile(true);
                   setProfileSuccess('');
+                  profileForm.reset({
+                    firstName: user.firstName ?? '',
+                    lastName: user.lastName ?? '',
+                    phone: user.phone ?? '',
+                  });
                 }}
               >
                 Редактировать
@@ -141,37 +162,36 @@ export default function ProfilePage() {
             </CardFooter>
           </>
         ) : (
-          <form action={handleProfileSave}>
+          <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
             <div className="space-y-3 p-5">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <Label>Имя</Label>
-                  <Input name="firstName" type="text" defaultValue={user.firstName ?? ''} />
+                  <Input type="text" {...profileForm.register('firstName')} />
                 </div>
                 <div>
                   <Label>Фамилия</Label>
-                  <Input name="lastName" type="text" defaultValue={user.lastName ?? ''} />
+                  <Input type="text" {...profileForm.register('lastName')} />
                 </div>
                 <div>
                   <Label>Телефон</Label>
-                  <Input name="phone" type="tel" defaultValue={user.phone ?? ''} />
+                  <Input type="tel" {...profileForm.register('phone')} />
                 </div>
               </div>
-              {profileError && <ErrorBox message={profileError} />}
+              {profileApiError && <ErrorBox message={profileApiError} />}
             </div>
             <CardFooter>
               <BtnSecondary type="button" onClick={() => setEditingProfile(false)}>
                 Отмена
               </BtnSecondary>
-              <BtnPrimary type="submit" disabled={saving}>
-                {saving ? 'Сохранение...' : 'Сохранить'}
+              <BtnPrimary type="submit" disabled={profileForm.formState.isSubmitting}>
+                {profileForm.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
               </BtnPrimary>
             </CardFooter>
           </form>
         )}
       </Card>
 
-      {/* Password */}
       <Card>
         <div className="border-b border-(--border) px-5 py-3.5">
           <div className="flex items-center gap-2">
@@ -192,6 +212,7 @@ export default function ProfilePage() {
                 onClick={() => {
                   setEditingPassword(true);
                   setPasswordSuccess('');
+                  passwordForm.reset();
                 }}
               >
                 <KeyRound size={14} /> Изменить пароль
@@ -199,28 +220,28 @@ export default function ProfilePage() {
             </CardFooter>
           </>
         ) : (
-          <form action={handlePasswordSave}>
+          <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
             <div className="space-y-3 p-5">
               <div>
                 <Label required>Текущий пароль</Label>
-                <Input name="oldPassword" type="password" />
+                <Input type="password" {...passwordForm.register('oldPassword')} />
               </div>
               <div>
                 <Label required>Новый пароль</Label>
-                <Input name="newPassword" type="password" />
+                <Input type="password" {...passwordForm.register('newPassword')} />
               </div>
               <div>
                 <Label required>Повторите пароль</Label>
-                <Input name="confirm" type="password" />
+                <Input type="password" {...passwordForm.register('confirm')} />
               </div>
-              {passwordError && <ErrorBox message={passwordError} />}
+              {passwordApiError && <ErrorBox message={passwordApiError} />}
             </div>
             <CardFooter>
               <BtnSecondary type="button" onClick={() => setEditingPassword(false)}>
                 Отмена
               </BtnSecondary>
-              <BtnPrimary type="submit" disabled={saving}>
-                {saving ? 'Сохранение...' : 'Изменить'}
+              <BtnPrimary type="submit" disabled={passwordForm.formState.isSubmitting}>
+                {passwordForm.formState.isSubmitting ? 'Сохранение...' : 'Изменить'}
               </BtnPrimary>
             </CardFooter>
           </form>

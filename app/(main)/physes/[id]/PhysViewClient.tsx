@@ -25,8 +25,8 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
   const router = useRouter();
   const numId = Number(id);
   const { data: phys, error: physError } = useApi(
+    ['phys', numId],
     () => physesApi.getById(numId).then((r) => r.data),
-    [],
   );
 
   useEffect(() => {

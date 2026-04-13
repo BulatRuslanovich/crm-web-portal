@@ -32,11 +32,14 @@ interface FormValues {
 
 export default function CreateActivPage() {
   const router = useRouter();
-  const { data: refData, loading: loadingData } = useApi(() =>
-    Promise.all([orgsApi.getAll(), drugsApi.getAll()]).then(([o, d]) => ({
-      orgs: o.data.items,
-      drugs: d.data.items,
-    })),
+  const { data: refData, loading: loadingData } = useApi(
+    'activ-create-refs',
+    () =>
+      Promise.all([orgsApi.getAll(), drugsApi.getAll()]).then(([o, d]) => ({
+        orgs: o.data.items,
+        drugs: d.data.items,
+      })),
+    { dedupingInterval: 300_000 },
   );
   const orgs = refData?.orgs ?? [];
   const drugs = refData?.drugs ?? [];

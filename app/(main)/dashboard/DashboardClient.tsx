@@ -175,15 +175,19 @@ function RecentActivs({ activs }: { activs: ActivResponse[] }) {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: dashData, loading } = useApi(() =>
-    Promise.all([activsApi.getAll(1, 100, undefined, 'start', true), orgsApi.getAll(1, 100), physesApi.getAll(1, 100)]).then(
-      ([activsRes, orgsRes, physesRes]) => ({
+  const { data: dashData, loading } = useApi(
+    'dashboard',
+    () =>
+      Promise.all([
+        activsApi.getAll(1, 100, undefined, 'start', true),
+        orgsApi.getAll(1, 100),
+        physesApi.getAll(1, 100),
+      ]).then(([activsRes, orgsRes, physesRes]) => ({
         activs: activsRes.data.items,
         activsCount: activsRes.data.totalCount,
         orgsCount: orgsRes.data.totalCount,
         physesCount: physesRes.data.totalCount,
-      }),
-    ),
+      })),
   );
 
   const hour = new Date().getHours();

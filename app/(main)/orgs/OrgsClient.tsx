@@ -14,7 +14,11 @@ export default function OrgsPage() {
   const isAdmin = user?.policies?.includes('Admin');
   const [page, setPage] = useState(1);
 
-  const { data, loading } = useApi(() => orgsApi.getAll(page, 20).then(({ data }) => data), [page]);
+  const { data, loading } = useApi(
+    ['orgs', page],
+    () => orgsApi.getAll(page, 20).then(({ data }) => data),
+    { keepPreviousData: true },
+  );
   const orgs = data?.items ?? [];
   const totalPages = data?.totalPages ?? 1;
 

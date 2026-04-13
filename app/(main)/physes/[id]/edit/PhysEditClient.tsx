@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
 import { useApi } from '@/lib/use-api';
 import { useSetDiff } from '@/lib/use-set-diff';
 import { physesApi } from '@/lib/api/physes';
@@ -16,56 +17,47 @@ import {
   CardSkeleton,
   Label,
   Input,
-  Select,
   ErrorBox,
   BtnPrimary,
   BtnSecondary,
 } from '@/components/ui';
+import { Combobox } from '@/components/Combobox';
+import { MultiCombobox } from '@/components/MultiCombobox';
+
+interface FormValues {
+  specId: string;
+  lastName: string;
+  firstName: string;
+  middleName: string;
+  phone: string;
+  email: string;
+  position: string;
+}
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-
-  const [form, setForm] = useState({
-    specId: '',
-    lastName: '',
-    firstName: '',
-    middleName: '',
-    phone: '',
-    email: '',
-    position: '',
-  });
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [selectedOrgId, setSelectedOrgId] = useState('');
+  const [apiError, setApiError] = useState('');
 
   const numId = Number(id);
   const { data: phys, error: physError } = useApi(
+    ['phys', numId],
     () => physesApi.getById(numId).then((r) => r.data),
-    [],
   );
 
   useEffect(() => {
     if (physError) router.push('/physes');
   }, [physError, router]);
 
-  useEffect(() => {
-    if (!phys) return;
-    setForm({
-      specId: phys.specId != null ? String(phys.specId) : '',
-      lastName: phys.lastName,
-      firstName: phys.firstName ?? '',
-      middleName: phys.middleName ?? '',
-      phone: phys.phone ?? '',
-      email: phys.email ?? '',
-      position: phys.position ?? '',
-    });
-  }, [phys]);
-
-  const { data: specs = [] } = useApi(() => specsApi.getAll().then(({ data }) => data), []);
+  const { data: specs = [] } = useApi(
+    'specs',
+    () => specsApi.getAll().then(({ data }) => data),
+    { dedupingInterval: 300_000 },
+  );
   const { data: allOrgs = [] } = useApi(
+    'orgs-all',
     () => orgsApi.getAll(1, 1000).then(({ data }) => data.items),
-    [],
+    { dedupingInterval: 300_000 },
   );
 
   const orgSourceIds = useMemo(
@@ -79,6 +71,37 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   );
   const orgs = useSetDiff(orgSourceIds);
 
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      specId: '',
+      lastName: '',
+      firstName: '',
+      middleName: '',
+      phone: '',
+      email: '',
+      position: '',
+    },
+  });
+
+  useEffect(() => {
+    if (!phys) return;
+    reset({
+      specId: phys.specId != null ? String(phys.specId) : '',
+      lastName: phys.lastName,
+      firstName: phys.firstName ?? '',
+      middleName: phys.middleName ?? '',
+      phone: phys.phone ?? '',
+      email: phys.email ?? '',
+      position: phys.position ?? '',
+    });
+  }, [phys, reset]);
+
   if (!phys)
     return (
       <div className="mx-auto max-w-2xl">
@@ -87,27 +110,41 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     );
 
   const fullName = [phys.lastName, phys.firstName, phys.middleName].filter(Boolean).join(' ');
-  const linkedOrgsList = allOrgs.filter((o: OrgResponse) => orgs.has(o.orgId));
-  const availableOrgs = allOrgs.filter((o: OrgResponse) => !orgs.has(o.orgId));
 
-  function handleAddOrg() {
-    if (!selectedOrgId) return;
-    orgs.add(Number(selectedOrgId));
-    setSelectedOrgId('');
+  const specOptions = specs.map((s) => ({
+    value: String(s.specId),
+    label: s.specName,
+  }));
+
+  const orgOptions = allOrgs.map((o: OrgResponse) => ({
+    value: String(o.orgId),
+    label: o.orgName,
+  }));
+
+  const selectedOrgIds = [...orgs.selected].map(String);
+
+  function handleOrgChange(values: string[]) {
+    const newSet = new Set(values.map(Number));
+    const current = orgs.selected;
+    for (const id of current) {
+      if (!newSet.has(id)) orgs.remove(id);
+    }
+    for (const id of newSet) {
+      if (!current.has(id)) orgs.add(id);
+    }
   }
 
-  async function handleUpdate() {
-    setError('');
-    setSaving(true);
+  async function onSubmit(values: FormValues) {
+    setApiError('');
     try {
       await physesApi.update(numId, {
-        specId: form.specId ? Number(form.specId) : null,
-        lastName: form.lastName,
-        firstName: form.firstName || null,
-        middleName: form.middleName || null,
-        phone: form.phone || null,
-        email: form.email || null,
-        position: form.position || null,
+        specId: values.specId ? Number(values.specId) : null,
+        lastName: values.lastName,
+        firstName: values.firstName || null,
+        middleName: values.middleName || null,
+        phone: values.phone || null,
+        email: values.email || null,
+        position: values.position || null,
       });
 
       const { toAdd, toRemove } = orgs.diff();
@@ -118,9 +155,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
 
       router.push(`/physes/${id}`);
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setSaving(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -131,132 +166,73 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
         <h2 className="flex-1 text-xl font-semibold text-(--fg)">{fullName}</h2>
       </div>
 
-      <form action={handleUpdate}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-4 p-5">
             <div>
               <Label required>Фамилия</Label>
-              <Input
-                type="text"
-                value={form.lastName}
-                onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-                required
-              />
+              <Input type="text" {...register('lastName')} />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <Label required>Имя</Label>
-                <Input
-                  type="text"
-                  value={form.firstName}
-                  onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
-                  required
-                />
+                <Input type="text" {...register('firstName')} />
               </div>
               <div>
                 <Label required>Отчество</Label>
-                <Input
-                  type="text"
-                  value={form.middleName}
-                  onChange={(e) => setForm((f) => ({ ...f, middleName: e.target.value }))}
-                  required
-                />
+                <Input type="text" {...register('middleName')} />
               </div>
             </div>
             <div>
               <Label>Специальность</Label>
-              <Select
-                value={form.specId}
-                onChange={(e) => setForm((f) => ({ ...f, specId: e.target.value }))}
-              >
-                <option value="">Не указана</option>
-                {specs.map((s) => (
-                  <option key={s.specId} value={s.specId}>
-                    {s.specName}
-                  </option>
-                ))}
-              </Select>
+              <Controller
+                name="specId"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    options={specOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Не указана"
+                    searchPlaceholder="Поиск специальности..."
+                  />
+                )}
+              />
             </div>
             <div>
               <Label>Должность</Label>
-              <Input
-                type="text"
-                value={form.position}
-                onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))}
-              />
+              <Input type="text" {...register('position')} />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <Label>Телефон</Label>
-                <Input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                />
+                <Input type="tel" {...register('phone')} />
               </div>
               <div>
                 <Label>Email</Label>
-                <Input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                />
+                <Input type="email" {...register('email')} />
               </div>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-xs font-semibold tracking-wide text-(--fg-muted) uppercase">
-                Организации
-              </p>
-
-              {linkedOrgsList.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {linkedOrgsList.map((o: OrgResponse) => (
-                    <span
-                      key={o.orgId}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-(--primary-border) bg-(--primary-subtle) px-2.5 py-1 text-xs text-(--primary-text)"
-                    >
-                      {o.orgName}
-                      <button
-                        type="button"
-                        onClick={() => orgs.remove(o.orgId)}
-                        className="cursor-pointer transition-colors hover:text-(--danger)"
-                        title="Удалить связь"
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-(--fg-muted)">Нет привязанных организаций</p>
-              )}
-
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <Select value={selectedOrgId} onChange={(e) => setSelectedOrgId(e.target.value)}>
-                    <option value="">Выберите...</option>
-                    {availableOrgs.map((o: OrgResponse) => (
-                      <option key={o.orgId} value={o.orgId}>
-                        {o.orgName}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <BtnSecondary type="button" onClick={handleAddOrg} disabled={!selectedOrgId}>
-                  Добавить
-                </BtnSecondary>
-              </div>
+            <div>
+              <Label>Организации</Label>
+              <MultiCombobox
+                options={orgOptions}
+                value={selectedOrgIds}
+                onChange={handleOrgChange}
+                placeholder="Выберите организации"
+                searchPlaceholder="Поиск организации..."
+              />
             </div>
 
-            {error && <ErrorBox message={error} />}
+            {apiError && <ErrorBox message={apiError} />}
           </div>
           <CardFooter>
             <BtnSecondary type="button" onClick={() => router.push(`/physes/${id}`)}>
               Отмена
             </BtnSecondary>
-            <BtnPrimary type="submit" disabled={saving}>
-              {saving ? 'Сохранение...' : 'Сохранить'}
+            <BtnPrimary type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Сохранение...' : 'Сохранить'}
             </BtnPrimary>
           </CardFooter>
         </Card>

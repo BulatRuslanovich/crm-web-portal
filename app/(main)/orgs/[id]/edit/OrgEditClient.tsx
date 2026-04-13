@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
 import { useApi } from '@/lib/use-api';
 import { orgsApi } from '@/lib/api/orgs';
 import { extractApiError } from '@/lib/api/errors';
@@ -12,40 +13,55 @@ import {
   CardSkeleton,
   Label,
   Input,
-  Select,
   ErrorBox,
   BtnPrimary,
   BtnSecondary,
 } from '@/components/ui';
+import { Combobox } from '@/components/Combobox';
+
+interface FormValues {
+  orgTypeId: string;
+  orgName: string;
+  inn: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+}
 
 export default function OrgEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-
-  const [form, setForm] = useState({
-    orgTypeId: '',
-    orgName: '',
-    inn: '',
-    address: '',
-    latitude: '',
-    longitude: '',
-  });
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   const numId = Number(id);
   const { data: org, error: orgError } = useApi(
+    ['org', numId],
     () => orgsApi.getById(numId).then((r) => r.data),
-    [],
   );
 
   useEffect(() => {
     if (orgError) router.push('/orgs');
   }, [orgError, router]);
 
+  const { data: types = [] } = useApi(
+    'org-types',
+    () => orgsApi.getTypes().then(({ data }) => data),
+    { dedupingInterval: 300_000 },
+  );
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: { orgTypeId: '', orgName: '', inn: '', address: '', latitude: '', longitude: '' },
+  });
+
   useEffect(() => {
     if (!org) return;
-    setForm({
+    reset({
       orgTypeId: String(org.orgTypeId),
       orgName: org.orgName,
       inn: org.inn ?? '',
@@ -53,9 +69,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
       latitude: org.latitude != null ? String(org.latitude) : '',
       longitude: org.longitude != null ? String(org.longitude) : '',
     });
-  }, [org]);
-
-  const { data: types = [] } = useApi(() => orgsApi.getTypes().then(({ data }) => data), []);
+  }, [org, reset]);
 
   if (!org)
     return (
@@ -64,23 +78,25 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
       </div>
     );
 
-  async function handleUpdate() {
-    setError('');
-    setSaving(true);
+  const typeOptions = types.map((t) => ({
+    value: String(t.orgTypeId),
+    label: t.orgTypeName,
+  }));
+
+  async function onSubmit(values: FormValues) {
+    setApiError('');
     try {
       await orgsApi.update(numId, {
-        orgTypeId: Number(form.orgTypeId),
-        orgName: form.orgName,
-        inn: form.inn || null,
-        address: form.address || null,
-        latitude: form.latitude ? Number(form.latitude) : null,
-        longitude: form.longitude ? Number(form.longitude) : null,
+        orgTypeId: Number(values.orgTypeId),
+        orgName: values.orgName,
+        inn: values.inn || null,
+        address: values.address || null,
+        latitude: values.latitude ? Number(values.latitude) : null,
+        longitude: values.longitude ? Number(values.longitude) : null,
       });
       router.push(`/orgs/${id}`);
     } catch (err) {
-      setError(extractApiError(err, 'Неизвестная ошибка при обновлении организации'));
-    } finally {
-      setSaving(false);
+      setApiError(extractApiError(err, 'Неизвестная ошибка при обновлении организации'));
     }
   }
 
@@ -91,75 +107,55 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
         <h2 className="flex-1 text-xl font-semibold text-(--fg)">{org.orgName}</h2>
       </div>
 
-      <form action={handleUpdate}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-4 p-5">
             <div>
               <Label required>Тип</Label>
-              <Select
-                value={form.orgTypeId}
-                onChange={(e) => setForm((f) => ({ ...f, orgTypeId: e.target.value }))}
-              >
-                {types.map((t) => (
-                  <option key={t.orgTypeId} value={t.orgTypeId}>
-                    {t.orgTypeName}
-                  </option>
-                ))}
-              </Select>
+              <Controller
+                name="orgTypeId"
+                control={control}
+                render={({ field }) => (
+                  <Combobox
+                    options={typeOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Выберите тип"
+                    searchPlaceholder="Поиск типа..."
+                  />
+                )}
+              />
             </div>
             <div>
               <Label required>Название</Label>
-              <Input
-                type="text"
-                value={form.orgName}
-                onChange={(e) => setForm((f) => ({ ...f, orgName: e.target.value }))}
-                required
-              />
+              <Input type="text" {...register('orgName')} />
             </div>
             <div>
               <Label>ИНН</Label>
-              <Input
-                type="text"
-                value={form.inn}
-                onChange={(e) => setForm((f) => ({ ...f, inn: e.target.value }))}
-              />
+              <Input type="text" {...register('inn')} />
             </div>
             <div>
               <Label>Адрес</Label>
-              <Input
-                type="text"
-                value={form.address}
-                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-              />
+              <Input type="text" {...register('address')} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Широта</Label>
-                <Input
-                  type="number"
-                  step="any"
-                  value={form.latitude}
-                  onChange={(e) => setForm((f) => ({ ...f, latitude: e.target.value }))}
-                />
+                <Input type="number" step="any" {...register('latitude')} />
               </div>
               <div>
                 <Label>Долгота</Label>
-                <Input
-                  type="number"
-                  step="any"
-                  value={form.longitude}
-                  onChange={(e) => setForm((f) => ({ ...f, longitude: e.target.value }))}
-                />
+                <Input type="number" step="any" {...register('longitude')} />
               </div>
             </div>
-            {error && <ErrorBox message={error} />}
+            {apiError && <ErrorBox message={apiError} />}
           </div>
           <CardFooter>
             <BtnSecondary type="button" onClick={() => router.push(`/orgs/${id}`)}>
               Отмена
             </BtnSecondary>
-            <BtnPrimary type="submit" disabled={saving}>
-              {saving ? 'Сохранение...' : 'Сохранить'}
+            <BtnPrimary type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Сохранение...' : 'Сохранить'}
             </BtnPrimary>
           </CardFooter>
         </Card>

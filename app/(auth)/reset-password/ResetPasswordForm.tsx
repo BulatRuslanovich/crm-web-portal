@@ -3,22 +3,34 @@
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
 import { KeyRound } from 'lucide-react';
+
+interface FormValues {
+  code: string;
+  password: string;
+  confirmPassword: string;
+}
 
 function ResetPasswordInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') ?? '';
 
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
   const [cooldown, setCooldown] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({ defaultValues: { code: '', password: '', confirmPassword: '' } });
 
   useEffect(() => {
     return () => {
@@ -44,40 +56,29 @@ function ResetPasswordInner() {
   async function handleResend() {
     setResendLoading(true);
     setResendMsg('');
-    setError(null);
-
+    setApiError(null);
     try {
       await authApi.forgotPassword(email);
       setResendMsg('Код отправлен повторно');
       startCooldown(60);
     } catch (err) {
-      setError(extractApiError(err));
+      setApiError(extractApiError(err));
     } finally {
       setResendLoading(false);
     }
   }
 
-  const [code, setCode] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
-
-    if (password !== confirmPassword) {
-      setError('Пароли не совпадают');
-      setLoading(false);
+  async function onSubmit(values: FormValues) {
+    setApiError(null);
+    if (values.password !== values.confirmPassword) {
+      setApiError('Пароли не совпадают');
       return;
     }
-
     try {
-      await authApi.resetPassword(email, code.trim(), password);
+      await authApi.resetPassword(email, values.code.trim(), values.password);
       router.push('/login');
     } catch (err) {
-      setError(extractApiError(err));
-    } finally {
-      setLoading(false);
+      setApiError(extractApiError(err));
     }
   }
 
@@ -85,55 +86,34 @@ function ResetPasswordInner() {
     <div className="p-6">
       <h2 className="mb-1 text-xl font-bold text-(--fg)">Новый пароль</h2>
       <p className="mb-5 text-sm text-(--fg-muted)">Введите код из письма и новый пароль</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Код подтверждения</Label>
           <Input
-            name="code"
             type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             maxLength={6}
             className="h-12! text-center! font-mono! text-xl! tracking-widest!"
             placeholder="000000"
+            {...register('code')}
           />
         </div>
 
         <div>
           <Label>Новый пароль</Label>
-          <Input
-            name="newPassword"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <Input type="password" placeholder="••••••••" {...register('password')} />
         </div>
 
         <div>
           <Label>Подтвердите пароль</Label>
-          <Input
-            name="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <Input type="password" placeholder="••••••••" {...register('confirmPassword')} />
         </div>
 
-        {error && <ErrorBox message={error} />}
-
+        {apiError && <ErrorBox message={apiError} />}
         {resendMsg && <SuccessBox message={resendMsg} />}
 
-        <BtnSuccess type="submit" disabled={loading} className="w-full">
+        <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <KeyRound size={15} />
-          {loading ? 'Cбрасывание...' : 'Сбросить пароль'}
+          {isSubmitting ? 'Cбрасывание...' : 'Сбросить пароль'}
         </BtnSuccess>
       </form>
 

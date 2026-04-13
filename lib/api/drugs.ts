@@ -2,8 +2,8 @@ import { apiClient } from './client';
 import type { DrugResponse, CreateDrugRequest, UpdateDrugRequest, PagedResponse } from './types';
 
 export const drugsApi = {
-  getAll: (page = 1, pageSize = 20) =>
-    apiClient.get<PagedResponse<DrugResponse>>('/api/drugs', { params: { page, pageSize } }),
+  getAll: (page = 1, pageSize = 20, search?: string) =>
+    apiClient.get<PagedResponse<DrugResponse>>('/api/drugs', { params: { page, pageSize, search } }),
 
   getById: (id: number) => apiClient.get<DrugResponse>(`/api/drugs/${id}`),
 

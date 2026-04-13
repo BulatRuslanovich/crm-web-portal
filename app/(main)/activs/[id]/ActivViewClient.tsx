@@ -44,7 +44,7 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
     data: activ,
     error: activError,
     reload,
-  } = useApi(() => activsApi.getById(numId).then((r) => r.data), []);
+  } = useApi(['activ', numId], () => activsApi.getById(numId).then((r) => r.data));
 
   useEffect(() => {
     if (activError) router.push('/activs');
