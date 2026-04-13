@@ -3,6 +3,7 @@
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import Image from 'next/image'
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -37,7 +38,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
       style={{ background: 'var(--gradient-auth)' }}
     >
-      {/* Floating orbs for visual depth */}
+      
       <FloatingOrb className="animate-float -top-48 -left-48 h-96 w-96 bg-(--primary)" />
       <FloatingOrb
         className="animate-float -right-40 -bottom-40 h-80 w-80 bg-(--success)"
@@ -51,13 +52,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <ThemeToggle />
 
       <div className="animate-fade-in relative z-10 w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-(--fg)">Pharmo CRM</h1>
+   
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div
+            className="mb-3 flex items-center justify-center rounded-2xl"
+          >
+            <Image src={"/icon.svg"} width={82} height={32} alt={'icon'} />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-(--fg)">Pharmo CRM</h1>
           <p className="mt-1.5 text-sm text-(--fg-muted)">Система управления визитами</p>
         </div>
 
-        {/* Glass card wrapper */}
         <div className="glass rounded-2xl border border-(--border) shadow-lg">{children}</div>
       </div>
     </div>

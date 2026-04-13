@@ -1,5 +1,6 @@
 'use client';
 
+import { forwardRef } from 'react';
 import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -137,41 +138,41 @@ export function SectionLabel({
 }
 
 /* ── Form Controls ─────────────────────────────────────────────────────────── */
-export function Input({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
+export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className = '', ...props }, ref) => (
     <input
+      ref={ref}
       className={`h-10 w-full rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50 ${className}`}
       {...props}
     />
-  );
-}
+  ),
+);
+Input.displayName = 'Input';
 
-export function Textarea({
-  className = '',
-  ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <textarea
-      className={`w-full resize-none rounded-xl border border-(--border) bg-(--input-bg) px-3.5 py-2.5 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none ${className}`}
-      {...props}
-    />
-  );
-}
+export const Textarea = forwardRef<
+  HTMLTextAreaElement,
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>
+>(({ className = '', ...props }, ref) => (
+  <textarea
+    ref={ref}
+    className={`w-full resize-none rounded-xl border border-(--border) bg-(--input-bg) px-3.5 py-2.5 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none ${className}`}
+    {...props}
+  />
+));
+Textarea.displayName = 'Textarea';
 
-export function Select({
-  className = '',
-  children,
-  ...props
-}: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
+export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
+  ({ className = '', children, ...props }, ref) => (
     <select
+      ref={ref}
       className={`h-10 w-full rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-sm text-(--fg) transition-all duration-200 focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50 ${className}`}
       {...props}
     >
       {children}
     </select>
-  );
-}
+  ),
+);
+Select.displayName = 'Select';
 
 export function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/lib/auth-context';
@@ -20,6 +21,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+
 
 const navItems = [
   { href: '/dashboard', label: 'Главная', icon: LayoutDashboard },
@@ -66,17 +68,22 @@ function NavContent({
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* Header */}
       <div
         className={`flex h-14 shrink-0 items-center border-b border-(--border) px-3 ${compact ? 'justify-center' : 'justify-between gap-2'}`}
       >
         <Link href="/dashboard" onClick={onClose} className="flex min-w-0 items-center gap-2.5">
-          <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-(--primary) shadow-sm">
-            <span className="text-xs font-bold text-(--primary-fg)">P</span>
+          <div
+            className="relative flex shrink-0 items-center justify-center rounded-xl shadow-sm"
+          >
+              <Image src={"/icon.svg"} width={32} height={32} alt={'icon'} />
           </div>
-          {!compact && <span className="truncate text-sm font-bold text-(--fg)">Pharmo CRM</span>}
+          {!compact && (
+            <span className="truncate text-sm font-bold tracking-tight text-(--fg)">
+              Pharmo CRM
+            </span>
+          )}
         </Link>
-        
+
         {!compact && (
           <button
             onClick={onToggle}
@@ -88,7 +95,6 @@ function NavContent({
         )}
       </div>
 
-      {/* Nav items */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-3">
         {allItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + '/');
