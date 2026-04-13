@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     siteName: 'Pharmo CRM',
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://crm.pharmo.uz'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL ?? 'https://crmwebapi.ru'),
   robots: {
     index: true,
     follow: true,

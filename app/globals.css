@@ -16,7 +16,6 @@
   --navbar-bg: rgba(255, 255, 255, 0.85);
   --navbar-border: #dbebf0;
 
-  /* Primary — Medical Teal */
   --primary: #0d9488;
   --primary-hover: #0f766e;
   --primary-fg: #ffffff;
@@ -24,7 +23,6 @@
   --primary-text: #0f766e;
   --primary-border: #5eead4;
 
-  /* Success — Pharmacy Emerald */
   --success: #059669;
   --success-hover: #047857;
   --success-fg: #ffffff;
@@ -32,7 +30,6 @@
   --success-text: #065f46;
   --success-border: #6ee7b7;
 
-  /* Danger — Clinical Rose (softer than red, medical-appropriate) */
   --danger: #e11d48;
   --danger-hover: #be123c;
   --danger-fg: #ffffff;
@@ -40,18 +37,15 @@
   --danger-text: #be123c;
   --danger-border: #fda4af;
 
-  /* Warn — Amber */
   --warn: #d97706;
   --warn-subtle: #fef3c7;
   --warn-text: #92400e;
   --warn-border: #fcd34d;
 
-  /* Accent — Sky (used wherever "violet-*" is referenced in components) */
   --violet-subtle: #e0f2fe;
   --violet-text: #0369a1;
   --violet-border: #7dd3fc;
 
-  /* Neutral */
   --neutral-subtle: #eef6f8;
   --neutral-text: #527687;
   --neutral-border: #dbebf0;
