@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import OrgEditPage from './OrgEditClient';
+import OrgEditPage from './OrgEditPage';
 
 export const metadata: Metadata = {
   title: 'Редактирование организации',

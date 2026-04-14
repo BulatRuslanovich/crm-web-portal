@@ -10,16 +10,9 @@ import { StatusBadge, Skeleton } from '@/components/ui';
 import { PageTransition, StaggerList, StaggerItem, HoverCard } from '@/components/motion';
 import { formatShort } from '@/lib/format';
 import type { ActivResponse } from '@/lib/api/types';
+import { STATUS_HEX } from '@/lib/api/statuses';
 import { PieChart, Pie, ResponsiveContainer, Tooltip, Sector } from 'recharts';
 import { PieSectorDataItem } from 'recharts/types/polar/Pie';
-
-
-const STATUS_COLORS: Record<string, string> = {
-  запланирован: '#0d9488',
-  открыт: '#d97706',
-  сохранен: '#0369a1',
-  закрыт: '#059669',
-};
 
 function StatCard({
   label,
@@ -56,7 +49,7 @@ const renderCustomShape = (props: PieSectorDataItem) => {
   const { name } = props.payload as { name: string };
 
   const fill =
-    STATUS_COLORS[name.toLowerCase()] ?? '#94a3b8';
+    STATUS_HEX[name.toLowerCase()] ?? '#94a3b8';
 
   return <Sector {...props} fill={fill} />;
 };
@@ -111,7 +104,7 @@ function StatusChart({ activs }: { activs: ActivResponse[] }) {
               <div className="flex items-center gap-3.5">
                 <span
                   className="h-2.5 w-2.5 shrink-0 rounded-full shadow-sm"
-                  style={{ background: STATUS_COLORS[d.name.toLowerCase()] ?? '#94a3b8' }}
+                  style={{ background: STATUS_HEX[d.name.toLowerCase()] ?? '#94a3b8' }}
                 />
                 <span className="text-(--fg-muted)">{d.name}</span>
               </div>
@@ -173,9 +166,9 @@ export default function DashboardPage() {
     'dashboard',
     () =>
       Promise.all([
-        activsApi.getAll(1, 100, undefined, 'start', true),
-        orgsApi.getAll(1, 100),
-        physesApi.getAll(1, 100),
+        activsApi.getAll(1, 5, undefined, 'start', true),
+        orgsApi.getAll(),
+        physesApi.getAll(),
       ]).then(([activsRes, orgsRes, physesRes]) => ({
         activs: activsRes.data.items,
         activsCount: activsRes.data.totalCount,

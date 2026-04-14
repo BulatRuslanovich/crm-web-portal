@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
-import GoBackButton from './GoBackButton';
+import { BackButton } from '@/components/ui';
 
 export const metadata: Metadata = {
   title: 'Страница не найдена',
@@ -49,7 +49,7 @@ export default function NotFound() {
             <Home size={15} strokeWidth={2} />
             На главную
           </Link>
-          <GoBackButton />
+          <BackButton />
         </div>
       </div>
     </div>

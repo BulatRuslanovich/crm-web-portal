@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { useApi } from '@/lib/use-api';
+import { useEntity } from '@/lib/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
 import { extractApiError } from '@/lib/api/errors';
 import {
@@ -34,14 +35,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
   const [apiError, setApiError] = useState('');
 
   const numId = Number(id);
-  const { data: org, error: orgError } = useApi(
-    ['org', numId],
-    () => orgsApi.getById(numId).then((r) => r.data),
-  );
-
-  useEffect(() => {
-    if (orgError) router.push('/orgs');
-  }, [orgError, router]);
+  const { data: org } = useEntity(['org', numId], () => orgsApi.getById(numId), '/orgs');
 
   const { data: types = [] } = useApi(
     'org-types',
@@ -103,7 +97,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <BackButton onClick={() => router.push(`/orgs/${id}`)} />
+        <BackButton href={`/orgs/${id}`} />
         <h2 className="flex-1 text-xl font-semibold text-(--fg)">{org.orgName}</h2>
       </div>
 

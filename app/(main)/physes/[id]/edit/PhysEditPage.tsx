@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useApi } from '@/lib/use-api';
 import { useSetDiff } from '@/lib/use-set-diff';
 import { physesApi } from '@/lib/api/physes';
-import { orgsApi } from '@/lib/api/orgs';
+import { searchOrgOptions } from '@/lib/api/orgs';
 import { specsApi } from '@/lib/api/specs';
 import { extractApiError } from '@/lib/api/errors';
 import {
@@ -31,11 +31,6 @@ interface FormValues {
   phone: string;
   email: string;
   position: string;
-}
-
-async function searchOrgs(query: string): Promise<MultiComboboxOption[]> {
-  const { data } = await orgsApi.getAll(1, 20, query || undefined);
-  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
 }
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -102,7 +97,6 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
       middleName: phys.middleName ?? '',
       phone: phys.phone ?? '',
       email: phys.email ?? '',
-      position: phys.position ?? '',
     });
   }, [phys, reset]);
 
@@ -143,8 +137,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
         firstName: values.firstName || null,
         middleName: values.middleName || null,
         phone: values.phone || null,
-        email: values.email || null,
-        position: values.position || null,
+        email: values.email || null
       });
 
       const { toAdd, toRemove } = orgs.diff();
@@ -162,7 +155,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <BackButton onClick={() => router.push(`/physes/${id}`)} />
+        <BackButton href={`/physes/${id}`} />
         <h2 className="flex-1 text-xl font-semibold text-(--fg)">{fullName}</h2>
       </div>
 
@@ -217,7 +210,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
             <div>
               <Label>Организации</Label>
               <MultiCombobox
-                asyncSearch={searchOrgs}
+                asyncSearch={searchOrgOptions}
                 selectedOptions={selectedOrgs}
                 value={selectedOrgIds}
                 onChange={handleOrgChange}

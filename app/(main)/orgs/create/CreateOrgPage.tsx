@@ -70,7 +70,7 @@ export default function CreateOrgPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-5 flex items-center gap-3">
-        <BackButton onClick={() => router.back()} />
+        <BackButton />
         <h2 className="text-xl font-semibold text-(--fg)">Новая организация</h2>
       </div>
 

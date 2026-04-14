@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { activsApi } from '@/lib/api/activs';
-import { orgsApi } from '@/lib/api/orgs';
-import { drugsApi } from '@/lib/api/drugs';
+import { searchOrgOptions } from '@/lib/api/orgs';
+import { searchDrugOptions } from '@/lib/api/drugs';
 import { extractApiError } from '@/lib/api/errors';
 import {
   BackButton,
@@ -29,20 +29,6 @@ interface FormValues {
   drugIds: string[];
 }
 
-async function searchOrgs(query: string): Promise<ComboboxOption[]> {
-  const { data } = await orgsApi.getAll(1, 20, query || undefined);
-  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
-}
-
-async function searchDrugs(query: string): Promise<MultiComboboxOption[]> {
-  const { data } = await drugsApi.getAll(1, 20, query || undefined);
-  return data.items.map((d) => ({
-    value: String(d.drugId),
-    label: d.drugName,
-    sublabel: d.brand || undefined,
-  }));
-}
-
 export default function CreateActivPage() {
   const router = useRouter();
   const [selectedOrg, setSelectedOrg] = useState<ComboboxOption | undefined>();
@@ -64,9 +50,9 @@ export default function CreateActivPage() {
       const { data } = await activsApi.create({
         orgId: Number(values.orgId),
         statusId: STATUS_PLANNED,
-        start: values.start || null,
+        start: values.start,
         end: null,
-        description: values.description || null,
+        description: values.description,
         drugIds: values.drugIds.map(Number),
       });
       router.push(`/activs/${data.activId}`);
@@ -78,7 +64,7 @@ export default function CreateActivPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-5 flex items-center gap-3">
-        <BackButton onClick={() => router.back()} />
+        <BackButton />
         <h2 className="text-xl font-semibold text-(--fg)">Новый визит</h2>
       </div>
 
@@ -93,7 +79,7 @@ export default function CreateActivPage() {
                 rules={{ required: true }}
                 render={({ field }) => (
                   <Combobox
-                    asyncSearch={searchOrgs}
+                    asyncSearch={searchOrgOptions}
                     selectedOption={selectedOrg}
                     value={field.value}
                     onChange={(val, opt) => {
@@ -134,7 +120,7 @@ export default function CreateActivPage() {
                 control={control}
                 render={({ field }) => (
                   <MultiCombobox
-                    asyncSearch={searchDrugs}
+                    asyncSearch={searchDrugOptions}
                     selectedOptions={selectedDrugs}
                     value={field.value}
                     onChange={(vals, opts) => {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ActivEditPage from './ActivEditClient';
+import ActivEditPage from './ActivEditPage';
 
 export const metadata: Metadata = {
   title: 'Редактирование активности',

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AdminPage from './AdminClient';
+import AdminPage from './AdminPage';
 
 export const metadata: Metadata = {
   title: 'Администрирование',

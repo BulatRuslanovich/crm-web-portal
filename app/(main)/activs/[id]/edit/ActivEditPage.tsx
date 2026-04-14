@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useApi } from '@/lib/use-api';
 import { useSetDiff } from '@/lib/use-set-diff';
 import { activsApi } from '@/lib/api/activs';
-import { drugsApi } from '@/lib/api/drugs';
+import { searchDrugOptions } from '@/lib/api/drugs';
 import { STATUSES } from '@/lib/api/statuses';
 import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
@@ -30,15 +30,6 @@ interface FormValues {
   start: string;
   end: string;
   description: string;
-}
-
-async function searchDrugs(query: string): Promise<MultiComboboxOption[]> {
-  const { data } = await drugsApi.getAll(1, 20, query || undefined);
-  return data.items.map((d) => ({
-    value: String(d.drugId),
-    label: d.drugName,
-    sublabel: d.brand || undefined,
-  }));
 }
 
 export default function ActivEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -150,7 +141,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <BackButton onClick={() => router.push(`/activs/${id}`)} />
+        <BackButton href={`/activs/${id}`} />
         <h2 className="min-w-0 flex-1 truncate text-xl font-semibold text-(--fg)">
           {activ.orgName}
         </h2>
@@ -218,7 +209,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
             <div>
               <Label>Препараты</Label>
               <MultiCombobox
-                asyncSearch={searchDrugs}
+                asyncSearch={searchDrugOptions}
                 selectedOptions={selectedDrugs}
                 value={selectedDrugIds}
                 onChange={handleDrugChange}

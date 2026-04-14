@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import OrgViewPage from './OrgViewClient';
+import OrgViewPage from './OrgDetailPage';
 
 export const metadata: Metadata = {
   title: 'Просмотр организации',

@@ -66,11 +66,10 @@ export default function CreatePhysPage() {
       const { data } = await physesApi.create({
         specId: Number(values.specId),
         lastName: values.lastName,
-        firstName: values.firstName || '',
-        middleName: values.middleName || '',
-        phone: values.phone || '',
-        email: values.email || '',
-        position: values.position || '',
+        firstName: values.firstName,
+        middleName: values.middleName,
+        phone: values.phone,
+        email: values.email,
       });
       router.push(`/physes/${data.physId}`);
     } catch (err) {
@@ -81,7 +80,7 @@ export default function CreatePhysPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-5 flex items-center gap-3">
-        <BackButton onClick={() => router.back()} />
+        <BackButton />
         <h2 className="text-xl font-semibold text-(--fg)">Новый врач</h2>
       </div>
 

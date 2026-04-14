@@ -14,18 +14,18 @@ export interface ActivResponse {
   orgName: string;
   statusId: number;
   statusName: string;
-  start: string | null;
+  start: string;
   end: string | null;
-  description: string | null;
+  description: string;
   drugs: DrugResponse[];
 }
 
 export interface CreateActivRequest {
   orgId: number;
   statusId: number;
-  start: string | null;
+  start: string;
   end: string | null;
-  description: string | null;
+  description: string;
   drugIds: number[];
 }
 
@@ -39,8 +39,8 @@ export interface UpdateActivRequest {
 export interface DrugResponse {
   drugId: number;
   drugName: string;
-  brand: string | null;
-  form: string | null;
+  brand: string;
+  form: string;
 }
 
 export interface CreateDrugRequest {
@@ -53,7 +53,6 @@ export interface UpdateDrugRequest {
   drugName: string | null;
   brand: string | null;
   form: string | null;
-  description: string | null;
 }
 
 export interface OrgResponse {
@@ -89,10 +88,9 @@ export interface CreatePhysRequest {
   specId: number;
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName: string | null;
   phone: string;
   email: string;
-  position: string;
 }
 
 export interface UpdatePhysRequest {
@@ -102,7 +100,6 @@ export interface UpdatePhysRequest {
   middleName: string | null;
   phone: string | null;
   email: string | null;
-  position: string | null;
 }
 
 export interface OrgTypeResponse {
@@ -116,10 +113,9 @@ export interface PhysResponse {
   specName: string;
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName: string | null;
   phone: string;
   email: string;
-  position: string;
   orgs: OrgResponse[];
 }
 
@@ -161,7 +157,6 @@ export interface CreateUserRequest {
 export interface UpdateUserRequest {
   firstName?: string | null;
   lastName?: string | null;
-  email?: string | null;
   phone?: string | null;
 }
 

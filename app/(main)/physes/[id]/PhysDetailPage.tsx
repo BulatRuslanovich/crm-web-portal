@@ -1,9 +1,10 @@
 'use client';
 
-import { use, useEffect } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { physesApi } from '@/lib/api/physes';
-import { useApi } from '@/lib/use-api';
+import { useEntity } from '@/lib/use-entity';
+import { useIsAdmin } from '@/lib/use-is-admin';
 import {
   BackButton,
   Card,
@@ -15,23 +16,14 @@ import {
   BtnDanger,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { Trash2, Pencil, User, Phone, Mail, Briefcase, Building2 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { Trash2, Pencil, User, Phone, Mail, Building2 } from 'lucide-react';
 
 export default function PhysViewPage({ params }: { params: Promise<{ id: string }> }) {
-  const { user } = useAuth();
-  const isAdmin = user?.policies?.includes('Admin');
   const { id } = use(params);
   const router = useRouter();
+  const isAdmin = useIsAdmin();
   const numId = Number(id);
-  const { data: phys, error: physError } = useApi(
-    ['phys', numId],
-    () => physesApi.getById(numId).then((r) => r.data),
-  );
-
-  useEffect(() => {
-    if (physError) router.push('/physes');
-  }, [physError, router]);
+  const { data: phys } = useEntity(['phys', numId], () => physesApi.getById(numId), '/physes');
 
   if (!phys)
     return (
@@ -52,7 +44,7 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
   return (
     <PageTransition className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <BackButton onClick={() => router.push('/physes')} />
+        <BackButton href="/physes" />
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary-subtle) text-sm font-bold text-(--primary-text)">
           {initials}
         </div>
@@ -71,7 +63,6 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
           <div>
             <SectionLabel icon={User}>Информация</SectionLabel>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Должность" value={phys.position} icon={Briefcase} />
               <Field label="Специальность" value={phys.specName} />
             </div>
           </div>

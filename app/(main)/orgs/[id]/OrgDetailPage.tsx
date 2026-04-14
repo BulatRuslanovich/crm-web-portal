@@ -1,10 +1,10 @@
 'use client';
 
-import { use, useEffect } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { orgsApi } from '@/lib/api/orgs';
-import { useAuth } from '@/lib/auth-context';
-import { useApi } from '@/lib/use-api';
+import { useEntity } from '@/lib/use-entity';
+import { useIsAdmin } from '@/lib/use-is-admin';
 import {
   BackButton,
   Card,
@@ -21,17 +21,9 @@ import { Trash2, Pencil, Building2, MapPin } from 'lucide-react';
 export default function OrgViewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const { user } = useAuth();
-  const isAdmin = user?.policies?.includes('Admin');
+  const isAdmin = useIsAdmin();
   const numId = Number(id);
-  const { data: org, error: orgError } = useApi(
-    ['org', numId],
-    () => orgsApi.getById(numId).then((r) => r.data),
-  );
-
-  useEffect(() => {
-    if (orgError) router.push('/orgs');
-  }, [orgError, router]);
+  const { data: org } = useEntity(['org', numId], () => orgsApi.getById(numId), '/orgs');
 
   if (!org)
     return (
@@ -49,7 +41,7 @@ export default function OrgViewPage({ params }: { params: Promise<{ id: string }
   return (
     <PageTransition className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <BackButton onClick={() => router.push('/orgs')} />
+        <BackButton href="/orgs" />
         <h2 className="flex-1 text-xl font-bold text-(--fg)">{org.orgName}</h2>
         <span className="rounded-full border border-(--border) bg-(--surface-raised) px-2.5 py-1 text-xs font-medium text-(--fg-muted)">
           {org.orgTypeName}

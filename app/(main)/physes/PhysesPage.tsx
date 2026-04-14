@@ -7,11 +7,10 @@ import { physesApi } from '@/lib/api/physes';
 import { EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
 import { Stethoscope, Plus, Phone, Building2 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useIsAdmin } from '@/lib/use-is-admin';
 
 export default function PhysesPage() {
-  const { user } = useAuth();
-  const isAdmin = user?.policies?.includes('Admin');
+  const isAdmin = useIsAdmin();
   const [page, setPage] = useState(1);
 
   const { data, loading } = useApi(
@@ -70,9 +69,6 @@ export default function PhysesPage() {
                         <span className="rounded-md bg-(--surface-raised) px-2 py-0.5 text-xs font-medium text-(--fg-muted)">
                           {p.specName}
                         </span>
-                      )}
-                      {p.position && (
-                        <span className="text-xs text-(--fg-muted)">{p.position}</span>
                       )}
                     </div>
                   </div>

@@ -22,3 +22,8 @@ export const orgsApi = {
 
   getTypes: () => apiClient.get<OrgTypeResponse[]>('/api/orgs/types'),
 };
+
+export async function searchOrgOptions(query: string) {
+  const { data } = await orgsApi.getAll(1, 20, query || undefined);
+  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
+}

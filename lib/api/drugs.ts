@@ -14,3 +14,12 @@ export const drugsApi = {
 
   delete: (id: number) => apiClient.delete(`/api/drugs/${id}`),
 };
+
+export async function searchDrugOptions(query: string) {
+  const { data } = await drugsApi.getAll(1, 20, query || undefined);
+  return data.items.map((d) => ({
+    value: String(d.drugId),
+    label: d.drugName,
+    sublabel: d.brand || undefined,
+  }));
+}

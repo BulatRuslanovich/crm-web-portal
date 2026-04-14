@@ -340,7 +340,6 @@ export default function AdminPage() {
         <h2 className="text-xl font-bold text-(--fg)">Администрирование</h2>
       </div>
 
-      {/* Tabs */}
       <div className="mb-5 flex gap-1 rounded-xl border border-(--border) bg-(--surface-raised) p-1">
         {tabs.map((t) => {
           const Icon = t.icon;

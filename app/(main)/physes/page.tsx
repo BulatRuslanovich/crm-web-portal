@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import PhysesPage from './PhysesClient';
+import PhysesPage from './PhysesPage';
 
 export const metadata: Metadata = {
   title: 'Физические лица',

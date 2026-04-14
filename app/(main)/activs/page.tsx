@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ActivsPage from './ActivsClient';
+import ActivsPage from './ActivsPage';
 
 export const metadata: Metadata = {
   title: 'Активности',

@@ -101,7 +101,6 @@ export default function ProfilePage() {
     <PageTransition className="mx-auto max-w-2xl space-y-4">
       <h2 className="text-xl font-bold text-(--fg)">Профиль</h2>
 
-      {/* Identity card */}
       <Card>
         <div className="flex items-center gap-4 p-5">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-(--primary) to-(--violet-text) text-xl font-bold text-(--primary-fg) shadow-md">
@@ -248,7 +247,6 @@ export default function ProfilePage() {
         )}
       </Card>
 
-      {/* Logout */}
       <Card>
         <div className="p-5">
           <BtnDanger onClick={logout} className="w-full">

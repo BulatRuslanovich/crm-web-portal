@@ -3,6 +3,7 @@
 import { forwardRef } from 'react';
 import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 /* ── Status Badge ──────────────────────────────────────────────────────────── */
 export function StatusBadge({ name }: { name: string }) {
@@ -287,15 +288,26 @@ export function LinkButton({
 }
 
 /* ── Back Button ───────────────────────────────────────────────────────────── */
-export function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`${btnBase} border border-(--border) bg-(--surface) text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg)`}
-      style={{ boxShadow: 'var(--shadow-sm)' }}
-    >
+export function BackButton({ href, onClick }: { href?: string; onClick?: () => void }) {
+  const router = useRouter();
+  const cls = `${btnBase} border border-(--border) bg-(--surface) text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg)`;
+  const style = { boxShadow: 'var(--shadow-sm)' };
+  const content = (
+    <>
       <ArrowLeft size={14} strokeWidth={2} />
       Назад
+    </>
+  );
+  if (href) {
+    return (
+      <Link href={href} className={cls} style={style}>
+        {content}
+      </Link>
+    );
+  }
+  return (
+    <button onClick={onClick ?? (() => router.back())} className={cls} style={style}>
+      {content}
     </button>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import PhysViewPage from './PhysViewClient';
+import PhysViewPage from './PhysDetailPage';
 
 export const metadata: Metadata = {
   title: 'Просмотр физического лица',

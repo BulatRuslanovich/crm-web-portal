@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import PhysEditPage from './PhysEditClient';
+import PhysEditPage from './PhysEditPage';
 
 export const metadata: Metadata = {
   title: 'Редактирование физического лица',

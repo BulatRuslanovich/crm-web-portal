@@ -15,3 +15,10 @@ export const STATUSES: StatusResponse[] = [
 export const statusesApi = {
   getAll: () => Promise.resolve({ data: STATUSES }),
 };
+
+export const STATUS_HEX: Record<string, string> = {
+  запланирован: '#0d9488',
+  открыт: '#d97706',
+  сохранен: '#0369a1',
+  закрыт: '#059669',
+};

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ProfilePage from './ProfileClient';
+import ProfilePage from './ProfilePage';
 
 export const metadata: Metadata = {
   title: 'Профиль',

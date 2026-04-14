@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
-import { useApi } from '@/lib/use-api';
+import { useEntity } from '@/lib/use-entity';
+import { useIsAdmin } from '@/lib/use-is-admin';
 import { STATUS_PLANNED, STATUS_OPEN, STATUS_SAVED, STATUS_CLOSED } from '@/lib/api/statuses';
 import {
   StatusBadge,
@@ -32,23 +33,15 @@ import {
 } from 'lucide-react';
 import { PageTransition } from '@/components/motion';
 
-export default function ActivViewPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ActivDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
-  const isAdmin = user?.policies?.includes('Admin') ?? false;
+  const isAdmin = useIsAdmin();
   const [acting, setActing] = useState(false);
 
   const numId = Number(id);
-  const {
-    data: activ,
-    error: activError,
-    reload,
-  } = useApi(['activ', numId], () => activsApi.getById(numId).then((r) => r.data));
-
-  useEffect(() => {
-    if (activError) router.push('/activs');
-  }, [activError, router]);
+  const { data: activ, reload } = useEntity(['activ', numId], () => activsApi.getById(numId), '/activs');
 
   if (!activ)
     return (
@@ -92,7 +85,7 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
     <PageTransition className="mx-auto max-w-2xl space-y-4">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2">
-        <BackButton onClick={() => router.push('/activs')} />
+        <BackButton href="/activs" />
         <h2 className="min-w-0 flex-1 truncate text-xl font-bold text-(--fg)">{activ.orgName}</h2>
         <StatusBadge name={activ.statusName} />
       </div>
