@@ -8,6 +8,7 @@ import { orgsApi } from '@/lib/api/orgs';
 import { physesApi } from '@/lib/api/physes';
 import { StatusBadge, Skeleton } from '@/components/ui';
 import { PageTransition, StaggerList, StaggerItem, HoverCard } from '@/components/motion';
+import { formatShort } from '@/lib/format';
 import type { ActivResponse } from '@/lib/api/types';
 import { PieChart, Pie, ResponsiveContainer, Tooltip, Sector } from 'recharts';
 import { PieSectorDataItem } from 'recharts/types/polar/Pie';
@@ -152,14 +153,7 @@ function RecentActivs({ activs }: { activs: ActivResponse[] }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-(--fg)">{a.orgName}</p>
                 <p className="mt-0.5 text-xs text-(--fg-muted)">
-                  {a.start
-                    ? new Date(a.start).toLocaleString('ru-RU', {
-                        day: '2-digit',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })
-                    : 'Без даты'}
+                  {formatShort(a.start)}
                   {' · '}
                   {a.usrLogin}
                 </p>

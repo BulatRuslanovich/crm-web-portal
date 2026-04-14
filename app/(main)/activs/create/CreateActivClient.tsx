@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
-import { useApi } from '@/lib/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { orgsApi } from '@/lib/api/orgs';
 import { drugsApi } from '@/lib/api/drugs';
@@ -19,8 +18,8 @@ import {
   BtnSuccess,
 } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
-import { Combobox } from '@/components/Combobox';
-import { MultiCombobox } from '@/components/MultiCombobox';
+import { Combobox, type ComboboxOption } from '@/components/Combobox';
+import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
 import { STATUS_PLANNED } from '@/lib/api/statuses';
 
 interface FormValues {
@@ -30,41 +29,34 @@ interface FormValues {
   drugIds: string[];
 }
 
-export default function CreateActivPage() {
-  const router = useRouter();
-  const { data: refData, loading: loadingData } = useApi(
-    'activ-create-refs',
-    () =>
-      Promise.all([orgsApi.getAll(), drugsApi.getAll()]).then(([o, d]) => ({
-        orgs: o.data.items,
-        drugs: d.data.items,
-      })),
-    { dedupingInterval: 300_000 },
-  );
-  const orgs = refData?.orgs ?? [];
-  const drugs = refData?.drugs ?? [];
+async function searchOrgs(query: string): Promise<ComboboxOption[]> {
+  const { data } = await orgsApi.getAll(1, 20, query || undefined);
+  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
+}
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    defaultValues: { orgId: '', start: '', description: '', drugIds: [] },
-  });
-
-  const [apiError, setApiError] = useState('');
-
-  const orgOptions = orgs.map((o) => ({
-    value: String(o.orgId),
-    label: o.orgName,
-  }));
-
-  const drugOptions = drugs.map((d) => ({
+async function searchDrugs(query: string): Promise<MultiComboboxOption[]> {
+  const { data } = await drugsApi.getAll(1, 20, query || undefined);
+  return data.items.map((d) => ({
     value: String(d.drugId),
     label: d.drugName,
     sublabel: d.brand || undefined,
   }));
+}
+
+export default function CreateActivPage() {
+  const router = useRouter();
+  const [selectedOrg, setSelectedOrg] = useState<ComboboxOption | undefined>();
+  const [selectedDrugs, setSelectedDrugs] = useState<MultiComboboxOption[]>([]);
+  const [apiError, setApiError] = useState('');
+
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: { orgId: '', start: '', description: '', drugIds: [] },
+  });
 
   async function onSubmit(values: FormValues) {
     setApiError('');
@@ -93,30 +85,28 @@ export default function CreateActivPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-4 p-4">
-            {/* Организация */}
             <div>
               <Label required>Организация</Label>
-              {loadingData ? (
-                <div className="h-10 animate-pulse rounded-xl border border-(--border) bg-(--surface-raised)" />
-              ) : (
-                <Controller
-                  name="orgId"
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <Combobox
-                      options={orgOptions}
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Выберите организацию"
-                      searchPlaceholder="Поиск организации..."
-                    />
-                  )}
-                />
-              )}
+              <Controller
+                name="orgId"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Combobox
+                    asyncSearch={searchOrgs}
+                    selectedOption={selectedOrg}
+                    value={field.value}
+                    onChange={(val, opt) => {
+                      field.onChange(val);
+                      setSelectedOrg(opt);
+                    }}
+                    placeholder="Выберите организацию"
+                    searchPlaceholder="Поиск организации..."
+                  />
+                )}
+              />
             </div>
 
-            {/* Дата начала */}
             <div>
               <Label>Дата начала</Label>
               <Controller
@@ -132,31 +122,31 @@ export default function CreateActivPage() {
               />
             </div>
 
-            {/* Описание */}
             <div>
               <Label>Описание</Label>
               <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
             </div>
 
-            {/* Препараты */}
-            {drugs.length > 0 && (
-              <div>
-                <Label>Препараты</Label>
-                <Controller
-                  name="drugIds"
-                  control={control}
-                  render={({ field }) => (
-                    <MultiCombobox
-                      options={drugOptions}
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Выберите препараты"
-                      searchPlaceholder="Поиск препарата..."
-                    />
-                  )}
-                />
-              </div>
-            )}
+            <div>
+              <Label>Препараты</Label>
+              <Controller
+                name="drugIds"
+                control={control}
+                render={({ field }) => (
+                  <MultiCombobox
+                    asyncSearch={searchDrugs}
+                    selectedOptions={selectedDrugs}
+                    value={field.value}
+                    onChange={(vals, opts) => {
+                      field.onChange(vals);
+                      if (opts) setSelectedDrugs(opts);
+                    }}
+                    placeholder="Выберите препараты"
+                    searchPlaceholder="Поиск препарата..."
+                  />
+                )}
+              />
+            </div>
 
             {apiError && <ErrorBox message={apiError} />}
           </div>
@@ -165,7 +155,7 @@ export default function CreateActivPage() {
             <BtnSecondary type="button" onClick={() => router.back()}>
               Отмена
             </BtnSecondary>
-            <BtnSuccess type="submit" disabled={isSubmitting || loadingData}>
+            <BtnSuccess type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Создание...' : 'Создать визит'}
             </BtnSuccess>
           </CardFooter>

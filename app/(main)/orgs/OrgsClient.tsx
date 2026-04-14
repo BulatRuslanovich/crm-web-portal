@@ -6,7 +6,7 @@ import { useApi } from '@/lib/use-api';
 import { orgsApi } from '@/lib/api/orgs';
 import { useAuth } from '@/lib/auth-context';
 import { EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
-import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
+import { PageTransition } from '@/components/motion';
 import { Building2, Plus, MapPin } from 'lucide-react';
 
 export default function OrgsPage() {
@@ -51,35 +51,32 @@ export default function OrgsPage() {
             className="divide-y divide-(--border) overflow-hidden rounded-2xl border border-(--border) bg-(--surface)"
             style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
           >
-            <StaggerList>
-              {orgs.map((o) => (
-                <StaggerItem key={o.orgId}>
-                  <Link
-                    href={`/orgs/${o.orgId}`}
-                    className="flex flex-col gap-1.5 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised) sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-(--fg)">{o.orgName}</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <span className="rounded-md bg-(--surface-raised) px-2 py-0.5 text-xs font-medium text-(--fg-muted)">
-                          {o.orgTypeName}
-                        </span>
-                        {o.address && (
-                          <span className="flex items-center gap-1 text-xs text-(--fg-muted)">
-                            <MapPin size={10} /> {o.address}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {o.inn && (
-                      <span className="font-mono text-xs text-(--fg-muted) tabular-nums">
-                        ИНН: {o.inn}
+            {orgs.map((o) => (
+              <Link
+                key={o.orgId}
+                href={`/orgs/${o.orgId}`}
+                className="flex flex-col gap-1.5 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised) sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-(--fg)">{o.orgName}</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="rounded-md bg-(--surface-raised) px-2 py-0.5 text-xs font-medium text-(--fg-muted)">
+                      {o.orgTypeName}
+                    </span>
+                    {o.address && (
+                      <span className="flex items-center gap-1 text-xs text-(--fg-muted)">
+                        <MapPin size={10} /> {o.address}
                       </span>
                     )}
-                  </Link>
-                </StaggerItem>
-              ))}
-            </StaggerList>
+                  </div>
+                </div>
+                {o.inn && (
+                  <span className="font-mono text-xs text-(--fg-muted) tabular-nums">
+                    ИНН: {o.inn}
+                  </span>
+                )}
+              </Link>
+            ))}
           </div>
           <Pagination page={page} totalPages={totalPages} onPage={setPage} />
         </>

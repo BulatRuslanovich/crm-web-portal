@@ -149,10 +149,10 @@ export default function ActivViewPage({ params }: { params: Promise<{ id: string
               <div className="flex flex-wrap gap-2">
                 {activ.drugs.map((d) => (
                   <span
-                    key={d}
+                    key={d.drugId}
                     className="rounded-full border border-(--violet-border) bg-(--violet-subtle) px-3 py-1 text-xs font-medium text-(--violet-text)"
                   >
-                    {d}
+                    {d.drugName}
                   </span>
                 ))}
               </div>

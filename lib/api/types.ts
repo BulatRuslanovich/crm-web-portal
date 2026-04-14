@@ -17,7 +17,7 @@ export interface ActivResponse {
   start: string | null;
   end: string | null;
   description: string | null;
-  drugs: string[];
+  drugs: DrugResponse[];
 }
 
 export interface CreateActivRequest {
@@ -120,7 +120,7 @@ export interface PhysResponse {
   phone: string;
   email: string;
   position: string;
-  orgs: string[];
+  orgs: OrgResponse[];
 }
 
 export interface SpecResponse {

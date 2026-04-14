@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, forwardRef } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { ChevronDown, Search, Check, X } from 'lucide-react';
+import { ChevronDown, Search, Check, X, Loader2 } from 'lucide-react';
 
 export interface ComboboxOption {
   value: string;
@@ -11,9 +11,15 @@ export interface ComboboxOption {
 }
 
 export interface ComboboxProps {
-  options: ComboboxOption[];
+  /** Sync mode: pass a static list. */
+  options?: ComboboxOption[];
+  /** Async mode: fetcher called with query (empty on open). Must return options. */
+  asyncSearch?: (query: string) => Promise<ComboboxOption[]>;
+  /** Async mode: full option object for the current `value` (for display when not in search results). */
+  selectedOption?: ComboboxOption;
+
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string, option?: ComboboxOption) => void;
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
@@ -24,7 +30,9 @@ export interface ComboboxProps {
 export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
-      options,
+      options: staticOptions,
+      asyncSearch,
+      selectedOption,
       value,
       onChange,
       placeholder = 'Выберите...',
@@ -35,36 +43,61 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     },
     ref,
   ) => {
+    const isAsync = !!asyncSearch;
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
+    const [asyncOptions, setAsyncOptions] = useState<ComboboxOption[]>([]);
+    const [loading, setLoading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const selected = options.find((o) => o.value === value);
+    const options = isAsync ? asyncOptions : (staticOptions ?? []);
 
-    const filtered = query
-      ? options.filter(
-          (o) =>
-            o.label.toLowerCase().includes(query.toLowerCase()) ||
-            o.sublabel?.toLowerCase().includes(query.toLowerCase()),
-        )
-      : options;
+    const selected =
+      (isAsync ? selectedOption : undefined) ?? options.find((o) => o.value === value);
+
+    const filtered =
+      isAsync || !query
+        ? options
+        : options.filter(
+            (o) =>
+              o.label.toLowerCase().includes(query.toLowerCase()) ||
+              o.sublabel?.toLowerCase().includes(query.toLowerCase()),
+          );
 
     useEffect(() => {
       if (open) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setQuery('');
         setTimeout(() => inputRef.current?.focus(), 0);
       }
     }, [open]);
 
-    function handleSelect(val: string) {
-      onChange?.(val === value ? '' : val);
+    useEffect(() => {
+      if (!isAsync || !open) return;
+      let cancelled = false;
+      const t = setTimeout(async () => {
+        setLoading(true);
+        try {
+          const results = await asyncSearch!(query);
+          if (!cancelled) setAsyncOptions(results);
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+      }, 250);
+      return () => {
+        cancelled = true;
+        clearTimeout(t);
+      };
+    }, [isAsync, open, query, asyncSearch]);
+
+    function handleSelect(opt: ComboboxOption) {
+      const next = opt.value === value ? '' : opt.value;
+      onChange?.(next, next ? opt : undefined);
       setOpen(false);
     }
 
     function handleClear(e: React.MouseEvent) {
       e.stopPropagation();
-      onChange?.('');
+      onChange?.('', undefined);
     }
 
     return (
@@ -105,7 +138,6 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               align="start"
               className="animate-fade-in-scale z-50 w-(--radix-popover-trigger-width) rounded-xl border border-(--border) bg-(--surface) shadow-lg"
             >
-              {/* Search */}
               <div className="flex items-center gap-2 border-b border-(--border) px-3 py-2">
                 <Search size={15} className="shrink-0 text-(--fg-subtle)" />
                 <input
@@ -116,18 +148,22 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
                   placeholder={searchPlaceholder}
                   className="w-full bg-transparent text-sm text-(--fg) placeholder:text-(--fg-subtle) focus:outline-none"
                 />
+                {isAsync && loading && (
+                  <Loader2 size={14} className="shrink-0 animate-spin text-(--fg-subtle)" />
+                )}
               </div>
 
-              {/* Options */}
               <div className="max-h-56 overflow-y-auto p-1">
                 {filtered.length === 0 ? (
-                  <p className="px-3 py-4 text-center text-sm text-(--fg-muted)">{emptyMessage}</p>
+                  <p className="px-3 py-4 text-center text-sm text-(--fg-muted)">
+                    {isAsync && loading ? 'Поиск...' : emptyMessage}
+                  </p>
                 ) : (
                   filtered.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => handleSelect(opt.value)}
+                      onClick={() => handleSelect(opt)}
                       className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-(--surface-raised)"
                     >
                       <span

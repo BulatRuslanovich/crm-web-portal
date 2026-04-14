@@ -23,13 +23,22 @@ import {
 } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import { Combobox } from '@/components/Combobox';
-import { MultiCombobox } from '@/components/MultiCombobox';
+import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
 
 interface FormValues {
   statusId: string;
   start: string;
   end: string;
   description: string;
+}
+
+async function searchDrugs(query: string): Promise<MultiComboboxOption[]> {
+  const { data } = await drugsApi.getAll(1, 20, query || undefined);
+  return data.items.map((d) => ({
+    value: String(d.drugId),
+    label: d.drugName,
+    sublabel: d.brand || undefined,
+  }));
 }
 
 export default function ActivEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,6 +48,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   const isAdmin = user?.policies?.includes('Admin') ?? false;
 
   const [apiError, setApiError] = useState('');
+  const [pickedDrugs, setPickedDrugs] = useState<MultiComboboxOption[]>([]);
   const numId = Number(id);
 
   const { data: activ, error: activError } = useApi(
@@ -50,20 +60,24 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
     if (activError) router.push('/activs');
   }, [activError, router]);
 
-  const { data: allDrugs = [] } = useApi(
-    'drugs-all',
-    () => drugsApi.getAll(1, 200).then(({ data }) => data.items),
-    { dedupingInterval: 300_000 },
-  );
+  const drugs = useSetDiff(activ ? activ.drugs.map((d) => d.drugId) : []);
 
-  const drugSourceIds = useMemo(
-    () =>
-      activ && allDrugs.length > 0
-        ? allDrugs.filter((d) => activ.drugs.includes(d.drugName)).map((d) => d.drugId)
-        : [],
-    [activ, allDrugs],
-  );
-  const drugs = useSetDiff(drugSourceIds);
+  const selectedDrugs = useMemo<MultiComboboxOption[]>(() => {
+    const pool = new Map<string, MultiComboboxOption>();
+    if (activ) {
+      for (const d of activ.drugs) {
+        pool.set(String(d.drugId), {
+          value: String(d.drugId),
+          label: d.drugName,
+          sublabel: d.brand || undefined,
+        });
+      }
+    }
+    for (const o of pickedDrugs) pool.set(o.value, o);
+    return [...drugs.selected]
+      .map((id) => pool.get(String(id)))
+      .filter((o): o is MultiComboboxOption => !!o);
+  }, [activ, pickedDrugs, drugs.selected]);
 
   const {
     register,
@@ -97,15 +111,9 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
     label: s.statusName,
   }));
 
-  const drugOptions = allDrugs.map((d) => ({
-    value: String(d.drugId),
-    label: d.drugName,
-    sublabel: d.brand || undefined,
-  }));
-
   const selectedDrugIds = [...drugs.selected].map(String);
 
-  function handleDrugChange(values: string[]) {
+  function handleDrugChange(values: string[], opts?: MultiComboboxOption[]) {
     const newSet = new Set(values.map(Number));
     const current = drugs.selected;
     for (const id of current) {
@@ -114,6 +122,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
     for (const id of newSet) {
       if (!current.has(id)) drugs.add(id);
     }
+    if (opts) setPickedDrugs(opts);
   }
 
   async function onSubmit(values: FormValues) {
@@ -206,18 +215,17 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
               <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
             </div>
 
-            {allDrugs.length > 0 && (
-              <div>
-                <Label>Препараты</Label>
-                <MultiCombobox
-                  options={drugOptions}
-                  value={selectedDrugIds}
-                  onChange={handleDrugChange}
-                  placeholder="Выберите препараты"
-                  searchPlaceholder="Поиск препарата..."
-                />
-              </div>
-            )}
+            <div>
+              <Label>Препараты</Label>
+              <MultiCombobox
+                asyncSearch={searchDrugs}
+                selectedOptions={selectedDrugs}
+                value={selectedDrugIds}
+                onChange={handleDrugChange}
+                placeholder="Выберите препараты"
+                searchPlaceholder="Поиск препарата..."
+              />
+            </div>
 
             {apiError && <ErrorBox message={apiError} />}
           </div>

@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { useApi } from '@/lib/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { STATUSES } from '@/lib/api/statuses';
+import { formatShort } from '@/lib/format';
 import { StatusBadge, EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
-import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
+import { PageTransition } from '@/components/motion';
 import { Search, SlidersHorizontal, CalendarCheck, Plus } from 'lucide-react';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 25;
 
 export default function ActivsPage() {
   const [page, setPage] = useState(1);
@@ -129,50 +130,38 @@ export default function ActivsPage() {
             className="overflow-hidden rounded-2xl border border-(--border) bg-(--surface)"
             style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
           >
-            <StaggerList>
-              {activs.map((a, i) => (
-                <StaggerItem key={a.activId}>
-                  <Link
-                    href={`/activs/${a.activId}`}
-                    className={`flex items-center justify-between gap-4 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised) ${
-                      i > 0 ? 'border-t border-(--border)' : ''
-                    }`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-(--fg)">{a.orgName}</p>
-                      <div className="mt-1 flex flex-wrap items-center gap-2">
-                        <span className="text-xs text-(--fg-muted)">
-                          {a.start
-                            ? new Date(a.start).toLocaleString('ru-RU', {
-                                day: '2-digit',
-                                month: 'short',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })
-                            : 'Без даты'}
-                        </span>
+            {activs.map((a, i) => (
+              <Link
+                key={a.activId}
+                href={`/activs/${a.activId}`}
+                className={`flex items-center justify-between gap-4 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised) ${
+                  i > 0 ? 'border-t border-(--border)' : ''
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-(--fg)">{a.orgName}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    <span className="text-xs text-(--fg-muted)">{formatShort(a.start)}</span>
+                    <span className="h-1 w-1 rounded-full bg-(--fg-subtle)" />
+                    <span className="text-xs text-(--fg-muted)">{a.usrLogin}</span>
+                    {a.drugs.length > 0 && (
+                      <>
                         <span className="h-1 w-1 rounded-full bg-(--fg-subtle)" />
-                        <span className="text-xs text-(--fg-muted)">{a.usrLogin}</span>
-                        {a.drugs.length > 0 && (
-                          <>
-                            <span className="h-1 w-1 rounded-full bg-(--fg-subtle)" />
-                            <span className="text-xs text-(--fg-muted)">
-                              {a.drugs.length} препар.
-                            </span>
-                          </>
-                        )}
-                      </div>
-                      {a.description && (
-                        <p className="mt-1 line-clamp-1 text-xs text-(--fg-subtle)">
-                          {a.description}
-                        </p>
-                      )}
-                    </div>
-                    <StatusBadge name={a.statusName} />
-                  </Link>
-                </StaggerItem>
-              ))}
-            </StaggerList>
+                        <span className="text-xs text-(--fg-muted)">
+                          {a.drugs.length} препар.
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {a.description && (
+                    <p className="mt-1 line-clamp-1 text-xs text-(--fg-subtle)">
+                      {a.description}
+                    </p>
+                  )}
+                </div>
+                <StatusBadge name={a.statusName} />
+              </Link>
+            ))}
           </div>
 
           <Pagination page={page} totalPages={totalPages} onPage={setPage} />

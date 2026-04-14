@@ -8,7 +8,6 @@ import { useSetDiff } from '@/lib/use-set-diff';
 import { physesApi } from '@/lib/api/physes';
 import { orgsApi } from '@/lib/api/orgs';
 import { specsApi } from '@/lib/api/specs';
-import type { OrgResponse } from '@/lib/api/types';
 import { extractApiError } from '@/lib/api/errors';
 import {
   BackButton,
@@ -22,7 +21,7 @@ import {
   BtnSecondary,
 } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
-import { MultiCombobox } from '@/components/MultiCombobox';
+import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
 
 interface FormValues {
   specId: string;
@@ -34,10 +33,16 @@ interface FormValues {
   position: string;
 }
 
+async function searchOrgs(query: string): Promise<MultiComboboxOption[]> {
+  const { data } = await orgsApi.getAll(1, 20, query || undefined);
+  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
+}
+
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const [apiError, setApiError] = useState('');
+  const [pickedOrgs, setPickedOrgs] = useState<MultiComboboxOption[]>([]);
 
   const numId = Number(id);
   const { data: phys, error: physError } = useApi(
@@ -54,22 +59,21 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     () => specsApi.getAll().then(({ data }) => data),
     { dedupingInterval: 300_000 },
   );
-  const { data: allOrgs = [] } = useApi(
-    'orgs-all',
-    () => orgsApi.getAll(1, 1000).then(({ data }) => data.items),
-    { dedupingInterval: 300_000 },
-  );
 
-  const orgSourceIds = useMemo(
-    () =>
-      phys && allOrgs.length > 0
-        ? allOrgs
-            .filter((o: OrgResponse) => phys.orgs.includes(o.orgName))
-            .map((o: OrgResponse) => o.orgId)
-        : [],
-    [phys, allOrgs],
-  );
-  const orgs = useSetDiff(orgSourceIds);
+  const orgs = useSetDiff(phys ? phys.orgs.map((o) => o.orgId) : []);
+
+  const selectedOrgs = useMemo<MultiComboboxOption[]>(() => {
+    const pool = new Map<string, MultiComboboxOption>();
+    if (phys) {
+      for (const o of phys.orgs) {
+        pool.set(String(o.orgId), { value: String(o.orgId), label: o.orgName });
+      }
+    }
+    for (const o of pickedOrgs) pool.set(o.value, o);
+    return [...orgs.selected]
+      .map((id) => pool.get(String(id)))
+      .filter((o): o is MultiComboboxOption => !!o);
+  }, [phys, pickedOrgs, orgs.selected]);
 
   const {
     register,
@@ -116,14 +120,9 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     label: s.specName,
   }));
 
-  const orgOptions = allOrgs.map((o: OrgResponse) => ({
-    value: String(o.orgId),
-    label: o.orgName,
-  }));
-
   const selectedOrgIds = [...orgs.selected].map(String);
 
-  function handleOrgChange(values: string[]) {
+  function handleOrgChange(values: string[], opts?: MultiComboboxOption[]) {
     const newSet = new Set(values.map(Number));
     const current = orgs.selected;
     for (const id of current) {
@@ -132,6 +131,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     for (const id of newSet) {
       if (!current.has(id)) orgs.add(id);
     }
+    if (opts) setPickedOrgs(opts);
   }
 
   async function onSubmit(values: FormValues) {
@@ -217,7 +217,8 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
             <div>
               <Label>Организации</Label>
               <MultiCombobox
-                options={orgOptions}
+                asyncSearch={searchOrgs}
+                selectedOptions={selectedOrgs}
                 value={selectedOrgIds}
                 onChange={handleOrgChange}
                 placeholder="Выберите организации"

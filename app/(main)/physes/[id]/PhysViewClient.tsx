@@ -90,10 +90,10 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
               <div className="flex flex-wrap gap-2">
                 {phys.orgs.map((o) => (
                   <span
-                    key={o}
+                    key={o.orgId}
                     className="rounded-full border border-(--primary-border) bg-(--primary-subtle) px-3 py-1 text-xs font-medium text-(--primary-text)"
                   >
-                    {o}
+                    {o.orgName}
                   </span>
                 ))}
               </div>

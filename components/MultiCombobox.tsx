@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { ChevronDown, Search, Check, X } from 'lucide-react';
+import { ChevronDown, Search, Check, X, Loader2 } from 'lucide-react';
 
 export interface MultiComboboxOption {
   value: string;
@@ -11,9 +11,15 @@ export interface MultiComboboxOption {
 }
 
 export interface MultiComboboxProps {
-  options: MultiComboboxOption[];
+  /** Sync mode: static list. */
+  options?: MultiComboboxOption[];
+  /** Async mode: fetcher called with query. */
+  asyncSearch?: (query: string) => Promise<MultiComboboxOption[]>;
+  /** Async mode: full option objects for values currently in `value` (for pill display). */
+  selectedOptions?: MultiComboboxOption[];
+
   value: string[];
-  onChange: (value: string[]) => void;
+  onChange: (value: string[], options?: MultiComboboxOption[]) => void;
   placeholder?: string;
   searchPlaceholder?: string;
   emptyMessage?: string;
@@ -21,7 +27,9 @@ export interface MultiComboboxProps {
 }
 
 export function MultiCombobox({
-  options,
+  options: staticOptions,
+  asyncSearch,
+  selectedOptions,
   value,
   onChange,
   placeholder = 'Выберите...',
@@ -29,35 +37,83 @@ export function MultiCombobox({
   emptyMessage = 'Ничего не найдено',
   disabled,
 }: MultiComboboxProps) {
+  const isAsync = !!asyncSearch;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [asyncOptions, setAsyncOptions] = useState<MultiComboboxOption[]>([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedLabels = options.filter((o) => value.includes(o.value));
+  const options = isAsync ? asyncOptions : (staticOptions ?? []);
 
-  const filtered = query
-    ? options.filter(
-        (o) =>
-          o.label.toLowerCase().includes(query.toLowerCase()) ||
-          o.sublabel?.toLowerCase().includes(query.toLowerCase()),
-      )
-    : options;
+  const selectedLabels: MultiComboboxOption[] = isAsync
+    ? (selectedOptions ?? []).filter((o) => value.includes(o.value))
+    : options.filter((o) => value.includes(o.value));
+
+  const filtered =
+    isAsync || !query
+      ? options
+      : options.filter(
+          (o) =>
+            o.label.toLowerCase().includes(query.toLowerCase()) ||
+            o.sublabel?.toLowerCase().includes(query.toLowerCase()),
+        );
 
   useEffect(() => {
     if (open) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [open]);
 
-  function toggle(val: string) {
-    onChange(value.includes(val) ? value.filter((v) => v !== val) : [...value, val]);
+  useEffect(() => {
+    if (!isAsync || !open) return;
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const results = await asyncSearch!(query);
+        if (!cancelled) setAsyncOptions(results);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [isAsync, open, query, asyncSearch]);
+
+  function toggle(opt: MultiComboboxOption) {
+    const has = value.includes(opt.value);
+    const nextValue = has ? value.filter((v) => v !== opt.value) : [...value, opt.value];
+    if (isAsync) {
+      const base = selectedOptions ?? [];
+      const nextOpts = has
+        ? base.filter((o) => o.value !== opt.value)
+        : base.some((o) => o.value === opt.value)
+          ? base
+          : [...base, opt];
+      onChange(nextValue, nextOpts);
+    } else {
+      onChange(nextValue);
+    }
   }
 
   function remove(val: string, e: React.MouseEvent) {
     e.stopPropagation();
-    onChange(value.filter((v) => v !== val));
+    const nextValue = value.filter((v) => v !== val);
+    if (isAsync) {
+      const nextOpts = (selectedOptions ?? []).filter((o) => o.value !== val);
+      onChange(nextValue, nextOpts);
+    } else {
+      onChange(nextValue);
+    }
+  }
+
+  function clearAll() {
+    if (isAsync) onChange([], []);
+    else onChange([]);
   }
 
   return (
@@ -102,7 +158,6 @@ export function MultiCombobox({
           align="start"
           className="animate-fade-in-scale z-50 w-(--radix-popover-trigger-width) rounded-xl border border-(--border) bg-(--surface) shadow-lg"
         >
-          {/* Search */}
           <div className="flex items-center gap-2 border-b border-(--border) px-3 py-2">
             <Search size={15} className="shrink-0 text-(--fg-subtle)" />
             <input
@@ -113,6 +168,9 @@ export function MultiCombobox({
               placeholder={searchPlaceholder}
               className="w-full bg-transparent text-sm text-(--fg) placeholder:text-(--fg-subtle) focus:outline-none"
             />
+            {isAsync && loading && (
+              <Loader2 size={14} className="shrink-0 animate-spin text-(--fg-subtle)" />
+            )}
             {value.length > 0 && (
               <span className="shrink-0 rounded-md bg-(--primary-subtle) px-1.5 py-0.5 text-xs tabular-nums text-(--primary-text)">
                 {value.length}
@@ -120,10 +178,11 @@ export function MultiCombobox({
             )}
           </div>
 
-          {/* Options */}
           <div className="max-h-56 overflow-y-auto p-1">
             {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-sm text-(--fg-muted)">{emptyMessage}</p>
+              <p className="px-3 py-4 text-center text-sm text-(--fg-muted)">
+                {isAsync && loading ? 'Поиск...' : emptyMessage}
+              </p>
             ) : (
               filtered.map((opt) => {
                 const isSelected = value.includes(opt.value);
@@ -131,7 +190,7 @@ export function MultiCombobox({
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => toggle(opt.value)}
+                    onClick={() => toggle(opt)}
                     className={`flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-(--surface-raised) ${isSelected ? 'bg-(--primary-subtle)/50' : ''}`}
                   >
                     <span
@@ -153,12 +212,11 @@ export function MultiCombobox({
             )}
           </div>
 
-          {/* Clear all */}
           {value.length > 0 && (
             <div className="border-t border-(--border) p-1">
               <button
                 type="button"
-                onClick={() => onChange([])}
+                onClick={clearAll}
                 className="w-full cursor-pointer rounded-lg px-2.5 py-1.5 text-center text-xs text-(--fg-muted) transition-colors hover:bg-(--surface-raised) hover:text-(--danger-text)"
               >
                 Очистить все

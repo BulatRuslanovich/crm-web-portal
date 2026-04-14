@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useApi } from '@/lib/use-api';
 import { physesApi } from '@/lib/api/physes';
 import { EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
-import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
+import { PageTransition } from '@/components/motion';
 import { Stethoscope, Plus, Phone, Building2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -51,49 +51,46 @@ export default function PhysesPage() {
             className="divide-y divide-(--border) overflow-hidden rounded-2xl border border-(--border) bg-(--surface)"
             style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
           >
-            <StaggerList>
-              {physes.map((p) => {
-                const name = [p.lastName, p.firstName, p.middleName].filter(Boolean).join(' ');
-                const initials = ((p.lastName?.[0] ?? '') + (p.firstName?.[0] ?? '')).toUpperCase();
-                return (
-                  <StaggerItem key={p.physId}>
-                    <Link
-                      href={`/physes/${p.physId}`}
-                      className="flex items-center gap-4 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised)"
-                    >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--primary-subtle) text-xs font-bold text-(--primary-text)">
-                        {initials}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-(--fg)">{name}</p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-2">
-                          {p.specName && (
-                            <span className="rounded-md bg-(--surface-raised) px-2 py-0.5 text-xs font-medium text-(--fg-muted)">
-                              {p.specName}
-                            </span>
-                          )}
-                          {p.position && (
-                            <span className="text-xs text-(--fg-muted)">{p.position}</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3 text-xs text-(--fg-muted)">
-                        {p.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone size={10} /> {p.phone}
-                          </span>
-                        )}
-                        {p.orgs.length > 0 && (
-                          <span className="flex items-center gap-1">
-                            <Building2 size={10} /> {p.orgs.length}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  </StaggerItem>
-                );
-              })}
-            </StaggerList>
+            {physes.map((p) => {
+              const name = [p.lastName, p.firstName, p.middleName].filter(Boolean).join(' ');
+              const initials = ((p.lastName?.[0] ?? '') + (p.firstName?.[0] ?? '')).toUpperCase();
+              return (
+                <Link
+                  key={p.physId}
+                  href={`/physes/${p.physId}`}
+                  className="flex items-center gap-4 px-5 py-4 transition-all duration-150 hover:bg-(--surface-raised)"
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--primary-subtle) text-xs font-bold text-(--primary-text)">
+                    {initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-(--fg)">{name}</p>
+                    <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                      {p.specName && (
+                        <span className="rounded-md bg-(--surface-raised) px-2 py-0.5 text-xs font-medium text-(--fg-muted)">
+                          {p.specName}
+                        </span>
+                      )}
+                      {p.position && (
+                        <span className="text-xs text-(--fg-muted)">{p.position}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3 text-xs text-(--fg-muted)">
+                    {p.phone && (
+                      <span className="flex items-center gap-1">
+                        <Phone size={10} /> {p.phone}
+                      </span>
+                    )}
+                    {p.orgs.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Building2 size={10} /> {p.orgs.length}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </div>
           <Pagination page={page} totalPages={totalPages} onPage={setPage} />
         </>
