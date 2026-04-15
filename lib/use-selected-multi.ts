@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSetDiff } from './use-set-diff';
 import type { MultiComboboxOption } from '@/components/MultiCombobox';
 
@@ -12,18 +12,16 @@ export function useSelectedMulti<T>(
   const setDiff = useSetDiff(initialItems ? initialItems.map(getId) : []);
   const [picked, setPicked] = useState<MultiComboboxOption[]>([]);
 
-  const selectedOptions = useMemo<MultiComboboxOption[]>(() => {
-    const pool = new Map<string, MultiComboboxOption>();
-    if (initialItems) {
-      for (const item of initialItems) pool.set(String(getId(item)), toOption(item));
-    }
-    for (const o of picked) pool.set(o.value, o);
-    return [...setDiff.selected]
-      .map((id) => pool.get(String(id)))
-      .filter((o): o is MultiComboboxOption => !!o);
-  }, [initialItems, picked, setDiff.selected]); // eslint-disable-line react-hooks/exhaustive-deps
+  const pool = new Map<string, MultiComboboxOption>();
+  if (initialItems) {
+    for (const item of initialItems) pool.set(String(getId(item)), toOption(item));
+  }
+  for (const o of picked) pool.set(o.value, o);
+  const selectedOptions: MultiComboboxOption[] = [...setDiff.selected]
+    .map((id) => pool.get(String(id)))
+    .filter((o): o is MultiComboboxOption => !!o);
 
-  const values = useMemo(() => [...setDiff.selected].map(String), [setDiff.selected]);
+  const values = [...setDiff.selected].map(String);
 
   const onChange = useCallback(
     (vals: string[], opts?: MultiComboboxOption[]) => {

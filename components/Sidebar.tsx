@@ -20,14 +20,22 @@ import {
   ChevronRight,
   Menu,
   X,
+  CalendarDays,
+  MapPin,
+  TrendingUp,
+  FileDown,
 } from 'lucide-react';
 
 
 const navItems = [
   { href: '/dashboard', label: 'Главная', icon: LayoutDashboard },
   { href: '/activs', label: 'Визиты', icon: CalendarCheck },
+  { href: '/calendar', label: 'Календарь', icon: CalendarDays },
   { href: '/orgs', label: 'Организации', icon: Building2 },
+  { href: '/map', label: 'Карта', icon: MapPin },
   { href: '/physes', label: 'Врачи', icon: Stethoscope },
+  { href: '/analytics', label: 'Аналитика', icon: TrendingUp },
+  { href: '/reports', label: 'Отчёты', icon: FileDown },
 ];
 
 const adminItems = [{ href: '/admin', label: 'Администрирование', icon: ShieldCheck }];

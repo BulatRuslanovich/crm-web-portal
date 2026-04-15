@@ -134,7 +134,6 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
   login: string;
   policies: string[];
 }
@@ -148,7 +147,6 @@ export interface CreateUserRequest {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
   login: string;
   password: string;
   policyIds: number[];
@@ -157,7 +155,6 @@ export interface CreateUserRequest {
 export interface UpdateUserRequest {
   firstName?: string | null;
   lastName?: string | null;
-  phone?: string | null;
 }
 
 export interface ChangePasswordRequest {

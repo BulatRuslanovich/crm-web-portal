@@ -9,9 +9,20 @@ export const activsApi = {
     sortBy?: string,
     sortDesc?: boolean,
     statusesFilter?: number[],
+    dateFrom?: string,
+    dateTo?: string,
   ) =>
     apiClient.get<PagedResponse<ActivResponse>>('/api/activs', {
-      params: { page, pageSize, search, sortBy, sortDesc, statuses: statusesFilter },
+      params: {
+        page,
+        pageSize,
+        search,
+        sortBy,
+        sortDesc,
+        statuses: statusesFilter,
+        dateFrom,
+        dateTo,
+      },
     }),
 
   getById: (id: number) => apiClient.get<ActivResponse>(`/api/activs/${id}`),

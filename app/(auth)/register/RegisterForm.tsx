@@ -33,7 +33,6 @@ export default function RegisterForm() {
       firstName: '',
       lastName: '',
       email: '',
-      phone: '',
       login: '',
       password: '',
       confirmPassword: '',
@@ -55,7 +54,6 @@ export default function RegisterForm() {
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
         email: values.email.trim(),
-        phone: values.phone.trim(),
       });
 
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
@@ -86,10 +84,6 @@ export default function RegisterForm() {
         <div>
           <Label>Email</Label>
           <Input type="email" placeholder="ivan@example.com" {...register('email')} />
-        </div>
-        <div>
-          <Label>Телефон</Label>
-          <Input type="tel" placeholder="+7 999 000 00 00" {...register('phone')} />
         </div>
         <div>
           <Label>Пароль</Label>

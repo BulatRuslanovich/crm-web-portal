@@ -45,7 +45,6 @@ export default function ProfilePage() {
     defaultValues: {
       firstName: user?.firstName ?? '',
       lastName: user?.lastName ?? '',
-      phone: user?.phone ?? '',
     },
   });
 
@@ -67,7 +66,6 @@ export default function ProfilePage() {
       await usersApi.update(user!.usrId, {
         firstName: values.firstName || null,
         lastName: values.lastName || null,
-        phone: values.phone || null,
       });
       await refreshUser();
       setEditingProfile(false);
@@ -137,7 +135,6 @@ export default function ProfilePage() {
               <Field label="Имя" value={user.firstName} />
               <Field label="Фамилия" value={user.lastName} />
               <Field label="Email" value={user.email} />
-              <Field label="Телефон" value={user.phone} />
             </div>
             {profileSuccess && (
               <div className="px-5 pb-3">
@@ -152,7 +149,6 @@ export default function ProfilePage() {
                   profileForm.reset({
                     firstName: user.firstName ?? '',
                     lastName: user.lastName ?? '',
-                    phone: user.phone ?? '',
                   });
                 }}
               >
@@ -171,10 +167,6 @@ export default function ProfilePage() {
                 <div>
                   <Label>Фамилия</Label>
                   <Input type="text" {...profileForm.register('lastName')} />
-                </div>
-                <div>
-                  <Label>Телефон</Label>
-                  <Input type="tel" {...profileForm.register('phone')} />
                 </div>
               </div>
               {profileApiError && <ErrorBox message={profileApiError} />}
