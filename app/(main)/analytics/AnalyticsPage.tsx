@@ -34,6 +34,7 @@ function buildDailyData(activs: ActivResponse[], periodDays: number) {
   }
 
   for (const a of activs) {
+    if (!a.start) continue;
     const d = startOfDay(new Date(a.start));
     const key = format(d, 'dd.MM', { locale: ru });
     const idx = days.findIndex((x) => x.date === key);
@@ -45,7 +46,20 @@ function buildDailyData(activs: ActivResponse[], periodDays: number) {
 function buildTopOrgs(activs: ActivResponse[], top = 10) {
   const map = new Map<string, number>();
   for (const a of activs) {
+    if (!a.orgName) continue;
     map.set(a.orgName, (map.get(a.orgName) ?? 0) + 1);
+  }
+  return [...map.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, top)
+    .map(([name, count]) => ({ name, count }));
+}
+
+function buildTopPhyses(activs: ActivResponse[], top = 10) {
+  const map = new Map<string, number>();
+  for (const a of activs) {
+    if (!a.physName) continue;
+    map.set(a.physName, (map.get(a.physName) ?? 0) + 1);
   }
   return [...map.entries()]
     .sort((a, b) => b[1] - a[1])
@@ -121,12 +135,12 @@ export default function AnalyticsPage() {
 
   const { data: activs, loading } = useApi(
     ['analytics-activs', periodDays],
-    () => {
+    async () => {
       const to = new Date().toISOString();
       const from = subDays(startOfDay(new Date()), periodDays - 1).toISOString();
-      return activsApi
-        .getAll(1, undefined, undefined, 'start', true, undefined, from, to)
-        .then((r) => r.data.items);
+      const r = await activsApi
+        .getAll(1, 1000, undefined, 'start', true, undefined, from, to);
+      return r.data.items;
     },
     { keepPreviousData: true },
   );
@@ -136,6 +150,7 @@ export default function AnalyticsPage() {
     [activs, periodDays],
   );
   const topOrgs = useMemo(() => (activs ? buildTopOrgs(activs) : []), [activs]);
+  const topPhyses = useMemo(() => (activs ? buildTopPhyses(activs) : []), [activs]);
   const topDrugs = useMemo(() => (activs ? buildTopDrugs(activs) : []), [activs]);
   const byUsr = useMemo(() => (activs ? buildByUsr(activs) : []), [activs]);
   const byStatus = useMemo(() => (activs ? buildByStatus(activs) : []), [activs]);
@@ -303,6 +318,44 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {topPhyses.length > 0 && (
+              <ChartCard title="Топ врачей по визитам">
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart
+                    data={topPhyses}
+                    layout="vertical"
+                    margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11, fill: 'var(--fg-muted)' }}
+                      tickLine={false}
+                      axisLine={false}
+                      allowDecimals={false}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={120}
+                      tick={{ fontSize: 10, fill: 'var(--fg-muted)' }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v: string) => (v.length > 16 ? v.slice(0, 14) + '…' : v)}
+                    />
+                    <Tooltip {...tooltipStyle} />
+                    <Bar
+                      dataKey="count"
+                      name="Визиты"
+                      fill="var(--violet-text)"
+                      radius={[0, 4, 4, 0]}
+                      maxBarSize={18}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartCard>
+            )}
+
             {topOrgs.length > 0 && (
               <ChartCard title={`Топ организаций по визитам`}>
                 <ResponsiveContainer width="100%" height={280}>

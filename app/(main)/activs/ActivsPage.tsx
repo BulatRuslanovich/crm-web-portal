@@ -8,7 +8,7 @@ import { STATUSES } from '@/lib/api/statuses';
 import { formatShort } from '@/lib/format';
 import { StatusBadge, EmptyState, Pagination, LinkButton, ListSkeleton } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { Search, SlidersHorizontal, CalendarCheck, Plus } from 'lucide-react';
+import { Search, SlidersHorizontal, CalendarCheck, Plus, Building2, Stethoscope } from 'lucide-react';
 
 const PAGE_SIZE = 25;
 
@@ -69,7 +69,7 @@ export default function ActivsPage() {
           />
           <input
             type="text"
-            placeholder="Поиск по организации..."
+            placeholder="Поиск по организации или врачу..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="h-10 w-full rounded-xl border border-(--border) bg-(--surface) pr-3.5 pl-10 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none"
@@ -130,7 +130,11 @@ export default function ActivsPage() {
             className="overflow-hidden rounded-2xl border border-(--border) bg-(--surface)"
             style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
           >
-            {activs.map((a, i) => (
+            {activs.map((a, i) => {
+              const isPhys = a.physId != null;
+              const targetName = isPhys ? a.physName : a.orgName;
+              const TargetIcon = isPhys ? Stethoscope : Building2;
+              return (
               <Link
                 key={a.activId}
                 href={`/activs/${a.activId}`}
@@ -139,7 +143,12 @@ export default function ActivsPage() {
                 }`}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-(--fg)">{a.orgName}</p>
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    <TargetIcon size={13} className="shrink-0 text-(--fg-subtle)" />
+                    <p className="truncate text-sm font-semibold text-(--fg)">
+                      {targetName ?? '—'}
+                    </p>
+                  </div>
                   <div className="mt-1 flex flex-wrap items-center gap-2">
                     <span className="text-xs text-(--fg-muted)">{formatShort(a.start)}</span>
                     <span className="h-1 w-1 rounded-full bg-(--fg-subtle)" />
@@ -161,7 +170,8 @@ export default function ActivsPage() {
                 </div>
                 <StatusBadge name={a.statusName} />
               </Link>
-            ))}
+              );
+            })}
           </div>
 
           <Pagination page={page} totalPages={totalPages} onPage={setPage} />

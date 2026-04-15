@@ -10,18 +10,21 @@ export interface ActivResponse {
   activId: number;
   usrId: number;
   usrLogin: string;
-  orgId: number;
-  orgName: string;
+  orgId: number | null;
+  orgName: string | null;
+  physId: number | null;
+  physName: string | null;
   statusId: number;
   statusName: string;
-  start: string;
+  start: string | null;
   end: string | null;
   description: string;
   drugs: DrugResponse[];
 }
 
 export interface CreateActivRequest {
-  orgId: number;
+  orgId: number | null;
+  physId: number | null;
   statusId: number;
   start: string;
   end: string | null;
@@ -160,4 +163,14 @@ export interface UpdateUserRequest {
 export interface ChangePasswordRequest {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface DepartmentResponse {
+  departmentId: number;
+  departmentName: string;
+  userCount: number;
+}
+
+export interface CreateDepartmentRequest {
+  departmentName: string;
 }

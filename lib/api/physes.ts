@@ -19,3 +19,16 @@ export const physesApi = {
   unlinkOrg: (physId: number, orgId: number) =>
     apiClient.delete(`/api/physes/${physId}/orgs/${orgId}`),
 };
+
+function formatPhysLabel(p: PhysResponse): string {
+  return [p.lastName, p.firstName, p.middleName].filter(Boolean).join(' ');
+}
+
+export async function searchPhysOptions(query: string) {
+  const { data } = await physesApi.getAll(1, 20, query || undefined);
+  return data.items.map((p) => ({
+    value: String(p.physId),
+    label: formatPhysLabel(p),
+    sublabel: p.specName || undefined,
+  }));
+}

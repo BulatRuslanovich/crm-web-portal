@@ -20,11 +20,22 @@ function escapeCsv(v: string | null | undefined): string {
   return s;
 }
 
+function targetLabel(a: ActivResponse): string {
+  return a.physName ?? a.orgName ?? '';
+}
+
+function targetKind(a: ActivResponse): string {
+  if (a.physId != null) return 'Врач';
+  if (a.orgId != null) return 'Организация';
+  return '';
+}
+
 function exportCsv(activs: ActivResponse[], filename: string) {
-  const header = ['ID', 'Организация', 'Статус', 'Начало', 'Конец', 'Сотрудник', 'Препараты', 'Описание'];
+  const header = ['ID', 'Тип цели', 'Цель', 'Статус', 'Начало', 'Конец', 'Сотрудник', 'Препараты', 'Описание'];
   const rows = activs.map((a) => [
     a.activId,
-    a.orgName,
+    targetKind(a),
+    targetLabel(a),
     a.statusName,
     a.start ? formatFull(a.start) : '',
     a.end ? formatFull(a.end) : '',
@@ -83,7 +94,7 @@ function PreviewTable({ activs }: { activs: ActivResponse[] }) {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-(--border) bg-(--surface-raised)/50">
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Организация</th>
+              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Цель</th>
               <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Статус</th>
               <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Начало</th>
               <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Сотрудник</th>
@@ -101,8 +112,11 @@ function PreviewTable({ activs }: { activs: ActivResponse[] }) {
                     href={`/activs/${a.activId}`}
                     className="font-medium text-(--fg) hover:text-(--primary-text)"
                   >
-                    {a.orgName}
+                    {targetLabel(a) || '—'}
                   </Link>
+                  <div className="text-[10px] uppercase tracking-wider text-(--fg-subtle)">
+                    {targetKind(a)}
+                  </div>
                 </td>
                 <td className="px-4 py-2.5">
                   <StatusBadge name={a.statusName} />

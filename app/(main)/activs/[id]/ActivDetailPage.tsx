@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/use-entity';
-import { useIsAdmin } from '@/lib/use-is-admin';
+import { useRoles } from '@/lib/use-roles';
 import { STATUS_PLANNED, STATUS_OPEN, STATUS_SAVED, STATUS_CLOSED } from '@/lib/api/statuses';
 import {
   StatusBadge,
@@ -30,6 +30,8 @@ import {
   User,
   FileText,
   Pill,
+  Building2,
+  Stethoscope,
 } from 'lucide-react';
 import { PageTransition } from '@/components/motion';
 
@@ -37,7 +39,7 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
-  const isAdmin = useIsAdmin();
+  const { isAdmin, canManageActivs } = useRoles();
   const [acting, setActing] = useState(false);
 
   const numId = Number(id);
@@ -50,9 +52,14 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
       </div>
     );
 
+  const isOwn = activ.usrId === user?.usrId;
   const isClosed = activ.statusId === STATUS_CLOSED;
   const isLocked = isClosed && !isAdmin;
-  const canEdit = isAdmin || (activ.usrId === user?.usrId && !isLocked);
+  const canEdit = (canManageActivs || isOwn) && !isLocked;
+  const canDelete = canManageActivs || isOwn;
+  const isPhys = activ.physId != null;
+  const targetName = isPhys ? activ.physName : activ.orgName;
+  const TargetIcon = isPhys ? Stethoscope : Building2;
 
   async function quickAction(statusId: number, extra: { start?: string; end?: string } = {}) {
     setActing(true);
@@ -86,7 +93,10 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/activs" />
-        <h2 className="min-w-0 flex-1 truncate text-xl font-bold text-(--fg)">{activ.orgName}</h2>
+        <h2 className="flex min-w-0 flex-1 items-center gap-2 truncate text-xl font-bold text-(--fg)">
+          <TargetIcon size={18} className="shrink-0 text-(--fg-muted)" />
+          <span className="truncate">{targetName ?? '—'}</span>
+        </h2>
         <StatusBadge name={activ.statusName} />
       </div>
 
@@ -156,7 +166,7 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
         {/* Actions */}
         <CardFooter>
           <div className="flex-1">
-            {isAdmin && (
+            {canDelete && (
               <BtnDanger onClick={handleDelete}>
                 <Trash2 size={14} /> Удалить
               </BtnDanger>

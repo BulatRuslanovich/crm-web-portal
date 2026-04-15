@@ -108,7 +108,7 @@ function DayCell({
                 color: STATUS_HEX[a.statusName.toLowerCase()] ?? '#94a3b8',
               }}
             >
-              {a.orgName}
+              {a.physName ?? a.orgName ?? '—'}
             </div>
           ))}
           {overflow > 0 && (
@@ -172,7 +172,9 @@ function DayPanel({
               className="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-(--surface-raised)"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-(--fg)">{a.orgName}</p>
+                <p className="truncate text-sm font-medium text-(--fg)">
+                  {a.physName ?? a.orgName ?? '—'}
+                </p>
                 <p className="mt-0.5 text-xs text-(--fg-muted)">
                   {formatShort(a.start)} · {a.usrLogin}
                 </p>
@@ -217,6 +219,7 @@ export default function CalendarPage() {
     const map = new Map<string, ActivResponse[]>();
     if (!activs) return map;
     for (const a of activs) {
+      if (!a.start) continue;
       const d = new Date(a.start);
       if (d.getFullYear() === year && d.getMonth() === month) {
         const key = toDateKey(d);
