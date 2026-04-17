@@ -1,99 +1,99 @@
+<div align="center">
+
 # CRM Web Portal
 
-Веб-интерфейс фармацевтической CRM-системы.
+**Веб-интерфейс фармацевтической CRM-системы**
 
-## Содержание
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 
-- [Стек технологий](#стек-технологий)
-- [Архитектура](#архитектура)
-- [Запуск](#запуск)
-- [Структура проекта](#структура-проекта)
-- [Переменные окружения](#переменные-окружения)
+</div>
 
 ---
+
+## О проекте
+
+Фронтенд CRM для фарм компаний: дашборд, активности, организации, контакты, аналитика, карта и админ-панель. Работает в паре с [CrmWebApi](https://github.com/BulatRuslanovich/crm_api).
+
 
 ## Стек технологий
 
-| Категория      | Технологии                     |
-| -------------- | ------------------------------ |
-| Фреймворк      | Next.js 16, React 19           |
-| Язык           | TypeScript 5                   |
-| Стилизация     | Tailwind CSS 4                 |
-| Анимации       | Framer Motion                  |
-| Графики        | Recharts                       |
-| Иконки         | Lucide React                   |
-| HTTP-клиент    | Axios                          |
-| Темы           | next-themes (светлая / тёмная) |
-| Линтинг        | ESLint, Prettier               |
-| Инфраструктура | Docker, Node 20                |
-
----
+| Категория | Технологии |
+|---|---|
+| Фреймворк | Next.js 16 (App Router, React Compiler) |
+| UI | React 19, Radix UI |
+| Язык | TypeScript 5 |
+| Стилизация | Tailwind CSS 4 |
+| Формы | React Hook Form |
+| Данные | SWR, Axios |
+| Анимации | Framer Motion |
+| Графики | Recharts |
+| Карты | Leaflet, React-Leaflet |
+| Даты | date-fns, react-day-picker |
+| Темы | next-themes |
+| Линтинг | ESLint, Prettier |
+| Инфраструктура | Docker, Node 20, Caddy |
 
 ## Архитектура
 
 ```
-app/
-├── (auth)/          ← страницы авторизации (login, register, ...)
-└── (main)/          ← защищённые страницы (dashboard, activs, ...)
-
-components/          ← переиспользуемые UI-компоненты
-lib/
-├── api/             ← API-клиенты для работы с бэкендом
-├── auth-context.tsx ← контекст авторизации (JWT + refresh)
-├── use-api.ts       ← хук для запросов к API
-├── use-entity.ts    ← хук для CRUD-операций
-└── use-set-diff.ts  ← хук для отслеживания изменений
+Pages (App Router)  →  Hooks (useApi / useEntity)  →  API-клиенты (axios)  →  CrmWebApi
 ```
 
-**Паттерны:**
+Ключевые точки:
 
-- App Router — файловая маршрутизация Next.js с route groups
-- Context API — глобальное состояние авторизации через `AuthContext`
-- Кастомные хуки — `useApi`, `useEntity` для переиспользуемой логики работы с данными
-- JWT + auto-refresh — автоматическое обновление токенов через Axios interceptors
+- **App Router** — файловая маршрутизация, route groups `(auth)` и `(main)`
+- **React Compiler** — авто-мемоизация, включён в [next.config.ts](next.config.ts)
+- **AuthContext** — глобальное состояние авторизации, JWT + auto-refresh через axios-interceptor
+- **SWR** — кеш/ревалидация серверных данных
+- **Standalone output** — минимальный Docker-образ
 
----
+## Разделы приложения
+
+| Раздел | Путь | Описание |
+|---|---|---|
+| Авторизация | [app/(auth)/](app/(auth)/) | логин, регистрация, OTP, сброс пароля |
+| Дашборд | [app/(main)/dashboard/](app/(main)/dashboard/) | ключевые метрики |
+| Активности | [app/(main)/activs/](app/(main)/activs/) | визиты и активности |
+| Организации | [app/(main)/orgs/](app/(main)/orgs/) | справочник организаций |
+| Контакты | [app/(main)/physes/](app/(main)/physes/) | справочник физлиц |
+| Аналитика | [app/(main)/analytics/](app/(main)/analytics/) | графики |
+| Отчёты | [app/(main)/reports/](app/(main)/reports/) | отчёты по активностям |
+| Календарь | [app/(main)/calendar/](app/(main)/calendar/) | календарь активностей |
+| Карта | [app/(main)/map/](app/(main)/map/) | карта организаций |
+| Профиль | [app/(main)/profile/](app/(main)/profile/) | профиль пользователя |
+| Админ | [app/(main)/admin/](app/(main)/admin/) | панель администратора |
 
 ## Запуск
 
-### Через Docker (в составе CRM)
-
-Портал собирается и запускается автоматически через `docker compose` в директории `CrmWebApi/`:
-
-```bash
-cd CrmWebApi
-docker compose up -d
-```
-
-Фронтенд доступен через Caddy на порту 443 (HTTPS).
-
-### Локально (для разработки)
+**Локально:**
 
 ```bash
 npm install
 npm run dev
 ```
 
-Приложение будет доступно на [http://localhost:3000](http://localhost:3000).
-
----
-
-## Структура проекта
-
-| Раздел            | Путь                    | Описание                                              |
-| ----------------- | ----------------------- | ----------------------------------------------------- |
-| Авторизация       | `app/(auth)/`           | Логин, регистрация, подтверждение email, сброс пароля |
-| Дашборд           | `app/(main)/dashboard/` | Главная страница с аналитикой                         |
-| Активности        | `app/(main)/activs/`    | Управление активностями                               |
-| Организации       | `app/(main)/orgs/`      | Справочник организаций                                |
-| Контакты          | `app/(main)/physes/`    | Справочник физических лиц                             |
-| Профиль           | `app/(main)/profile/`   | Профиль пользователя                                  |
-| Администрирование | `app/(main)/admin/`     | Панель администратора                                 |
-
----
+Откроется на [http://localhost:3000](http://localhost:3000). Подробности — в [DEV.md](DEV.md).
 
 ## Переменные окружения
 
-| Переменная            | Описание                                      |
-| --------------------- | --------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | URL бэкенда (например `https://crmwebapi.ru`) |
+| Переменная | Обязательна | По умолчанию | Описание |
+|---|---|---|---|
+| `NEXT_PUBLIC_API_URL` | да | `http://localhost:5000` | URL бэкенда ([CrmWebApi](https://github.com/BulatRuslanovich/crm_api)) |
+
+`NEXT_PUBLIC_*` встраивается в бандл на этапе `npm run build` — пересборка обязательна при смене URL.
+
+## Документация
+
+- **[DEV.md](DEV.md)** — памятка разработчику: как поднять портал локально
+
+---
+
+<div align="center">
+
+MIT © [BulatRuslanovich](https://github.com/BulatRuslanovich)
+
+</div>
