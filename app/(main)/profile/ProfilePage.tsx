@@ -96,7 +96,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <PageTransition className="mx-auto max-w-2xl space-y-4">
+    <PageTransition className="mx-auto w-full space-y-4">
       <h2 className="text-xl font-bold text-(--fg)">Профиль</h2>
 
       <Card>

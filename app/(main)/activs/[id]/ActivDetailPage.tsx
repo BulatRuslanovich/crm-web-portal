@@ -47,7 +47,7 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
 
   if (!activ)
     return (
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
@@ -89,7 +89,7 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <PageTransition className="mx-auto max-w-2xl space-y-4">
+    <PageTransition className="mx-auto w-full space-y-4">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/activs" />

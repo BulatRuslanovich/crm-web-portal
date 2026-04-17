@@ -92,7 +92,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
 
   if (!activ)
     return (
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
@@ -139,7 +139,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href={`/activs/${id}`} />
         <h2 className="min-w-0 flex-1 truncate text-xl font-semibold text-(--fg)">

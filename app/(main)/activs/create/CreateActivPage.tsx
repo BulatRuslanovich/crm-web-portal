@@ -99,7 +99,7 @@ export default function CreateActivPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto w-full">
       <div className="mb-5 flex items-center gap-3">
         <BackButton />
         <h2 className="text-xl font-semibold text-(--fg)">Новый визит</h2>

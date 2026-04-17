@@ -45,7 +45,7 @@ export default function ActivsPage() {
   const hasFilter = search || statusFilter.length > 0;
 
   return (
-    <PageTransition className="mx-auto max-w-4xl space-y-4">
+    <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--primary-subtle)">

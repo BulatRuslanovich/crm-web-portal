@@ -38,7 +38,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <PageTransition className="mx-auto max-w-4xl">
+    <PageTransition className="mx-auto w-full space-y-4">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--violet-subtle)">
           <ShieldCheck size={18} className="text-(--violet-text)" />

@@ -183,7 +183,7 @@ export default function ReportsPage() {
   const hasFilter = dateFrom || dateTo || statusFilter.length > 0 || usrFilter;
 
   return (
-    <PageTransition className="mx-auto max-w-5xl space-y-4">
+    <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--primary-subtle)">

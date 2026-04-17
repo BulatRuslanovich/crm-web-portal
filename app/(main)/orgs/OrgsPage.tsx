@@ -23,7 +23,7 @@ export default function OrgsPage() {
   const totalPages = data?.totalPages ?? 1;
 
   return (
-    <PageTransition className="mx-auto max-w-4xl">
+    <PageTransition className="mx-auto w-full">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--success-subtle)">

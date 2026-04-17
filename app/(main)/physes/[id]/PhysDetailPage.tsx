@@ -27,7 +27,7 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
 
   if (!phys)
     return (
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
@@ -42,7 +42,7 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <PageTransition className="mx-auto max-w-2xl space-y-4">
+    <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <BackButton href="/physes" />
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary-subtle) text-sm font-bold text-(--primary-text)">

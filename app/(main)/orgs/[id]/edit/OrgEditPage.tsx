@@ -67,7 +67,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
 
   if (!org)
     return (
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
@@ -95,7 +95,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href={`/orgs/${id}`} />
         <h2 className="flex-1 text-xl font-semibold text-(--fg)">{org.orgName}</h2>

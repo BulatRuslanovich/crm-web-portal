@@ -57,7 +57,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main
         className={`px-4 py-6 pt-16 transition-all duration-300 sm:px-6 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
       >
-        <div className="animate-fade-in mx-auto max-w-7xl">{children}</div>
+        <div className="animate-fade-in mx-auto max-w-[1600px]">{children}</div>
       </main>
     </div>
   );
