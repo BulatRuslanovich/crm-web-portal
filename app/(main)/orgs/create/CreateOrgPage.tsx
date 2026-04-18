@@ -15,8 +15,10 @@ import {
   ErrorBox,
   BtnSecondary,
   BtnSuccess,
+  SectionLabel,
 } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
+import { Building2, FileText, MapPin, Plus } from 'lucide-react';
 
 interface FormValues {
   orgTypeId: string;
@@ -68,61 +70,96 @@ export default function CreateOrgPage() {
   }
 
   return (
-    <div className="mx-auto w-full">
-      <div className="mb-5 flex items-center gap-3">
+    <div className="mx-auto w-full space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
         <BackButton />
-        <h2 className="text-xl font-semibold text-(--fg)">Новая организация</h2>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success/10 ring-1 ring-success/20">
+            <Plus size={16} className="text-success" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground">Новая организация</h2>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-4">
+          <div className="space-y-6 p-5">
             <div>
-              <Label>Тип организации</Label>
-              <Controller
-                name="orgTypeId"
-                control={control}
-                render={({ field }) => (
-                  <Combobox
-                    options={typeOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Выберите тип"
-                    searchPlaceholder="Поиск типа..."
+              <SectionLabel icon={Building2}>Основная информация</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label required>Название</Label>
+                  <Input
+                    type="text"
+                    placeholder="Городская больница №1"
+                    {...register('orgName')}
                   />
-                )}
-              />
-            </div>
-            <div>
-              <Label>Название</Label>
-              <Input
-                type="text"
-                placeholder="Городская больница №1"
-                {...register('orgName')}
-              />
-            </div>
-            <div>
-              <Label>ИНН</Label>
-              <Input type="text" placeholder="0000000000" {...register('inn')} />
-            </div>
-            <div>
-              <Label>Адрес</Label>
-              <Input
-                type="text"
-                placeholder="г. Москва, ул. Примерная, 1"
-                {...register('address')}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Широта</Label>
-                <Input type="number" step="any" placeholder="55.7558" {...register('latitude')} />
-              </div>
-              <div>
-                <Label>Долгота</Label>
-                <Input type="number" step="any" placeholder="37.6173" {...register('longitude')} />
+                </div>
+                <div>
+                  <Label>Тип организации</Label>
+                  <Controller
+                    name="orgTypeId"
+                    control={control}
+                    render={({ field }) => (
+                      <Combobox
+                        options={typeOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Выберите тип"
+                        searchPlaceholder="Поиск типа..."
+                      />
+                    )}
+                  />
+                </div>
               </div>
             </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={FileText}>Реквизиты</SectionLabel>
+              <div>
+                <Label>ИНН</Label>
+                <Input type="text" placeholder="0000000000" {...register('inn')} />
+              </div>
+            </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={MapPin}>Местоположение</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label>Адрес</Label>
+                  <Input
+                    type="text"
+                    placeholder="г. Москва, ул. Примерная, 1"
+                    {...register('address')}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Широта</Label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder="55.7558"
+                      {...register('latitude')}
+                    />
+                  </div>
+                  <div>
+                    <Label>Долгота</Label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder="37.6173"
+                      {...register('longitude')}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {apiError && <ErrorBox message={apiError} />}
           </div>
           <CardFooter>

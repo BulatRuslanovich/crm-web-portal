@@ -17,8 +17,10 @@ import {
   ErrorBox,
   BtnPrimary,
   BtnSecondary,
+  SectionLabel,
 } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
+import { Building2, FileText, MapPin, Pencil } from 'lucide-react';
 
 interface FormValues {
   orgTypeId: string;
@@ -98,50 +100,80 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
     <div className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href={`/orgs/${id}`} />
-        <h2 className="flex-1 text-xl font-semibold text-(--fg)">{org.orgName}</h2>
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success/10 ring-1 ring-success/20">
+            <Pencil size={15} className="text-success" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              Редактирование организации
+            </p>
+            <h2 className="truncate text-lg font-bold text-foreground">{org.orgName}</h2>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-5">
+          <div className="space-y-6 p-5">
             <div>
-              <Label required>Тип</Label>
-              <Controller
-                name="orgTypeId"
-                control={control}
-                render={({ field }) => (
-                  <Combobox
-                    options={typeOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Выберите тип"
-                    searchPlaceholder="Поиск типа..."
+              <SectionLabel icon={Building2}>Основная информация</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label required>Название</Label>
+                  <Input type="text" {...register('orgName')} />
+                </div>
+                <div>
+                  <Label required>Тип</Label>
+                  <Controller
+                    name="orgTypeId"
+                    control={control}
+                    render={({ field }) => (
+                      <Combobox
+                        options={typeOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Выберите тип"
+                        searchPlaceholder="Поиск типа..."
+                      />
+                    )}
                   />
-                )}
-              />
-            </div>
-            <div>
-              <Label required>Название</Label>
-              <Input type="text" {...register('orgName')} />
-            </div>
-            <div>
-              <Label>ИНН</Label>
-              <Input type="text" {...register('inn')} />
-            </div>
-            <div>
-              <Label>Адрес</Label>
-              <Input type="text" {...register('address')} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Широта</Label>
-                <Input type="number" step="any" {...register('latitude')} />
-              </div>
-              <div>
-                <Label>Долгота</Label>
-                <Input type="number" step="any" {...register('longitude')} />
+                </div>
               </div>
             </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={FileText}>Реквизиты</SectionLabel>
+              <div>
+                <Label>ИНН</Label>
+                <Input type="text" {...register('inn')} />
+              </div>
+            </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={MapPin}>Местоположение</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label>Адрес</Label>
+                  <Input type="text" {...register('address')} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Широта</Label>
+                    <Input type="number" step="any" {...register('latitude')} />
+                  </div>
+                  <div>
+                    <Label>Долгота</Label>
+                    <Input type="number" step="any" {...register('longitude')} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {apiError && <ErrorBox message={apiError} />}
           </div>
           <CardFooter>

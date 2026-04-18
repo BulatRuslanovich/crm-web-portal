@@ -6,8 +6,6 @@ import { useAuth } from '@/lib/auth-context';
 import { usersApi } from '@/lib/api/users';
 import { extractApiError } from '@/lib/api/errors';
 import {
-  Card,
-  CardFooter,
   Field,
   Label,
   Input,
@@ -18,7 +16,17 @@ import {
   BtnDanger,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { User, Shield, KeyRound, LogOut } from 'lucide-react';
+import {
+  User,
+  Shield,
+  KeyRound,
+  LogOut,
+  Mail,
+  AtSign,
+  Pencil,
+  CheckCircle2,
+  BadgeCheck,
+} from 'lucide-react';
 
 interface ProfileFormValues {
   firstName: string;
@@ -30,6 +38,73 @@ interface PasswordFormValues {
   oldPassword: string;
   newPassword: string;
   confirm: string;
+}
+
+const POLICY_LABEL: Record<string, string> = {
+  Admin: 'Администратор',
+  Director: 'Руководитель',
+  Manager: 'Менеджер',
+  User: 'Сотрудник',
+};
+
+function policyTone(policy: string): string {
+  switch (policy) {
+    case 'Admin':
+      return 'border-warning/40 bg-warning/15 text-warning';
+    case 'Director':
+      return 'border-primary/40 bg-primary/10 text-primary';
+    case 'Manager':
+      return 'border-success/40 bg-success/10 text-success';
+    default:
+      return 'border-border bg-muted text-muted-foreground';
+  }
+}
+
+function SectionCard({
+  icon: Icon,
+  title,
+  subtitle,
+  tone = 'default',
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle?: string;
+  tone?: 'default' | 'primary' | 'success' | 'warning' | 'destructive';
+  children: React.ReactNode;
+}) {
+  const toneCls =
+    tone === 'primary'
+      ? 'bg-primary/10 text-primary ring-primary/15'
+      : tone === 'success'
+        ? 'bg-success/10 text-success ring-success/20'
+        : tone === 'warning'
+          ? 'bg-warning/15 text-warning ring-warning/25'
+          : tone === 'destructive'
+            ? 'bg-destructive/10 text-destructive ring-destructive/20'
+            : 'bg-muted text-muted-foreground ring-border';
+  return (
+    <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+        <div className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
+          <Icon size={16} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-bold text-foreground">{title}</h3>
+          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function CardFooterBar({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-muted/40 px-5 py-3">
+      {children}
+    </div>
+  );
 }
 
 export default function ProfilePage() {
@@ -57,7 +132,9 @@ export default function ProfilePage() {
   const displayName = user.firstName
     ? `${user.firstName} ${user.lastName ?? ''}`.trim()
     : user.login;
-  const initials = (user.firstName?.[0] ?? user.login[0]).toUpperCase();
+  const initials = ((user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? ''))
+    .toUpperCase()
+    || user.login.slice(0, 2).toUpperCase();
 
   async function onProfileSubmit(values: ProfileFormValues) {
     setProfileApiError('');
@@ -96,52 +173,75 @@ export default function ProfilePage() {
   }
 
   return (
-    <PageTransition className="mx-auto w-full space-y-4">
-      <h2 className="text-xl font-bold text-(--fg)">Профиль</h2>
-
-      <Card>
-        <div className="flex items-center gap-4 p-5">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-(--primary) to-(--violet-text) text-xl font-bold text-(--primary-fg) shadow-md">
-            {initials}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-base font-bold text-(--fg)">{displayName}</p>
-            <p className="text-sm text-(--fg-muted)">{user.login}</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {user.policies.map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-(--warn-border) bg-(--warn-subtle) px-2 py-0.5 text-xs font-medium text-(--warn-text)"
-                >
-                  {p}
-                </span>
-              ))}
+    <PageTransition className="mx-auto w-full space-y-5">
+      {/* Hero */}
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted to-card shadow-sm">
+        <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-wrap items-center gap-5 p-6">
+          <div className="relative">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground shadow-lg ring-4 ring-card">
+              {initials}
             </div>
+            <span className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-success text-success-foreground ring-2 ring-card">
+              <BadgeCheck size={13} />
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              Профиль
+            </p>
+            <h2 className="truncate text-2xl font-bold text-foreground">{displayName}</h2>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <AtSign size={12} />
+                <span className="font-medium text-foreground/90">{user.login}</span>
+              </span>
+              {user.email && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail size={12} />
+                  {user.email}
+                </span>
+              )}
+            </div>
+            {user.policies.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {user.policies.map((p) => (
+                  <span
+                    key={p}
+                    className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${policyTone(
+                      p,
+                    )}`}
+                  >
+                    {POLICY_LABEL[p] ?? p}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card>
-        <div className="border-b border-(--border) px-5 py-3.5">
-          <div className="flex items-center gap-2">
-            <User size={15} className="text-(--fg-muted)" />
-            <p className="text-sm font-bold text-(--fg)">Личные данные</p>
-          </div>
-        </div>
-
+      {/* Personal info */}
+      <SectionCard
+        icon={User}
+        title="Личные данные"
+        subtitle="Имя, фамилия и контакты"
+        tone="primary"
+      >
         {!editingProfile ? (
           <>
             <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
               <Field label="Имя" value={user.firstName} />
               <Field label="Фамилия" value={user.lastName} />
               <Field label="Email" value={user.email} />
+              <Field label="Логин" value={user.login} />
             </div>
             {profileSuccess && (
-              <div className="px-5 pb-3">
+              <div className="px-5 pb-4">
                 <SuccessBox message={profileSuccess} />
               </div>
             )}
-            <CardFooter>
+            <CardFooterBar>
               <BtnSecondary
                 onClick={() => {
                   setEditingProfile(true);
@@ -152,13 +252,13 @@ export default function ProfilePage() {
                   });
                 }}
               >
-                Редактировать
+                <Pencil size={13} /> Редактировать
               </BtnSecondary>
-            </CardFooter>
+            </CardFooterBar>
           </>
         ) : (
           <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
-            <div className="space-y-3 p-5">
+            <div className="space-y-4 p-5">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <Label>Имя</Label>
@@ -171,34 +271,45 @@ export default function ProfilePage() {
               </div>
               {profileApiError && <ErrorBox message={profileApiError} />}
             </div>
-            <CardFooter>
+            <CardFooterBar>
               <BtnSecondary type="button" onClick={() => setEditingProfile(false)}>
                 Отмена
               </BtnSecondary>
               <BtnPrimary type="submit" disabled={profileForm.formState.isSubmitting}>
+                <CheckCircle2 size={13} />
                 {profileForm.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
               </BtnPrimary>
-            </CardFooter>
+            </CardFooterBar>
           </form>
         )}
-      </Card>
+      </SectionCard>
 
-      <Card>
-        <div className="border-b border-(--border) px-5 py-3.5">
-          <div className="flex items-center gap-2">
-            <Shield size={15} className="text-(--fg-muted)" />
-            <p className="text-sm font-bold text-(--fg)">Безопасность</p>
-          </div>
-        </div>
-
+      {/* Security */}
+      <SectionCard
+        icon={Shield}
+        title="Безопасность"
+        subtitle="Пароль и доступ к аккаунту"
+        tone="success"
+      >
         {!editingPassword ? (
           <>
+            <div className="flex items-start gap-3 px-5 py-4">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted ring-1 ring-border">
+                <KeyRound size={13} className="text-muted-foreground" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground">Пароль</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Рекомендуем менять пароль раз в 90 дней
+                </p>
+              </div>
+            </div>
             {passwordSuccess && (
-              <div className="px-5 pt-3">
+              <div className="px-5 pb-3">
                 <SuccessBox message={passwordSuccess} />
               </div>
             )}
-            <CardFooter>
+            <CardFooterBar>
               <BtnSecondary
                 onClick={() => {
                   setEditingPassword(true);
@@ -206,46 +317,58 @@ export default function ProfilePage() {
                   passwordForm.reset();
                 }}
               >
-                <KeyRound size={14} /> Изменить пароль
+                <KeyRound size={13} /> Изменить пароль
               </BtnSecondary>
-            </CardFooter>
+            </CardFooterBar>
           </>
         ) : (
           <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
             <div className="space-y-3 p-5">
               <div>
                 <Label required>Текущий пароль</Label>
-                <Input type="password" {...passwordForm.register('oldPassword')} />
+                <Input type="password" autoComplete="current-password" {...passwordForm.register('oldPassword')} />
               </div>
-              <div>
-                <Label required>Новый пароль</Label>
-                <Input type="password" {...passwordForm.register('newPassword')} />
-              </div>
-              <div>
-                <Label required>Повторите пароль</Label>
-                <Input type="password" {...passwordForm.register('confirm')} />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <Label required>Новый пароль</Label>
+                  <Input type="password" autoComplete="new-password" {...passwordForm.register('newPassword')} />
+                </div>
+                <div>
+                  <Label required>Повторите пароль</Label>
+                  <Input type="password" autoComplete="new-password" {...passwordForm.register('confirm')} />
+                </div>
               </div>
               {passwordApiError && <ErrorBox message={passwordApiError} />}
             </div>
-            <CardFooter>
+            <CardFooterBar>
               <BtnSecondary type="button" onClick={() => setEditingPassword(false)}>
                 Отмена
               </BtnSecondary>
               <BtnPrimary type="submit" disabled={passwordForm.formState.isSubmitting}>
+                <CheckCircle2 size={13} />
                 {passwordForm.formState.isSubmitting ? 'Сохранение...' : 'Изменить'}
               </BtnPrimary>
-            </CardFooter>
+            </CardFooterBar>
           </form>
         )}
-      </Card>
+      </SectionCard>
 
-      <Card>
-        <div className="p-5">
-          <BtnDanger onClick={logout} className="w-full">
-            <LogOut size={15} /> Выйти из аккаунта
+      {/* Logout */}
+      <SectionCard
+        icon={LogOut}
+        title="Выход"
+        subtitle="Завершить текущую сессию"
+        tone="destructive"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+          <p className="text-xs text-muted-foreground">
+            После выхода потребуется ввести логин и пароль заново.
+          </p>
+          <BtnDanger onClick={logout}>
+            <LogOut size={13} /> Выйти из аккаунта
           </BtnDanger>
         </div>
-      </Card>
+      </SectionCard>
     </PageTransition>
   );
 }

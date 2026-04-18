@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown, Search, Check, X, Loader2 } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+
 export interface MultiComboboxOption {
   value: string;
   label: string;
@@ -121,33 +123,39 @@ export function MultiCombobox({
       <Popover.Trigger asChild disabled={disabled}>
         <button
           type="button"
-          className="flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-xl border border-(--border) bg-(--input-bg) px-3 py-1.5 text-left text-sm transition-all duration-200 focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50"
+          className={cn(
+            'flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-3 py-1.5 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
+            'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            'dark:bg-input/30',
+          )}
         >
           {selectedLabels.length > 0 ? (
-            <>
-              {selectedLabels.map((o) => (
+            selectedLabels.map((o) => (
+              <span
+                key={o.value}
+                className="inline-flex items-center gap-1 rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+              >
+                {o.label}
                 <span
-                  key={o.value}
-                  className="inline-flex items-center gap-1 rounded-lg bg-(--primary-subtle) px-2 py-0.5 text-xs font-medium text-(--primary-text)"
+                  role="button"
+                  tabIndex={-1}
+                  onClick={(e) => remove(o.value, e)}
+                  className="rounded p-0.5 transition-colors hover:bg-accent"
                 >
-                  {o.label}
-                  <span
-                    role="button"
-                    tabIndex={-1}
-                    onClick={(e) => remove(o.value, e)}
-                    className="rounded p-0.5 transition-colors hover:bg-(--primary-border)/30"
-                  >
-                    <X size={11} />
-                  </span>
+                  <X size={11} />
                 </span>
-              ))}
-            </>
+              </span>
+            ))
           ) : (
-            <span className="flex-1 py-0.5 text-(--fg-subtle)">{placeholder}</span>
+            <span className="flex-1 py-0.5 text-muted-foreground">{placeholder}</span>
           )}
           <ChevronDown
             size={15}
-            className={`ml-auto shrink-0 text-(--fg-subtle) transition-transform ${open ? 'rotate-180' : ''}`}
+            className={cn(
+              'ml-auto shrink-0 text-muted-foreground transition-transform',
+              open && 'rotate-180',
+            )}
           />
         </button>
       </Popover.Trigger>
@@ -156,23 +164,23 @@ export function MultiCombobox({
         <Popover.Content
           sideOffset={6}
           align="start"
-          className="animate-fade-in-scale z-50 w-(--radix-popover-trigger-width) rounded-xl border border-(--border) bg-(--surface) shadow-lg"
+          className="animate-fade-in-scale z-50 w-(--radix-popover-trigger-width) rounded-md border bg-popover text-popover-foreground shadow-md"
         >
-          <div className="flex items-center gap-2 border-b border-(--border) px-3 py-2">
-            <Search size={15} className="shrink-0 text-(--fg-subtle)" />
+          <div className="flex items-center gap-2 border-b px-3 py-2">
+            <Search size={15} className="shrink-0 text-muted-foreground" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full bg-transparent text-sm text-(--fg) placeholder:text-(--fg-subtle) focus:outline-none"
+              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
             {isAsync && loading && (
-              <Loader2 size={14} className="shrink-0 animate-spin text-(--fg-subtle)" />
+              <Loader2 size={14} className="shrink-0 animate-spin text-muted-foreground" />
             )}
             {value.length > 0 && (
-              <span className="shrink-0 rounded-md bg-(--primary-subtle) px-1.5 py-0.5 text-xs tabular-nums text-(--primary-text)">
+              <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-xs tabular-nums text-secondary-foreground">
                 {value.length}
               </span>
             )}
@@ -180,7 +188,7 @@ export function MultiCombobox({
 
           <div className="max-h-56 overflow-y-auto p-1">
             {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-sm text-(--fg-muted)">
+              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
                 {isAsync && loading ? 'Поиск...' : emptyMessage}
               </p>
             ) : (
@@ -191,17 +199,25 @@ export function MultiCombobox({
                     key={opt.value}
                     type="button"
                     onClick={() => toggle(opt)}
-                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-(--surface-raised) ${isSelected ? 'bg-(--primary-subtle)/50' : ''}`}
+                    className={cn(
+                      'flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+                      isSelected && 'bg-accent/50',
+                    )}
                   >
                     <span
-                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${isSelected ? 'border-(--primary) bg-(--primary) text-(--primary-fg)' : 'border-(--border) text-transparent'}`}
+                      className={cn(
+                        'flex size-4 shrink-0 items-center justify-center rounded-sm border transition-colors',
+                        isSelected
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input text-transparent',
+                      )}
                     >
                       <Check size={11} strokeWidth={3} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <span className="block truncate text-(--fg)">{opt.label}</span>
+                      <span className="block truncate text-foreground">{opt.label}</span>
                       {opt.sublabel && (
-                        <span className="block truncate text-xs text-(--fg-muted)">
+                        <span className="block truncate text-xs text-muted-foreground">
                           {opt.sublabel}
                         </span>
                       )}
@@ -213,11 +229,11 @@ export function MultiCombobox({
           </div>
 
           {value.length > 0 && (
-            <div className="border-t border-(--border) p-1">
+            <div className="border-t p-1">
               <button
                 type="button"
                 onClick={clearAll}
-                className="w-full cursor-pointer rounded-lg px-2.5 py-1.5 text-center text-xs text-(--fg-muted) transition-colors hover:bg-(--surface-raised) hover:text-(--danger-text)"
+                className="w-full cursor-pointer rounded-sm px-2.5 py-1.5 text-center text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-destructive"
               >
                 Очистить все
               </button>

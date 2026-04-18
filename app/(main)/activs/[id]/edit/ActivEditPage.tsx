@@ -20,10 +20,13 @@ import {
   ErrorBox,
   BtnPrimary,
   BtnSecondary,
+  SectionLabel,
+  StatusBadge,
 } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import { Combobox } from '@/components/Combobox';
 import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
+import { Pencil, Clock, FileText, Pill, CircleDot, Building2, Stethoscope } from 'lucide-react';
 
 interface FormValues {
   statusId: string;
@@ -42,9 +45,8 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   const [pickedDrugs, setPickedDrugs] = useState<MultiComboboxOption[]>([]);
   const numId = Number(id);
 
-  const { data: activ, error: activError } = useApi(
-    ['activ', numId],
-    () => activsApi.getById(numId).then((r) => r.data),
+  const { data: activ, error: activError } = useApi(['activ', numId], () =>
+    activsApi.getById(numId).then((r) => r.data),
   );
 
   useEffect(() => {
@@ -138,22 +140,38 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
     }
   }
 
+  const isPhys = activ.physId != null;
+  const TargetIcon = isPhys ? Stethoscope : Building2;
+  const targetName = isPhys ? activ.physName : activ.orgName;
+
   return (
     <div className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href={`/activs/${id}`} />
-        <h2 className="min-w-0 flex-1 truncate text-xl font-semibold text-(--fg)">
-          {activ.physName ?? activ.orgName ?? '—'}
-        </h2>
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
+            <Pencil size={15} className="text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              Редактирование визита
+            </p>
+            <h2 className="flex min-w-0 items-center gap-1.5 truncate text-lg font-bold text-foreground">
+              <TargetIcon size={15} className="shrink-0 text-muted-foreground" />
+              <span className="truncate">{targetName ?? '—'}</span>
+            </h2>
+          </div>
+        </div>
+        <StatusBadge name={activ.statusName} />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-5">
+          <div className="space-y-6 p-5">
             {canEditFields && (
               <>
                 <div>
-                  <Label>Статус</Label>
+                  <SectionLabel icon={CircleDot}>Статус</SectionLabel>
                   <Controller
                     name="statusId"
                     control={control}
@@ -167,47 +185,56 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label>Начало</Label>
-                    <Controller
-                      name="start"
-                      control={control}
-                      render={({ field }) => (
-                        <DateTimePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Дата начала"
-                        />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Label>Конец</Label>
-                    <Controller
-                      name="end"
-                      control={control}
-                      render={({ field }) => (
-                        <DateTimePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Дата окончания"
-                        />
-                      )}
-                    />
+
+                <hr className="border-border" />
+
+                <div>
+                  <SectionLabel icon={Clock}>Время визита</SectionLabel>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <Label>Начало</Label>
+                      <Controller
+                        name="start"
+                        control={control}
+                        render={({ field }) => (
+                          <DateTimePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Дата начала"
+                          />
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <Label>Конец</Label>
+                      <Controller
+                        name="end"
+                        control={control}
+                        render={({ field }) => (
+                          <DateTimePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="Дата окончания"
+                          />
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
-                <hr className="border-(--border)" />
+
+                <hr className="border-border" />
               </>
             )}
 
             <div>
-              <Label>Описание</Label>
+              <SectionLabel icon={FileText}>Описание</SectionLabel>
               <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
             </div>
 
+            <hr className="border-border" />
+
             <div>
-              <Label>Препараты</Label>
+              <SectionLabel icon={Pill}>Препараты</SectionLabel>
               <MultiCombobox
                 asyncSearch={searchDrugOptions}
                 selectedOptions={selectedDrugs}

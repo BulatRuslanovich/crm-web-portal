@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const nunito = Nunito({
+  variable: '--font-nunito',
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
 });
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${geistSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="ru" className={`${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>

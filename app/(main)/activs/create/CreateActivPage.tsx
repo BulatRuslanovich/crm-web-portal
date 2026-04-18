@@ -17,12 +17,21 @@ import {
   ErrorBox,
   BtnSecondary,
   BtnSuccess,
+  SectionLabel,
 } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import { Combobox, type ComboboxOption } from '@/components/Combobox';
 import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
 import { STATUS_PLANNED } from '@/lib/api/statuses';
-import { Building2, Stethoscope } from 'lucide-react';
+import {
+  Building2,
+  Stethoscope,
+  CalendarCheck,
+  Target,
+  Clock,
+  FileText,
+  Pill,
+} from 'lucide-react';
 
 type TargetKind = 'org' | 'phys';
 
@@ -76,9 +85,7 @@ export default function CreateActivPage() {
     const physId = targetKind === 'phys' && values.physId ? Number(values.physId) : null;
 
     if ((orgId == null) === (physId == null)) {
-      setApiError(
-        targetKind === 'org' ? 'Выберите организацию' : 'Выберите врача',
-      );
+      setApiError(targetKind === 'org' ? 'Выберите организацию' : 'Выберите врача');
       return;
     }
 
@@ -99,90 +106,100 @@ export default function CreateActivPage() {
   }
 
   return (
-    <div className="mx-auto w-full">
-      <div className="mb-5 flex items-center gap-3">
+    <div className="mx-auto w-full space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
         <BackButton />
-        <h2 className="text-xl font-semibold text-(--fg)">Новый визит</h2>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
+            <CalendarCheck size={16} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground">Новый визит</h2>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-4">
+          <div className="space-y-6 p-5">
+            {/* Target */}
             <div>
-              <Label required>Цель визита</Label>
-              <div className="flex gap-1 rounded-xl border border-(--border) bg-(--surface-raised) p-1">
+              <SectionLabel icon={Target}>Цель визита</SectionLabel>
+              <div className="mb-3 grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/50 p-1">
                 <button
                   type="button"
                   onClick={() => switchTarget('org')}
-                  className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                  className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                     targetKind === 'org'
-                      ? 'bg-(--surface) text-(--fg) shadow-sm'
-                      : 'text-(--fg-muted) hover:text-(--fg)'
+                      ? 'bg-card text-foreground shadow-sm ring-1 ring-border'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <Building2 size={14} /> Организация
+                  <Building2 size={15} /> Организация
                 </button>
                 <button
                   type="button"
                   onClick={() => switchTarget('phys')}
-                  className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                  className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                     targetKind === 'phys'
-                      ? 'bg-(--surface) text-(--fg) shadow-sm'
-                      : 'text-(--fg-muted) hover:text-(--fg)'
+                      ? 'bg-card text-foreground shadow-sm ring-1 ring-border'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <Stethoscope size={14} /> Врач
+                  <Stethoscope size={15} /> Врач
                 </button>
               </div>
+
+              {targetKind === 'org' ? (
+                <div>
+                  <Label required>Организация</Label>
+                  <Controller
+                    name="orgId"
+                    control={control}
+                    rules={{ required: targetKind === 'org' }}
+                    render={({ field }) => (
+                      <Combobox
+                        asyncSearch={searchOrgOptions}
+                        selectedOption={selectedOrg}
+                        value={field.value}
+                        onChange={(val, opt) => {
+                          field.onChange(val);
+                          setSelectedOrg(opt);
+                        }}
+                        placeholder="Выберите организацию"
+                        searchPlaceholder="Поиск организации..."
+                      />
+                    )}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Label required>Врач</Label>
+                  <Controller
+                    name="physId"
+                    control={control}
+                    rules={{ required: targetKind === 'phys' }}
+                    render={({ field }) => (
+                      <Combobox
+                        asyncSearch={searchPhysOptions}
+                        selectedOption={selectedPhys}
+                        value={field.value}
+                        onChange={(val, opt) => {
+                          field.onChange(val);
+                          setSelectedPhys(opt);
+                        }}
+                        placeholder="Выберите врача"
+                        searchPlaceholder="Поиск врача..."
+                      />
+                    )}
+                  />
+                </div>
+              )}
             </div>
 
-            {targetKind === 'org' ? (
-              <div>
-                <Label required>Организация</Label>
-                <Controller
-                  name="orgId"
-                  control={control}
-                  rules={{ required: targetKind === 'org' }}
-                  render={({ field }) => (
-                    <Combobox
-                      asyncSearch={searchOrgOptions}
-                      selectedOption={selectedOrg}
-                      value={field.value}
-                      onChange={(val, opt) => {
-                        field.onChange(val);
-                        setSelectedOrg(opt);
-                      }}
-                      placeholder="Выберите организацию"
-                      searchPlaceholder="Поиск организации..."
-                    />
-                  )}
-                />
-              </div>
-            ) : (
-              <div>
-                <Label required>Врач</Label>
-                <Controller
-                  name="physId"
-                  control={control}
-                  rules={{ required: targetKind === 'phys' }}
-                  render={({ field }) => (
-                    <Combobox
-                      asyncSearch={searchPhysOptions}
-                      selectedOption={selectedPhys}
-                      value={field.value}
-                      onChange={(val, opt) => {
-                        field.onChange(val);
-                        setSelectedPhys(opt);
-                      }}
-                      placeholder="Выберите врача"
-                      searchPlaceholder="Поиск врача..."
-                    />
-                  )}
-                />
-              </div>
-            )}
+            <hr className="border-border" />
 
+            {/* Time */}
             <div>
+              <SectionLabel icon={Clock}>Время</SectionLabel>
               <Label>Дата начала</Label>
               <Controller
                 name="start"
@@ -197,13 +214,19 @@ export default function CreateActivPage() {
               />
             </div>
 
+            <hr className="border-border" />
+
+            {/* Description */}
             <div>
-              <Label>Описание</Label>
+              <SectionLabel icon={FileText}>Описание</SectionLabel>
               <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
             </div>
 
+            <hr className="border-border" />
+
+            {/* Drugs */}
             <div>
-              <Label>Препараты</Label>
+              <SectionLabel icon={Pill}>Препараты</SectionLabel>
               <Controller
                 name="drugIds"
                 control={control}

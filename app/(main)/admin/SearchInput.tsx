@@ -14,7 +14,7 @@ export function SearchInput({
     <div className="relative flex-1">
       <Search
         size={15}
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-(--fg-muted)"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
       />
       <Input
         value={value}

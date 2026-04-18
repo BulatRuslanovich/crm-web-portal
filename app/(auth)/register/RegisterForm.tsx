@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { UserPlus } from 'lucide-react';
+import { AuthFormShell } from '@/components/auth/auth-form-shell';
 
 interface FormValues {
   firstName: string;
@@ -63,34 +64,46 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="p-6">
-      <h2 className="mb-1 text-xl font-bold text-(--fg)">Регистрация</h2>
-      <p className="mb-5 text-sm text-(--fg-muted)">Создайте аккаунт для работы с системой</p>
+
+    <AuthFormShell
+      title="Регистрация"
+      subtitle="Создайте аккаунт для работы с системой"
+      footer={
+        <>
+            <span className="text-muted-foreground">
+              Нет аккаунта?{' '}
+              <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
+                Войти
+              </Link>
+            </span>
+        </>
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label>Имя</Label>
+            <Label required>Имя</Label>
             <Input type="text" placeholder="Иван" {...register('firstName')} />
           </div>
           <div>
-            <Label>Фамилия</Label>
+            <Label required>Фамилия</Label>
             <Input type="text" placeholder="Иванов" {...register('lastName')} />
           </div>
         </div>
         <div>
-          <Label>Логин</Label>
+          <Label required>Логин</Label>
           <Input type="text" placeholder="ivanov" {...register('login')} />
         </div>
         <div>
-          <Label>Email</Label>
+          <Label required>Email</Label>
           <Input type="email" placeholder="ivan@example.com" {...register('email')} />
         </div>
         <div>
-          <Label>Пароль</Label>
+          <Label required>Пароль</Label>
           <Input type="password" placeholder="Минимум 8 символов" {...register('password')} />
         </div>
         <div>
-          <Label>Подтвердите пароль</Label>
+          <Label required>Подтвердите пароль</Label>
           <Input
             type="password"
             placeholder="Минимум 8 символов"
@@ -105,12 +118,6 @@ export default function RegisterForm() {
           {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
         </BtnSuccess>
       </form>
-      <div className="mt-5 border-t border-(--border) pt-5 text-center text-sm text-(--fg-muted)">
-        Уже есть аккаунт?{' '}
-        <Link href="/login" className="font-medium text-(--primary-text) hover:underline">
-          Войти
-        </Link>
-      </div>
-    </div>
+    </AuthFormShell>
   );
 }

@@ -5,36 +5,42 @@ import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input as ShadInput } from '@/components/ui/input';
+import { Textarea as ShadTextarea } from '@/components/ui/textarea';
+import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
 /* ── Status Badge ──────────────────────────────────────────────────────────── */
 export function StatusBadge({ name }: { name: string }) {
   const n = name.toLowerCase();
-  let cls = 'bg-(--neutral-subtle) text-(--neutral-text) border-(--neutral-border)';
-  if (n === 'запланирован')
-    cls = 'bg-(--primary-subtle) text-(--primary-text) border-(--primary-border)';
-  else if (n === 'открыт') cls = 'bg-(--warn-subtle) text-(--warn-text) border-(--warn-border)';
-  else if (n === 'сохранен')
-    cls = 'bg-(--violet-subtle) text-(--violet-text) border-(--violet-border)';
-  else if (n === 'закрыт')
-    cls = 'bg-(--success-subtle) text-(--success-text) border-(--success-border)';
+  const variant: React.ComponentProps<typeof Badge>['variant'] =
+    n === 'запланирован'
+      ? 'default'
+      : n === 'открыт'
+        ? 'warning'
+        : n === 'сохранен'
+          ? 'secondary'
+          : n === 'закрыт'
+            ? 'success'
+            : 'outline';
+  const dotColor =
+    n === 'запланирован'
+      ? 'bg-primary-foreground'
+      : n === 'открыт'
+        ? 'bg-warning-foreground'
+        : n === 'сохранен'
+          ? 'bg-muted-foreground'
+          : n === 'закрыт'
+            ? 'bg-success-foreground'
+            : 'bg-muted-foreground';
   return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium backdrop-blur-sm ${cls}`}
-    >
-      <span
-        className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-          n === 'запланирован'
-            ? 'bg-(--primary)'
-            : n === 'открыт'
-              ? 'bg-(--warn)'
-              : n === 'сохранен'
-                ? 'bg-(--violet-text)'
-                : n === 'закрыт'
-                  ? 'bg-(--success)'
-                  : 'bg-(--fg-subtle)'
-        }`}
-      />
+    <Badge variant={variant} className="rounded-full">
+      <span className={cn('mr-1 size-1.5 rounded-full', dotColor)} />
       {name}
-    </span>
+    </Badge>
   );
 }
 
@@ -51,8 +57,8 @@ export function PageHeader({
   return (
     <div className="mb-6 flex items-center justify-between">
       <div>
-        <h2 className="text-xl font-bold text-(--fg)">{title}</h2>
-        {subtitle && <p className="mt-0.5 text-sm text-(--fg-muted)">{subtitle}</p>}
+        <h2 className="text-xl font-bold text-foreground">{title}</h2>
+        {subtitle && <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -71,12 +77,12 @@ export function Field({
 }) {
   return (
     <div className="group">
-      <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-(--fg-muted) uppercase">
-        {Icon && <Icon size={12} strokeWidth={2} className="text-(--fg-subtle)" />}
+      <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+        {Icon && <Icon size={12} strokeWidth={2} className="text-muted-foreground/70" />}
         {label}
       </p>
-      <p className="text-sm leading-relaxed text-(--fg)">
-        {value || <span className="text-(--fg-subtle)">--</span>}
+      <p className="text-sm leading-relaxed text-foreground">
+        {value || <span className="text-muted-foreground/70">--</span>}
       </p>
     </div>
   );
@@ -92,8 +98,10 @@ export function Card({
 }) {
   return (
     <div
-      className={`hover-glow overflow-hidden rounded-2xl border border-(--border) bg-(--surface) transition-shadow duration-200 ${className}`}
-      style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
+      className={cn(
+        'overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-shadow duration-200 hover:shadow-md',
+        className,
+      )}
     >
       {children}
     </div>
@@ -107,12 +115,12 @@ export function CardHeader({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={`border-b border-(--border) px-5 py-4 ${className}`}>{children}</div>;
+  return <div className={cn('border-b px-5 py-4', className)}>{children}</div>;
 }
 
 export function CardFooter({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex justify-end gap-2 rounded-b-2xl border-t border-(--border) bg-(--surface-raised)/50 px-5 py-4">
+    <div className="flex justify-end gap-2 rounded-b-xl border-t bg-muted/40 px-5 py-4">
       {children}
     </div>
   );
@@ -129,11 +137,13 @@ export function SectionLabel({
   return (
     <div className="mb-3 flex items-center gap-2">
       {Icon && (
-        <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-(--primary-subtle)">
-          <Icon size={12} strokeWidth={2} className="text-(--primary-text)" />
+        <div className="flex size-6 items-center justify-center rounded-md bg-accent text-accent-foreground">
+          <Icon size={12} strokeWidth={2} />
         </div>
       )}
-      <p className="text-xs font-bold tracking-wider text-(--fg-muted) uppercase">{children}</p>
+      <p className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+        {children}
+      </p>
     </div>
   );
 }
@@ -141,11 +151,7 @@ export function SectionLabel({
 /* ── Form Controls ─────────────────────────────────────────────────────────── */
 export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className = '', ...props }, ref) => (
-    <input
-      ref={ref}
-      className={`h-10 w-full rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50 ${className}`}
-      {...props}
-    />
+    <ShadInput ref={ref} className={cn('h-10', className)} {...props} />
   ),
 );
 Input.displayName = 'Input';
@@ -154,11 +160,7 @@ export const Textarea = forwardRef<
   HTMLTextAreaElement,
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
 >(({ className = '', ...props }, ref) => (
-  <textarea
-    ref={ref}
-    className={`w-full resize-none rounded-xl border border-(--border) bg-(--input-bg) px-3.5 py-2.5 text-sm text-(--fg) transition-all duration-200 placeholder:text-(--fg-subtle) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none ${className}`}
-    {...props}
-  />
+  <ShadTextarea ref={ref} className={cn('resize-none', className)} {...props} />
 ));
 Textarea.displayName = 'Textarea';
 
@@ -166,7 +168,13 @@ export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<H
   ({ className = '', children, ...props }, ref) => (
     <select
       ref={ref}
-      className={`h-10 w-full rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-sm text-(--fg) transition-all duration-200 focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50 ${className}`}
+      className={cn(
+        'flex h-10 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow]',
+        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        'dark:bg-input/30',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -177,92 +185,70 @@ Select.displayName = 'Select';
 
 export function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (
-    <label className="mb-1.5 block text-sm font-medium text-(--fg)">
+    <label className="mb-1.5 block text-sm font-medium text-foreground">
       {children}
-      {required && <span className="ml-0.5 text-(--danger)">*</span>}
+      {required && <span className="ml-0.5 text-destructive">*</span>}
     </label>
   );
 }
 
 export function ErrorBox({ message }: { message: string }) {
   return (
-    <div className="animate-fade-in flex items-start gap-2.5 rounded-xl border border-(--danger-border) bg-(--danger-subtle) px-3.5 py-3 text-sm whitespace-pre-line text-(--danger-text)">
-      <AlertCircle size={16} className="mt-0.5 shrink-0" />
-      <span>{message}</span>
-    </div>
+    <Alert variant="destructive" className="animate-fade-in whitespace-pre-line">
+      <AlertCircle />
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
   );
 }
 
 export function SuccessBox({ message }: { message: string }) {
   return (
-    <div className="animate-fade-in flex items-start gap-2.5 rounded-xl border border-(--success-border) bg-(--success-subtle) px-3.5 py-3 text-sm text-(--success-text)">
-      <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
-      <span>{message}</span>
-    </div>
+    <Alert variant="success" className="animate-fade-in">
+      <CheckCircle2 />
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
   );
 }
 
 /* ── Buttons ───────────────────────────────────────────────────────────────── */
-const btnBase =
-  'inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-medium rounded-xl disabled:opacity-50 transition-all duration-200 active:scale-[0.97] cursor-pointer disabled:cursor-default';
+type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function BtnPrimary({
-  children,
-  className = '',
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BtnPrimary({ children, className = '', ...props }: BtnProps) {
   return (
-    <button
-      className={`${btnBase} bg-(--primary) text-(--primary-fg) shadow-sm hover:bg-(--primary-hover) hover:shadow-md ${className}`}
-      {...props}
-    >
+    <Button className={cn('h-10 px-4', className)} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 
-export function BtnSuccess({
-  children,
-  className = '',
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BtnSuccess({ children, className = '', ...props }: BtnProps) {
   return (
-    <button
-      className={`${btnBase} bg-(--success) text-(--success-fg) shadow-sm hover:bg-(--success-hover) hover:shadow-md ${className}`}
-      {...props}
-    >
+    <Button variant="success" className={cn('h-10 px-4', className)} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 
-export function BtnSecondary({
-  children,
-  className = '',
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BtnSecondary({ children, className = '', ...props }: BtnProps) {
   return (
-    <button
-      className={`${btnBase} border border-(--border) bg-(--surface) text-(--fg) hover:border-(--fg-subtle)/30 hover:bg-(--surface-raised) ${className}`}
-      {...props}
-    >
+    <Button variant="outline" className={cn('h-10 px-4', className)} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 
-export function BtnDanger({
-  children,
-  className = '',
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BtnDanger({ children, className = '', ...props }: BtnProps) {
   return (
-    <button
-      className={`${btnBase} border border-(--border) bg-(--surface) text-(--danger-text) hover:border-(--danger-border) hover:bg-(--danger-subtle) ${className}`}
+    <Button
+      variant="outline"
+      className={cn(
+        'h-10 px-4 text-destructive hover:bg-destructive/10 hover:text-destructive',
+        className,
+      )}
       {...props}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -276,53 +262,48 @@ export function LinkButton({
   variant?: 'primary' | 'success';
   children: React.ReactNode;
 }) {
-  const colors =
-    variant === 'success'
-      ? 'text-(--success-fg) bg-(--success) hover:bg-(--success-hover)'
-      : 'text-(--primary-fg) bg-(--primary) hover:bg-(--primary-hover)';
   return (
-    <Link href={href} className={`${btnBase} ${colors} shadow-sm hover:shadow-md`}>
-      {children}
-    </Link>
+    <Button asChild variant={variant === 'success' ? 'success' : 'default'} className="h-10 px-4">
+      <Link href={href}>{children}</Link>
+    </Button>
   );
 }
 
 /* ── Back Button ───────────────────────────────────────────────────────────── */
 export function BackButton({ href, onClick }: { href?: string; onClick?: () => void }) {
   const router = useRouter();
-  const cls = `${btnBase} border border-(--border) bg-(--surface) text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg)`;
-  const style = { boxShadow: 'var(--shadow-sm)' };
   const content = (
     <>
-      <ArrowLeft size={14} strokeWidth={2} />
+      <ArrowLeft />
       Назад
     </>
   );
   if (href) {
     return (
-      <Link href={href} className={cls} style={style}>
-        {content}
-      </Link>
+      <Button asChild variant="outline" className="h-10 px-4">
+        <Link href={href}>{content}</Link>
+      </Button>
     );
   }
   return (
-    <button onClick={onClick ?? (() => router.back())} className={cls} style={style}>
+    <Button
+      variant="outline"
+      className="h-10 px-4"
+      onClick={onClick ?? (() => router.back())}
+    >
       {content}
-    </button>
+    </Button>
   );
 }
 
 /* ── Skeleton ──────────────────────────────────────────────────────────────── */
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-skeleton rounded-xl bg-(--surface-raised) ${className}`} />;
+  return <ShadSkeleton className={cn('rounded-md', className)} />;
 }
 
 export function CardSkeleton() {
   return (
-    <div
-      className="animate-fade-in space-y-3 rounded-2xl border border-(--border) bg-(--surface) p-5"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
-    >
+    <div className="animate-fade-in space-y-3 rounded-xl border bg-card p-5 shadow-sm">
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-4 w-2/3" />
       <Skeleton className="h-4 w-1/2" />
@@ -333,14 +314,11 @@ export function CardSkeleton() {
 
 export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div
-      className="animate-fade-in divide-y divide-(--border) rounded-2xl border border-(--border) bg-(--surface)"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
-    >
+    <div className="animate-fade-in divide-y rounded-xl border bg-card shadow-sm">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center justify-between gap-4 px-5 py-4">
           <div className="flex flex-1 items-center gap-3">
-            <Skeleton className="h-9 w-9 shrink-0 rounded-xl" />
+            <Skeleton className="size-9 shrink-0 rounded-md" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-2/5" />
               <Skeleton className="h-3 w-1/3" />
@@ -356,14 +334,11 @@ export function ListSkeleton({ rows = 4 }: { rows?: number }) {
 /* ── Empty State ───────────────────────────────────────────────────────────── */
 export function EmptyState({ message, action }: { message: string; action?: React.ReactNode }) {
   return (
-    <div
-      className="animate-fade-in rounded-2xl border border-(--border) bg-(--surface) px-4 py-20 text-center"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
-    >
-      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-(--surface-raised)">
+    <div className="animate-fade-in rounded-xl border bg-card px-4 py-20 text-center shadow-sm">
+      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-xl bg-muted">
         <span className="text-2xl">&#128203;</span>
       </div>
-      <p className="text-sm text-(--fg-muted)">{message}</p>
+      <p className="text-sm text-muted-foreground">{message}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
@@ -382,13 +357,14 @@ export function Pagination({
   if (totalPages <= 1) return null;
   return (
     <div className="mt-5 flex items-center justify-center gap-1.5">
-      <button
+      <Button
+        variant="outline"
+        size="icon"
         onClick={() => onPage(page - 1)}
         disabled={page === 1}
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-(--border) bg-(--surface) text-(--fg) transition-all hover:bg-(--surface-raised) disabled:cursor-default disabled:opacity-30"
       >
-        <ChevronLeft size={16} />
-      </button>
+        <ChevronLeft />
+      </Button>
       {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
         let p: number;
         if (totalPages <= 7) {
@@ -401,26 +377,24 @@ export function Pagination({
           p = page - 3 + i;
         }
         return (
-          <button
+          <Button
             key={p}
+            variant={p === page ? 'default' : 'outline'}
+            size="icon"
             onClick={() => onPage(p)}
-            className={`inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-sm font-medium transition-all ${
-              p === page
-                ? 'bg-(--primary) text-(--primary-fg) shadow-sm'
-                : 'border border-(--border) bg-(--surface) text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg)'
-            }`}
           >
             {p}
-          </button>
+          </Button>
         );
       })}
-      <button
+      <Button
+        variant="outline"
+        size="icon"
         onClick={() => onPage(page + 1)}
         disabled={page === totalPages}
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-(--border) bg-(--surface) text-(--fg) transition-all hover:bg-(--surface-raised) disabled:cursor-default disabled:opacity-30"
       >
-        <ChevronRight size={16} />
-      </button>
+        <ChevronRight />
+      </Button>
     </div>
   );
 }

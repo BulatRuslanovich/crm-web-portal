@@ -7,6 +7,8 @@ import { format, parse, isValid, setHours, setMinutes } from 'date-fns';
 import * as Popover from '@radix-ui/react-popover';
 import { Calendar, Clock, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+
 const FMT_DISPLAY = 'dd.MM.yyyy HH:mm';
 const FMT_VALUE = "yyyy-MM-dd'T'HH:mm";
 
@@ -75,20 +77,25 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
           <Popover.Trigger asChild disabled={disabled}>
             <button
               type="button"
-              className="flex h-10 w-full items-center gap-2 rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-left text-sm transition-all duration-200 focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none disabled:opacity-50"
+              className={cn(
+                'flex h-10 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
+                'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+                'disabled:cursor-not-allowed disabled:opacity-50',
+                'dark:bg-input/30',
+              )}
             >
-              <Calendar size={15} className="shrink-0 text-(--fg-subtle)" />
+              <Calendar size={15} className="shrink-0 text-muted-foreground" />
               {validDate ? (
-                <span className="flex-1 text-(--fg)">{format(validDate, FMT_DISPLAY)}</span>
+                <span className="flex-1 text-foreground">{format(validDate, FMT_DISPLAY)}</span>
               ) : (
-                <span className="flex-1 text-(--fg-subtle)">{placeholder}</span>
+                <span className="flex-1 text-muted-foreground">{placeholder}</span>
               )}
               {validDate && (
                 <span
                   role="button"
                   tabIndex={-1}
                   onClick={handleClear}
-                  className="shrink-0 rounded-md p-0.5 text-(--fg-subtle) hover:bg-(--surface-raised) hover:text-(--fg)"
+                  className="shrink-0 rounded-sm p-0.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   <X size={14} />
                 </span>
@@ -100,7 +107,7 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
             <Popover.Content
               sideOffset={6}
               align="start"
-              className="animate-fade-in-scale z-50 rounded-xl border border-(--border) bg-(--surface) shadow-lg"
+              className="animate-fade-in-scale z-50 rounded-md border bg-popover text-popover-foreground shadow-md"
             >
               <DayPicker
                 mode="single"
@@ -122,30 +129,30 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
                   months: 'flex flex-col',
                   month: 'space-y-3',
                   month_caption: 'flex justify-center',
-                  caption_label: 'text-sm font-medium text-(--fg) capitalize',
+                  caption_label: 'text-sm font-medium capitalize',
                   nav: 'flex items-center justify-between absolute inset-x-3 top-3',
                   button_previous:
-                    'h-7 w-7 flex items-center justify-center rounded-lg text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg) transition-colors',
+                    'h-7 w-7 flex items-center justify-center rounded-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors',
                   button_next:
-                    'h-7 w-7 flex items-center justify-center rounded-lg text-(--fg-muted) hover:bg-(--surface-raised) hover:text-(--fg) transition-colors',
+                    'h-7 w-7 flex items-center justify-center rounded-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors',
                   weekdays: 'flex',
-                  weekday: 'w-9 text-center text-xs font-medium text-(--fg-subtle)',
+                  weekday: 'w-9 text-center text-xs font-medium text-muted-foreground',
                   week: 'flex mt-1',
                   day: 'text-center text-sm',
                   day_button:
-                    'h-9 w-9 rounded-lg font-normal transition-colors hover:bg-(--surface-raised) text-(--fg) cursor-pointer',
+                    'h-9 w-9 rounded-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer',
                   selected:
-                    '[&_.rdp-day_button]:bg-(--primary) [&_.rdp-day_button]:text-(--primary-fg) [&_.rdp-day_button]:hover:bg-(--primary-hover) [&_.rdp-day_button]:font-medium',
-                  today: '[&_.rdp-day_button]:border [&_.rdp-day_button]:border-(--primary-border)',
-                  outside: '[&_.rdp-day_button]:text-(--fg-subtle) [&_.rdp-day_button]:opacity-40',
+                    '[&_.rdp-day_button]:bg-primary [&_.rdp-day_button]:text-primary-foreground [&_.rdp-day_button]:hover:bg-primary/90 [&_.rdp-day_button]:font-medium',
+                  today: '[&_.rdp-day_button]:border [&_.rdp-day_button]:border-primary',
+                  outside: '[&_.rdp-day_button]:text-muted-foreground [&_.rdp-day_button]:opacity-40',
                 }}
               />
 
-              <div className="flex items-center gap-3 border-t border-(--border) px-3 py-2.5">
-                <Clock size={15} className="shrink-0 text-(--fg-subtle)" />
+              <div className="flex items-center gap-3 border-t px-3 py-2.5">
+                <Clock size={15} className="shrink-0 text-muted-foreground" />
                 <div className="flex items-center gap-1">
                   <TimeSelect value={hours} max={23} onChange={handleHoursChange} />
-                  <span className="text-(--fg-muted)">:</span>
+                  <span className="text-muted-foreground">:</span>
                   <TimeSelect value={minutes} max={59} step={5} onChange={handleMinutesChange} />
                 </div>
               </div>
@@ -178,7 +185,11 @@ function TimeSelect({
     <select
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
-      className="h-8 rounded-lg border border-(--border) bg-(--input-bg) px-2 text-center text-sm tabular-nums text-(--fg) focus:border-(--ring) focus:ring-2 focus:ring-(--ring)/40 focus:outline-none"
+      className={cn(
+        'h-8 rounded-sm border border-input bg-transparent px-2 text-center text-sm tabular-nums text-foreground outline-none transition-[color,box-shadow]',
+        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+        'dark:bg-input/30',
+      )}
     >
       {options.map((v) => (
         <option key={v} value={v}>

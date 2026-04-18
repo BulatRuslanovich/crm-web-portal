@@ -11,6 +11,7 @@ export const activsApi = {
     statusesFilter?: number[],
     dateFrom?: string,
     dateTo?: string,
+    usrId?: number,
   ) =>
     apiClient.get<PagedResponse<ActivResponse>>('/api/activs', {
       params: {
@@ -22,6 +23,7 @@ export const activsApi = {
         statuses: statusesFilter,
         dateFrom,
         dateTo,
+        usrId,
       },
     }),
 

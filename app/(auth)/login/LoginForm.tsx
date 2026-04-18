@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { LogIn } from 'lucide-react';
+import { AuthFormShell } from '@/components/auth/auth-form-shell';
 
 interface FormValues {
   login: string;
@@ -36,9 +37,25 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="p-6">
-      <h2 className="mb-1 text-xl font-bold text-(--fg)">Вход</h2>
-      <p className="mb-5 text-sm text-(--fg-muted)">Войдите в свой аккаунт</p>
+    <AuthFormShell
+  title="Вход"
+  subtitle="Войдите в свой аккаунт"
+  footer={
+    <>
+        <Link href="/forgot-password" className="text-foreground underline-offset-4 hover:underline">
+          Забыли пароль?
+        </Link>
+
+        <span className="text-muted-foreground">
+          Нет аккаунта?{' '}
+          <Link href="/register" className="font-medium text-foreground underline-offset-4 hover:underline">
+            Зарегистрироваться
+          </Link>
+        </span>
+    </>
+  }
+>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Логин</Label>
@@ -58,18 +75,6 @@ export default function LoginForm() {
         </BtnSuccess>
       </form>
 
-      <div className="mt-5 flex flex-col gap-2 border-t border-(--border) pt-5 text-center text-sm">
-        <Link href="/forgot-password" className="text-(--primary-text) hover:underline">
-          Забыли пароль?
-        </Link>
-
-        <span className="text-(--fg-muted)">
-          Нет аккаунта?{' '}
-          <Link href="/register" className="font-medium text-(--primary-text) hover:underline">
-            Зарегистрироваться
-          </Link>
-        </span>
-      </div>
-    </div>
+      </AuthFormShell>
   );
 }

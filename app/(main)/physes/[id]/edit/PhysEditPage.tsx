@@ -19,9 +19,18 @@ import {
   ErrorBox,
   BtnPrimary,
   BtnSecondary,
+  SectionLabel,
 } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
 import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
+import {
+  Pencil,
+  User,
+  BriefcaseMedical,
+  Phone,
+  Building2,
+  Stethoscope,
+} from 'lucide-react';
 
 interface FormValues {
   specId: string;
@@ -40,9 +49,8 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   const [pickedOrgs, setPickedOrgs] = useState<MultiComboboxOption[]>([]);
 
   const numId = Number(id);
-  const { data: phys, error: physError } = useApi(
-    ['phys', numId],
-    () => physesApi.getById(numId).then((r) => r.data),
+  const { data: phys, error: physError } = useApi(['phys', numId], () =>
+    physesApi.getById(numId).then((r) => r.data),
   );
 
   useEffect(() => {
@@ -137,7 +145,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
         firstName: values.firstName || null,
         middleName: values.middleName || null,
         phone: values.phone || null,
-        email: values.email || null
+        email: values.email || null,
       });
 
       const { toAdd, toRemove } = orgs.diff();
@@ -156,59 +164,93 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     <div className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href={`/physes/${id}`} />
-        <h2 className="flex-1 text-xl font-semibold text-(--fg)">{fullName}</h2>
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
+            <Pencil size={15} className="text-warning" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              Редактирование врача
+            </p>
+            <h2 className="flex min-w-0 items-center gap-1.5 truncate text-lg font-bold text-foreground">
+              <Stethoscope size={15} className="shrink-0 text-muted-foreground" />
+              <span className="truncate">{fullName}</span>
+            </h2>
+          </div>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-5">
+          <div className="space-y-6 p-5">
             <div>
-              <Label required>Фамилия</Label>
-              <Input type="text" {...register('lastName')} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label required>Имя</Label>
-                <Input type="text" {...register('firstName')} />
-              </div>
-              <div>
-                <Label required>Отчество</Label>
-                <Input type="text" {...register('middleName')} />
-              </div>
-            </div>
-            <div>
-              <Label>Специальность</Label>
-              <Controller
-                name="specId"
-                control={control}
-                render={({ field }) => (
-                  <Combobox
-                    options={specOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Не указана"
-                    searchPlaceholder="Поиск специальности..."
-                  />
-                )}
-              />
-            </div>
-            <div>
-              <Label>Должность</Label>
-              <Input type="text" {...register('position')} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Телефон</Label>
-                <Input type="tel" {...register('phone')} />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input type="email" {...register('email')} />
+              <SectionLabel icon={User}>ФИО</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label required>Фамилия</Label>
+                  <Input type="text" {...register('lastName')} />
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label required>Имя</Label>
+                    <Input type="text" {...register('firstName')} />
+                  </div>
+                  <div>
+                    <Label required>Отчество</Label>
+                    <Input type="text" {...register('middleName')} />
+                  </div>
+                </div>
               </div>
             </div>
 
+            <hr className="border-border" />
+
             <div>
-              <Label>Организации</Label>
+              <SectionLabel icon={BriefcaseMedical}>Специальность</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label>Специальность</Label>
+                  <Controller
+                    name="specId"
+                    control={control}
+                    render={({ field }) => (
+                      <Combobox
+                        options={specOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Не указана"
+                        searchPlaceholder="Поиск специальности..."
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <Label>Должность</Label>
+                  <Input type="text" {...register('position')} />
+                </div>
+              </div>
+            </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={Phone}>Контакты</SectionLabel>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label>Телефон</Label>
+                  <Input type="tel" {...register('phone')} />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input type="email" {...register('email')} />
+                </div>
+              </div>
+            </div>
+
+            <hr className="border-border" />
+
+            <div>
+              <SectionLabel icon={Building2}>Организации</SectionLabel>
               <MultiCombobox
                 asyncSearch={searchOrgOptions}
                 selectedOptions={selectedOrgs}

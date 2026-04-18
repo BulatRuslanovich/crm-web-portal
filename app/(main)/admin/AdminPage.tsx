@@ -18,6 +18,33 @@ import { SpecsSection } from './SpecsSection';
 
 type Tab = 'users' | 'drugs' | 'specs' | 'departments';
 
+const TABS: {
+  key: Tab;
+  label: string;
+  subtitle: string;
+  icon: React.ElementType;
+  tone: 'primary' | 'success' | 'warning' | 'default';
+}[] = [
+  { key: 'users', label: 'Пользователи', subtitle: 'Учётные записи и роли', icon: Users, tone: 'primary' },
+  { key: 'departments', label: 'Департаменты', subtitle: 'Состав и видимость', icon: Building, tone: 'success' },
+  { key: 'drugs', label: 'Препараты', subtitle: 'Справочник препаратов', icon: Pill, tone: 'warning' },
+  { key: 'specs', label: 'Специальности', subtitle: 'Справочник специальностей', icon: GraduationCap, tone: 'default' },
+];
+
+function toneRing(tone: 'primary' | 'success' | 'warning' | 'default', active: boolean) {
+  if (!active) return 'bg-muted text-muted-foreground ring-border';
+  switch (tone) {
+    case 'primary':
+      return 'bg-primary/10 text-primary ring-primary/20';
+    case 'success':
+      return 'bg-success/10 text-success ring-success/20';
+    case 'warning':
+      return 'bg-warning/15 text-warning ring-warning/25';
+    default:
+      return 'bg-foreground/10 text-foreground ring-foreground/20';
+  }
+}
+
 export default function AdminPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -30,46 +57,81 @@ export default function AdminPage() {
 
   if (!isAdmin) return null;
 
-  const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
-    { key: 'users', label: 'Пользователи', icon: Users },
-    { key: 'departments', label: 'Департаменты', icon: Building },
-    { key: 'drugs', label: 'Препараты', icon: Pill },
-    { key: 'specs', label: 'Специальности', icon: GraduationCap },
-  ];
+  const activeTab = TABS.find((t) => t.key === tab)!;
 
   return (
-    <PageTransition className="mx-auto w-full space-y-4">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--violet-subtle)">
-          <ShieldCheck size={18} className="text-(--violet-text)" />
+    <PageTransition className="mx-auto w-full space-y-5">
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-warning/10 via-muted to-card shadow-sm">
+        <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
+              <ShieldCheck size={20} className="text-warning" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+                Панель администратора
+              </p>
+              <h2 className="text-xl font-bold text-foreground">Администрирование</h2>
+              <p className="mt-0.5 text-xs text-muted-foreground">{activeTab.subtitle}</p>
+            </div>
+          </div>
+          <div className="hidden shrink-0 sm:block">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/15 px-3 py-1 text-xs font-semibold text-warning">
+              <ShieldCheck size={12} />
+              Admin access
+            </span>
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-(--fg)">Администрирование</h2>
       </div>
 
-      <div className="mb-5 flex gap-1 rounded-xl border border-(--border) bg-(--surface-raised) p-1">
-        {tabs.map((t) => {
+      {/* Tabs */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {TABS.map((t) => {
           const Icon = t.icon;
+          const active = tab === t.key;
           return (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex flex-1 cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                tab === t.key
-                  ? 'bg-(--surface) text-(--fg) shadow-sm'
-                  : 'text-(--fg-muted) hover:text-(--fg)'
+              className={`group relative flex cursor-pointer items-center gap-2.5 rounded-2xl border p-3 text-left transition-all duration-200 ${
+                active
+                  ? 'border-primary/40 bg-card shadow-sm ring-1 ring-primary/20'
+                  : 'border-border bg-card/50 hover:border-border hover:bg-card'
               }`}
             >
-              <Icon size={15} />
-              <span className="hidden sm:inline">{t.label}</span>
+              <div
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 transition-colors ${toneRing(
+                  t.tone,
+                  active,
+                )}`}
+              >
+                <Icon size={15} />
+              </div>
+              <div className="min-w-0">
+                <p
+                  className={`text-sm font-semibold ${
+                    active ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
+                  }`}
+                >
+                  {t.label}
+                </p>
+                <p className="hidden truncate text-[10px] text-muted-foreground/80 sm:block">
+                  {t.subtitle}
+                </p>
+              </div>
             </button>
           );
         })}
       </div>
 
-      {tab === 'users' && <UsersSection />}
-      {tab === 'departments' && <DepartmentsSection />}
-      {tab === 'drugs' && <DrugsSection />}
-      {tab === 'specs' && <SpecsSection />}
+      {/* Content */}
+      <div>
+        {tab === 'users' && <UsersSection />}
+        {tab === 'departments' && <DepartmentsSection />}
+        {tab === 'drugs' && <DrugsSection />}
+        {tab === 'specs' && <SpecsSection />}
+      </div>
     </PageTransition>
   );
 }

@@ -140,7 +140,7 @@ function LocateControl() {
           onClick={locate}
           disabled={busy}
           title="Моё местоположение"
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-(--border) bg-(--surface) text-(--fg) shadow-md transition-all hover:bg-(--surface-raised) disabled:opacity-50"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-foreground shadow-md transition-all hover:bg-muted disabled:opacity-50"
         >
           <Locate size={16} className={busy ? 'animate-pulse' : ''} />
         </button>
@@ -163,16 +163,16 @@ function OrgPopup({ org }: { org: OrgResponse }) {
           {org.orgTypeName}
         </span>
       </div>
-      <div className="mb-1 text-sm font-bold text-(--fg)">{org.orgName}</div>
+      <div className="mb-1 text-sm font-bold text-foreground">{org.orgName}</div>
       {org.address && (
-        <div className="mb-1 text-xs text-(--fg-muted)">{org.address}</div>
+        <div className="mb-1 text-xs text-muted-foreground">{org.address}</div>
       )}
       {org.inn && (
-        <div className="mb-2 text-[11px] text-(--fg-subtle)">ИНН: {org.inn}</div>
+        <div className="mb-2 text-[11px] text-muted-foreground/70">ИНН: {org.inn}</div>
       )}
       <a
         href={`/orgs/${org.orgId}`}
-        className="inline-block text-xs font-semibold text-(--primary-text) hover:underline"
+        className="inline-block text-xs font-semibold text-foreground hover:underline"
       >
         Открыть →
       </a>

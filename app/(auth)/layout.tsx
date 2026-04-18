@@ -3,7 +3,9 @@
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
-import Image from 'next/image'
+import Image from 'next/image';
+
+import { Button } from '@/components/ui/button';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -14,56 +16,32 @@ function ThemeToggle() {
   const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
   const Icon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Monitor;
   return (
-    <button
+    <Button
+      variant="outline"
+      size="icon"
       onClick={() => setTheme(next)}
-      className="glass absolute top-5 right-5 flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-(--border) text-(--fg-muted) transition-all duration-200 hover:border-(--fg-subtle)/30 hover:text-(--fg)"
+      className="absolute top-5 right-5"
     >
-      <Icon size={16} strokeWidth={1.75} />
-    </button>
-  );
-}
-
-function FloatingOrb({ className, style }: { className: string; style?: React.CSSProperties }) {
-  return (
-    <div
-      className={`pointer-events-none absolute rounded-full opacity-20 blur-3xl ${className}`}
-      style={style}
-    />
+      <Icon />
+    </Button>
   );
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
-      style={{ background: 'var(--gradient-auth)' }}
-    >
-      
-      <FloatingOrb className="animate-float -top-48 -left-48 h-96 w-96 bg-(--primary)" />
-      <FloatingOrb
-        className="animate-float -right-40 -bottom-40 h-80 w-80 bg-(--success)"
-        style={{ animationDelay: '1.5s' } as React.CSSProperties}
-      />
-      <FloatingOrb
-        className="animate-float top-1/3 -right-32 h-64 w-64 bg-(--violet-text)"
-        style={{ animationDelay: '3s' } as React.CSSProperties}
-      />
-
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
       <ThemeToggle />
 
       <div className="animate-fade-in relative z-10 w-full max-w-sm">
-   
         <div className="mb-8 flex flex-col items-center text-center">
-          <div
-            className="mb-3 flex items-center justify-center rounded-2xl"
-          >
-            <Image src={"/icon.svg"} width={82} height={32} alt={'icon'} />
+          <div className="mb-3 flex items-center justify-center rounded-xl">
+            <Image src="/icon.svg" width={82} height={32} alt="icon" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-(--fg)">Pharmo CRM</h1>
-          <p className="mt-1.5 text-sm text-(--fg-muted)">Система управления визитами</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Pharmo CRM</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">Система управления визитами</p>
         </div>
 
-        <div className="glass rounded-2xl border border-(--border) shadow-lg">{children}</div>
+        <div className="rounded-xl border bg-card shadow-sm">{children}</div>
       </div>
     </div>
   );

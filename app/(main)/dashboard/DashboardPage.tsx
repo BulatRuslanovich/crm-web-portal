@@ -1,115 +1,83 @@
 'use client';
 
-import Link from 'next/link';
+import { Building2, CalendarDays, Stethoscope } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { useApi } from '@/lib/use-api';
-import { activsApi } from '@/lib/api/activs';
-import { orgsApi } from '@/lib/api/orgs';
-import { physesApi } from '@/lib/api/physes';
-import { PageTransition, StaggerList, StaggerItem, HoverCard } from '@/components/motion';
-import { Skeleton } from '@/components/ui';
-
-function StatCard({
-  label,
-  value,
-  href,
-  loading,
-}: {
-  label: string;
-  value: number;
-  href: string;
-  loading?: boolean;
-}) {
-  return (
-    <HoverCard>
-      <Link
-        href={href}
-        className="group hover-glow block rounded-2xl border border-(--border) bg-(--surface) p-5 transition-all duration-200 hover:border-(--primary-border)"
-        style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
-      >
-        {loading ? (
-          <Skeleton className="mt-4 mb-1 h-9 w-20" />
-        ) : (
-          <p className="text-3xl font-bold tracking-tight text-(--fg) tabular-nums">
-            {value}
-          </p>
-        )}
-        <p className="text-sm text-(--fg-muted)">{label}</p>
-      </Link>
-    </HoverCard>
-  );
-}
-
+import { useRoles } from '@/lib/use-roles';
+import { useUserFilter } from '@/lib/use-user-filter';
+import { usePickerUsers } from '@/lib/use-picker-users';
+import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
+import { UserFilter } from '@/components/UserFilter';
+import {
+  useDashboardActivs,
+  useDashboardSummary,
+} from './_lib/use-dashboard-data';
+import { DashboardHero } from './_components/DashboardHero';
+import { StatCard } from './_components/StatCard';
+import { MyDay } from './_components/MyDay';
+import { HeatmapSection } from './_components/HeatmapSection';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: dashData, loading } = useApi(
-    'dashboard',
-    () =>
-      Promise.all([
-        activsApi.getAll(1, 5, undefined, 'start', true),
-        orgsApi.getAll(),
-        physesApi.getAll(),
-      ]).then(([activsRes, orgsRes, physesRes]) => ({
-        activs: activsRes.data.items,
-        activsCount: activsRes.data.totalCount,
-        orgsCount: orgsRes.data.totalCount,
-        physesCount: physesRes.data.totalCount,
-      })),
-  );
+  const { isManager, isDirector, isAdmin } = useRoles();
+  const canFilterByUser = isManager || isDirector || isAdmin;
 
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 6
-      ? 'Доброй ночи'
-      : hour < 12
-        ? 'Доброе утро'
-        : hour < 18
-          ? 'Добрый день'
-          : 'Добрый вечер';
+  const [filterUsrId, setFilterUsrId] = useUserFilter();
+  const { users: pickerUsers } = usePickerUsers(canFilterByUser);
+  const usrIdParam = filterUsrId ? Number(filterUsrId) : undefined;
+
+  const { data: summary, loading: summaryLoading } = useDashboardSummary(usrIdParam);
+  const { data: myActivs, loading: activsLoading } = useDashboardActivs(usrIdParam);
+  const filteredActivs = myActivs ?? [];
   const name = user?.firstName ?? user?.login ?? '';
 
   return (
     <PageTransition className="space-y-6">
-      <div
-        className="relative overflow-hidden rounded-2xl border border-(--border) px-6 py-8"
-        style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-sm)' }}
-      >
-        <div className="relative z-10">
-          <h2 className="text-2xl font-bold text-(--fg)">
-            {greeting}
-            {name ? `, ${name}` : ''}
-          </h2>
-          <p className="mt-1.5 text-sm text-(--fg-muted)">Вот что происходит в вашей CRM сегодня</p>
-        </div>
-      </div>
+      <DashboardHero name={name} />
 
       <StaggerList className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StaggerItem>
           <StatCard
-            loading={loading}
+            loading={summaryLoading}
             label="Визиты"
-            value={dashData?.activsCount ?? 0}
+            value={summary?.activsCount ?? 0}
             href="/activs"
+            icon={CalendarDays}
+            tone="primary"
           />
         </StaggerItem>
         <StaggerItem>
           <StatCard
-            loading={loading}
+            loading={summaryLoading}
             label="Организации"
-            value={dashData?.orgsCount ?? 0}
+            value={summary?.orgsCount ?? 0}
             href="/orgs"
+            icon={Building2}
+            tone="success"
           />
         </StaggerItem>
         <StaggerItem>
           <StatCard
-            loading={loading}
+            loading={summaryLoading}
             label="Врачи"
-            value={dashData?.physesCount ?? 0}
+            value={summary?.physesCount ?? 0}
             href="/physes"
+            icon={Stethoscope}
+            tone="warning"
           />
         </StaggerItem>
       </StaggerList>
+
+      {canFilterByUser && pickerUsers.length > 0 && (
+        <UserFilter
+          users={pickerUsers}
+          value={filterUsrId}
+          onChange={setFilterUsrId}
+          currentUsrId={user?.usrId}
+        />
+      )}
+
+      <HeatmapSection activs={filteredActivs} loading={activsLoading} />
+      <MyDay activs={filteredActivs} loading={activsLoading} />
     </PageTransition>
   );
 }

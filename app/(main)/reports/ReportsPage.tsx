@@ -1,286 +1,171 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { useApi } from '@/lib/use-api';
-import { activsApi } from '@/lib/api/activs';
-import { STATUSES } from '@/lib/api/statuses';
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { FileSpreadsheet } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useRoles } from '@/lib/use-roles';
+import { useUserFilter } from '@/lib/use-user-filter';
+import { usePickerUsers } from '@/lib/use-picker-users';
+import { STATUS_CLOSED } from '@/lib/api/statuses';
 import { PageTransition } from '@/components/motion';
-import { StatusBadge, ListSkeleton, BtnPrimary } from '@/components/ui';
-import { formatShort, formatFull } from '@/lib/format';
-import { FileDown, SlidersHorizontal } from 'lucide-react';
+import { ListSkeleton } from '@/components/ui';
+import { UserFilter } from '@/components/UserFilter';
+import {
+  defaultRange,
+  matchPreset,
+  rangeForPreset,
+} from './_lib/date-range';
+import { exportCsv, exportXlsx } from './_lib/export';
+import { useReportsData } from './_lib/use-reports-data';
+import { ReportsHero } from './_components/ReportsHero';
+import { StatPills, type ReportStats } from './_components/StatPills';
+import { FiltersCard } from './_components/FiltersCard';
+import { PreviewTable } from './_components/PreviewTable';
 import type { ActivResponse } from '@/lib/api/types';
 
-function escapeCsv(v: string | null | undefined): string {
-  if (v == null) return '';
-  const s = String(v);
-  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
-    return `"${s.replace(/"/g, '""')}"`;
-  }
-  return s;
+function computeStats(activs: ActivResponse[]): ReportStats {
+  const total = activs.length;
+  const closed = activs.filter((a) => a.statusId === STATUS_CLOSED).length;
+  const closedPct = total > 0 ? Math.round((closed / total) * 100) : 0;
+  const uniqueUsers = new Set(activs.map((a) => a.usrId)).size;
+  return { total, closed, closedPct, uniqueUsers };
 }
 
-function targetLabel(a: ActivResponse): string {
-  return a.physName ?? a.orgName ?? '';
-}
-
-function targetKind(a: ActivResponse): string {
-  if (a.physId != null) return 'Врач';
-  if (a.orgId != null) return 'Организация';
-  return '';
-}
-
-function exportCsv(activs: ActivResponse[], filename: string) {
-  const header = ['ID', 'Тип цели', 'Цель', 'Статус', 'Начало', 'Конец', 'Сотрудник', 'Препараты', 'Описание'];
-  const rows = activs.map((a) => [
-    a.activId,
-    targetKind(a),
-    targetLabel(a),
-    a.statusName,
-    a.start ? formatFull(a.start) : '',
-    a.end ? formatFull(a.end) : '',
-    a.usrLogin,
-    a.drugs.map((d) => d.drugName).join('; '),
-    a.description,
-  ]);
-
-  const csv = [header, ...rows]
-    .map((row) => row.map((v) => escapeCsv(String(v ?? ''))).join(','))
-    .join('\n');
-
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-
-function toIso(date: string, endOfDay = false): string | undefined {
-  if (!date) return undefined;
-  const d = new Date(date + (endOfDay ? 'T23:59:59' : 'T00:00:00'));
-  return d.toISOString();
-}
-
-function defaultRange(): { from: string; to: string } {
-  const today = new Date();
-  const past = new Date();
-  past.setDate(past.getDate() - 29);
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  return { from: fmt(past), to: fmt(today) };
-}
-
-function PreviewTable({ activs }: { activs: ActivResponse[] }) {
-  const shown = activs.slice(0, 50);
+function EmptyState({
+  hasAnyResults,
+  hasActiveFilters,
+  onReset,
+}: {
+  hasAnyResults: boolean;
+  hasActiveFilters: boolean;
+  onReset: () => void;
+}) {
   return (
-    <div
-      className="overflow-hidden rounded-2xl border border-(--border) bg-(--surface)"
-      style={{ boxShadow: 'var(--shadow-sm)', backgroundImage: 'var(--gradient-card)' }}
-    >
-      <div className="border-b border-(--border) px-5 py-3.5">
-        <p className="text-sm font-bold text-(--fg)">
-          Предпросмотр
-          {activs.length > 50 && (
-            <span className="ml-2 text-xs font-normal text-(--fg-muted)">
-              (показаны первые 50 из {activs.length})
-            </span>
-          )}
-        </p>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-(--border) bg-(--surface-raised)/50">
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Цель</th>
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Статус</th>
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Начало</th>
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Сотрудник</th>
-              <th className="px-4 py-2.5 text-left font-semibold text-(--fg-muted)">Препараты</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shown.map((a, i) => (
-              <tr
-                key={a.activId}
-                className={`transition-colors hover:bg-(--surface-raised) ${i > 0 ? 'border-t border-(--border)' : ''}`}
-              >
-                <td className="px-4 py-2.5">
-                  <Link
-                    href={`/activs/${a.activId}`}
-                    className="font-medium text-(--fg) hover:text-(--primary-text)"
-                  >
-                    {targetLabel(a) || '—'}
-                  </Link>
-                  <div className="text-[10px] uppercase tracking-wider text-(--fg-subtle)">
-                    {targetKind(a)}
-                  </div>
-                </td>
-                <td className="px-4 py-2.5">
-                  <StatusBadge name={a.statusName} />
-                </td>
-                <td className="px-4 py-2.5 text-(--fg-muted)">{formatShort(a.start)}</td>
-                <td className="px-4 py-2.5 text-(--fg-muted)">{a.usrLogin}</td>
-                <td className="px-4 py-2.5 text-(--fg-muted)">
-                  {a.drugs.length > 0
-                    ? a.drugs.map((d) => d.drugName).join(', ')
-                    : <span className="text-(--fg-subtle)">—</span>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <div className="rounded-2xl border border-border bg-card py-20 text-center">
+      <FileSpreadsheet size={28} className="mx-auto mb-2 text-muted-foreground/40" />
+      <p className="text-sm text-muted-foreground">
+        {hasAnyResults
+          ? 'Ничего не найдено по выбранным фильтрам'
+          : 'Нет визитов за выбранный период'}
+      </p>
+      {hasActiveFilters && (
+        <button
+          onClick={onReset}
+          className="mt-3 inline-block cursor-pointer text-sm font-medium text-primary hover:underline"
+        >
+          Сбросить фильтры
+        </button>
+      )}
     </div>
   );
 }
 
 export default function ReportsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { isAdmin, isDirector, isManager } = useRoles();
+  const canView = isAdmin || isDirector || isManager;
+
+  useEffect(() => {
+    if (user && !canView) router.push('/dashboard');
+  }, [user, canView, router]);
+
   const initial = defaultRange();
   const [dateFrom, setDateFrom] = useState(initial.from);
   const [dateTo, setDateTo] = useState(initial.to);
   const [statusFilter, setStatusFilter] = useState<number[]>([]);
-  const [usrFilter, setUsrFilter] = useState('');
+  const [usrFilter, setUsrFilter] = useUserFilter();
+  const { users: pickerUsers } = usePickerUsers(canView);
+  const usrIdParam = usrFilter ? Number(usrFilter) : undefined;
 
-  const { data: activs, loading } = useApi(
-    ['reports-activs', dateFrom, dateTo, statusFilter],
-    () =>
-      activsApi
-        .getAll(
-          1,
-          undefined,
-          undefined,
-          'start',
-          false,
-          statusFilter.length > 0 ? statusFilter : undefined,
-          toIso(dateFrom, false),
-          toIso(dateTo, true),
-        )
-        .then((r) => r.data.items),
-    { keepPreviousData: true },
-  );
+  const { data: activs, loading } = useReportsData({
+    enabled: canView,
+    dateFrom, dateTo, statusFilter, usrId: usrIdParam,
+  });
+  const filtered = activs ?? [];
 
-  const filtered = useMemo(() => {
-    if (!activs) return [];
-    if (!usrFilter) return activs;
-    const q = usrFilter.toLowerCase();
-    return activs.filter((a) => a.usrLogin.toLowerCase().includes(q));
-  }, [activs, usrFilter]);
+  const stats = useMemo(() => computeStats(filtered), [filtered]);
+  const activePresetKey = useMemo(() => matchPreset(dateFrom, dateTo), [dateFrom, dateTo]);
+  const hasCustomFilter =
+    statusFilter.length > 0 || usrFilter !== '' || !activePresetKey;
+
+  function applyPreset(days: number) {
+    const r = rangeForPreset(days);
+    setDateFrom(r.from);
+    setDateTo(r.to);
+  }
 
   function toggleStatus(id: number) {
-    setStatusFilter((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setStatusFilter((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   }
 
-  function handleExport() {
-    const from = dateFrom || 'all';
-    const to = dateTo || 'all';
-    const filename = `visity_${from}_${to}.csv`;
-    exportCsv(filtered, filename);
+  function handleExportCsv() {
+    exportCsv(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.csv`);
   }
 
-  const hasFilter = dateFrom || dateTo || statusFilter.length > 0 || usrFilter;
+  function handleExportXlsx() {
+    exportXlsx(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.xlsx`);
+  }
+
+  function resetAll() {
+    const r = defaultRange();
+    setDateFrom(r.from);
+    setDateTo(r.to);
+    setStatusFilter([]);
+    setUsrFilter('');
+  }
+
+  if (!canView) return null;
 
   return (
     <PageTransition className="mx-auto w-full space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--primary-subtle)">
-            <FileDown size={18} className="text-(--primary-text)" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-(--fg)">Отчёты</h2>
-            {!loading && activs && (
-              <p className="text-xs text-(--fg-muted)">
-                {hasFilter ? `${filtered.length} из ${activs.length}` : activs.length} визит(ов)
-              </p>
-            )}
-          </div>
-        </div>
-        <BtnPrimary onClick={handleExport} disabled={loading || filtered.length === 0}>
-          <FileDown size={15} />
-          Скачать CSV ({filtered.length})
-        </BtnPrimary>
-      </div>
+      <ReportsHero
+        loading={loading}
+        totalCount={activs ? activs.length : null}
+        filteredCount={filtered.length}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onExportXlsx={handleExportXlsx}
+        onExportCsv={handleExportCsv}
+      />
 
-      <div
-        className="space-y-3 rounded-2xl border border-(--border) bg-(--surface) p-4"
-        style={{ boxShadow: 'var(--shadow-sm)' }}
-      >
-        <p className="text-xs font-semibold text-(--fg-muted) uppercase tracking-wider">Фильтры</p>
+      {!loading && filtered.length > 0 && (
+        <StatPills stats={stats} filteredCount={filtered.length} />
+      )}
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-(--fg-muted)">С</label>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="h-9 rounded-xl border border-(--border) bg-(--input-bg) px-3 text-sm text-(--fg) transition-all focus:border-(--ring) focus:outline-none focus:ring-2 focus:ring-(--ring)/40"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-(--fg-muted)">По</label>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="h-9 rounded-xl border border-(--border) bg-(--input-bg) px-3 text-sm text-(--fg) transition-all focus:border-(--ring) focus:outline-none focus:ring-2 focus:ring-(--ring)/40"
-            />
-          </div>
+      {canView && pickerUsers.length > 0 && (
+        <UserFilter
+          users={pickerUsers}
+          value={usrFilter}
+          onChange={setUsrFilter}
+          currentUsrId={user?.usrId}
+        />
+      )}
 
-          <input
-            type="text"
-            placeholder="Сотрудник..."
-            value={usrFilter}
-            onChange={(e) => setUsrFilter(e.target.value)}
-            className="h-9 rounded-xl border border-(--border) bg-(--input-bg) px-3.5 text-sm text-(--fg) placeholder:text-(--fg-subtle) transition-all focus:border-(--ring) focus:outline-none focus:ring-2 focus:ring-(--ring)/40"
-          />
-
-          <button
-            onClick={() => {
-              const r = defaultRange();
-              setDateFrom(r.from);
-              setDateTo(r.to);
-              setStatusFilter([]);
-              setUsrFilter('');
-            }}
-            className="cursor-pointer text-xs text-(--fg-muted) transition-colors hover:text-(--danger-text)"
-          >
-            Сбросить всё
-          </button>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <SlidersHorizontal size={13} className="text-(--fg-subtle)" />
-          {STATUSES.map((s) => {
-            const active = statusFilter.includes(s.statusId);
-            return (
-              <button
-                key={s.statusId}
-                onClick={() => toggleStatus(s.statusId)}
-                className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
-                  active
-                    ? 'border-(--primary) bg-(--primary) text-(--primary-fg) shadow-sm'
-                    : 'border-(--border) bg-(--surface) text-(--fg-muted) hover:border-(--primary-border) hover:text-(--fg)'
-                }`}
-              >
-                {s.statusName}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <FiltersCard
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        activePresetKey={activePresetKey}
+        statusFilter={statusFilter}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
+        onApplyPreset={applyPreset}
+        onToggleStatus={toggleStatus}
+        onReset={resetAll}
+        showReset={hasCustomFilter}
+      />
 
       {loading ? (
         <ListSkeleton rows={6} />
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-(--border) bg-(--surface) py-20 text-center">
-          <p className="text-sm text-(--fg-muted)">
-            {hasFilter ? 'Ничего не найдено по выбранным фильтрам' : 'Нет визитов для экспорта'}
-          </p>
-        </div>
+        <EmptyState
+          hasAnyResults={Boolean(activs && activs.length > 0)}
+          hasActiveFilters={statusFilter.length > 0 || Boolean(usrFilter)}
+          onReset={resetAll}
+        />
       ) : (
         <PreviewTable activs={filtered} />
       )}

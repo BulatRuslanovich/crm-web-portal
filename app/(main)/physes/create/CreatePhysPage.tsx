@@ -16,15 +16,16 @@ import {
   ErrorBox,
   BtnSecondary,
   BtnSuccess,
+  SectionLabel,
 } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
+import { User, BriefcaseMedical, Phone, Plus } from 'lucide-react';
 
 interface FormValues {
   lastName: string;
   firstName: string;
   middleName: string;
   specId: string;
-  position: string;
   phone: string;
   email: string;
 }
@@ -49,7 +50,6 @@ export default function CreatePhysPage() {
       firstName: '',
       middleName: '',
       specId: '',
-      position: '',
       phone: '',
       email: '',
     },
@@ -78,60 +78,81 @@ export default function CreatePhysPage() {
   }
 
   return (
-    <div className="mx-auto w-full">
-      <div className="mb-5 flex items-center gap-3">
+    <div className="mx-auto w-full space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
         <BackButton />
-        <h2 className="text-xl font-semibold text-(--fg)">Новый врач</h2>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
+            <Plus size={16} className="text-warning" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground">Новый врач</h2>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
-          <div className="space-y-4 p-4">
+          <div className="space-y-6 p-5">
             <div>
-              <Label required>Фамилия</Label>
-              <Input type="text" placeholder="Иванов" {...register('lastName')} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Имя</Label>
-                <Input type="text" placeholder="Иван" {...register('firstName')} />
+              <SectionLabel icon={User}>ФИО</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label required>Фамилия</Label>
+                  <Input type="text" placeholder="Иванов" {...register('lastName')} />
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label required>Имя</Label>
+                    <Input type="text" placeholder="Иван" {...register('firstName')} />
+                  </div>
+                  <div>
+                    <Label>Отчество</Label>
+                    <Input type="text" placeholder="Иванович" {...register('middleName')} />
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>Отчество</Label>
-                <Input type="text" placeholder="Иванович" {...register('middleName')} />
-              </div>
             </div>
+
+            <hr className="border-border" />
+
             <div>
-              <Label required>Специальность</Label>
-              <Controller
-                name="specId"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Combobox
-                    options={specOptions}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Выберите специальность"
-                    searchPlaceholder="Поиск специальности..."
+              <SectionLabel icon={BriefcaseMedical}>Специальность</SectionLabel>
+              <div className="space-y-4">
+                <div>
+                  <Label required>Специальность</Label>
+                  <Controller
+                    name="specId"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <Combobox
+                        options={specOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Выберите специальность"
+                        searchPlaceholder="Поиск специальности..."
+                      />
+                    )}
                   />
-                )}
-              />
+                </div>
+              </div>
             </div>
+
+            <hr className="border-border" />
+
             <div>
-              <Label>Должность</Label>
-              <Input type="text" placeholder="Главный врач" {...register('position')} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label>Телефон</Label>
-                <Input type="tel" placeholder="+7 999 000 00 00" {...register('phone')} />
+              <SectionLabel icon={Phone}>Контакты</SectionLabel>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label required>Телефон</Label>
+                  <Input type="tel" placeholder="+7 999 000 00 00" {...register('phone')} />
+                </div>
+                <div>
+                  <Label required>Email</Label>
+                  <Input type="email" placeholder="doctor@example.com" {...register('email')} />
+                </div>
               </div>
-              <div>
-                <Label>Email</Label>
-                <Input type="email" placeholder="doctor@example.com" {...register('email')} />
-              </div>
             </div>
+
             {apiError && <ErrorBox message={apiError} />}
           </div>
           <CardFooter>

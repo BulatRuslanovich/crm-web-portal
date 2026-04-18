@@ -1,12 +1,15 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
+import { AuthFormShell } from '@/components/auth/auth-form-shell';
+import { ResendButton } from '@/components/auth/resend-button';
+import { useResendCode } from '@/lib/use-resend-code';
 import { KeyRound } from 'lucide-react';
 
 interface FormValues {
@@ -17,56 +20,16 @@ interface FormValues {
 
 function ResetPasswordInner() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email') ?? '';
+  const email = useSearchParams().get('email') ?? '';
 
   const [apiError, setApiError] = useState<string | null>(null);
-  const [resendLoading, setResendLoading] = useState(false);
-  const [resendMsg, setResendMsg] = useState('');
-  const [cooldown, setCooldown] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({ defaultValues: { code: '', password: '', confirmPassword: '' } });
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>({
+    defaultValues: { code: '', password: '', confirmPassword: '' },
+  });
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  const startCooldown = useCallback((seconds: number) => {
-    setCooldown(seconds);
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setCooldown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!);
-          timerRef.current = null;
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }, []);
-
-  async function handleResend() {
-    setResendLoading(true);
-    setResendMsg('');
-    setApiError(null);
-    try {
-      await authApi.forgotPassword(email);
-      setResendMsg('Код отправлен повторно');
-      startCooldown(60);
-    } catch (err) {
-      setApiError(extractApiError(err));
-    } finally {
-      setResendLoading(false);
-    }
-  }
+  const { loading: resendLoading, message: resendMsg, error: resendError, cooldown, handleResend } =
+    useResendCode({ onResend: () => authApi.forgotPassword(email) });
 
   async function onSubmit(values: FormValues) {
     setApiError(null);
@@ -83,9 +46,15 @@ function ResetPasswordInner() {
   }
 
   return (
-    <div className="p-6">
-      <h2 className="mb-1 text-xl font-bold text-(--fg)">Новый пароль</h2>
-      <p className="mb-5 text-sm text-(--fg-muted)">Введите код из письма и новый пароль</p>
+    <AuthFormShell
+      title="Новый пароль"
+      subtitle="Введите код из письма и новый пароль"
+      footer={
+        <Link href="/login" className="text-foreground underline-offset-4 hover:underline">
+          Вернуться ко входу
+        </Link>
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label>Код подтверждения</Label>
@@ -97,44 +66,31 @@ function ResetPasswordInner() {
             {...register('code')}
           />
         </div>
-
         <div>
           <Label>Новый пароль</Label>
           <Input type="password" placeholder="••••••••" {...register('password')} />
         </div>
-
         <div>
           <Label>Подтвердите пароль</Label>
           <Input type="password" placeholder="••••••••" {...register('confirmPassword')} />
         </div>
 
-        {apiError && <ErrorBox message={apiError} />}
+        {(apiError ?? resendError) && <ErrorBox message={(apiError ?? resendError)!} />}
         {resendMsg && <SuccessBox message={resendMsg} />}
 
         <BtnSuccess type="submit" disabled={isSubmitting} className="w-full">
           <KeyRound size={15} />
-          {isSubmitting ? 'Cбрасывание...' : 'Сбросить пароль'}
+          {isSubmitting ? 'Сбрасывание...' : 'Сбросить пароль'}
         </BtnSuccess>
       </form>
 
-      <button
+      <ResendButton
         onClick={handleResend}
-        disabled={resendLoading || cooldown > 0}
-        className="mt-4 w-full cursor-pointer text-sm text-(--fg-muted) transition-colors hover:text-(--primary-text) disabled:cursor-default disabled:opacity-50 disabled:hover:text-(--fg-muted)"
-      >
-        {resendLoading
-          ? 'Отправка...'
-          : cooldown > 0
-            ? `Отправить код повторно через ${cooldown} сек`
-            : 'Отправить код повторно'}
-      </button>
-
-      <div className="mt-5 border-t border-(--border) pt-5 text-center text-sm">
-        <Link href="/login" className="text-(--primary-text) hover:underline">
-          Вернуться ко входу
-        </Link>
-      </div>
-    </div>
+        loading={resendLoading}
+        cooldown={cooldown}
+        labels={{ cooldown: (s) => `Отправить код повторно через ${s} сек`, idle: 'Отправить код повторно' }}
+      />
+    </AuthFormShell>
   );
 }
 
