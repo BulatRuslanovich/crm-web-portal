@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 import type { ActivResponse } from '@/lib/api/types';
 import { addDays, toDateKey } from '../../_lib/date';

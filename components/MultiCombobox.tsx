@@ -12,7 +12,7 @@ export interface MultiComboboxOption {
   sublabel?: string;
 }
 
-export interface MultiComboboxProps {
+interface MultiComboboxProps {
   /** Sync mode: static list. */
   options?: MultiComboboxOption[];
   /** Async mode: fetcher called with query. */

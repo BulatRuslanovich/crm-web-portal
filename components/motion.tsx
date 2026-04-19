@@ -81,20 +81,3 @@ export function HoverCard({
   );
 }
 
-/* ── Scale-tap button wrapper ─────────────────────────────────────────── */
-export function TapScale({
-  children,
-  className = '',
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <motion.div whileTap={{ scale: 0.97 }} transition={{ duration: 0.1 }} className={className}>
-      {children}
-    </motion.div>
-  );
-}
-
-/* ── Counter animation ────────────────────────────────────────────────── */
-export { motion };

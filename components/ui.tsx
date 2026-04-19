@@ -44,27 +44,6 @@ export function StatusBadge({ name }: { name: string }) {
   );
 }
 
-/* ── Page Header ───────────────────────────────────────────────────────────── */
-export function PageHeader({
-  title,
-  subtitle,
-  action,
-}: {
-  title: string;
-  subtitle?: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="mb-6 flex items-center justify-between">
-      <div>
-        <h2 className="text-xl font-bold text-foreground">{title}</h2>
-        {subtitle && <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>}
-      </div>
-      {action}
-    </div>
-  );
-}
-
 /* ── Field (read-only label + value) ───────────────────────────────────────── */
 export function Field({
   label,
@@ -108,15 +87,6 @@ export function Card({
   );
 }
 
-export function CardHeader({
-  children,
-  className = '',
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <div className={cn('border-b px-5 py-4', className)}>{children}</div>;
-}
 
 export function CardFooter({ children }: { children: React.ReactNode }) {
   return (
@@ -163,25 +133,6 @@ export const Textarea = forwardRef<
   <ShadTextarea ref={ref} className={cn('resize-none', className)} {...props} />
 ));
 Textarea.displayName = 'Textarea';
-
-export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
-  ({ className = '', children, ...props }, ref) => (
-    <select
-      ref={ref}
-      className={cn(
-        'flex h-10 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow]',
-        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'dark:bg-input/30',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </select>
-  ),
-);
-Select.displayName = 'Select';
 
 export function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (

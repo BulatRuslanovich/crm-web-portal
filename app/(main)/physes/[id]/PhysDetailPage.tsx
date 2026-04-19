@@ -2,124 +2,83 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  BriefcaseMedical,
+  Building2,
+  Mail,
+  Pencil,
+  Phone,
+  Stethoscope,
+  Trash2,
+} from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
-import { useEntity } from '@/lib/use-entity';
-import { useIsAdmin } from '@/lib/use-is-admin';
+import { useEntity } from '@/lib/hooks/use-entity';
+import { toast } from 'sonner';
+import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import type { OrgResponse, PhysResponse } from '@/lib/api/types';
 import {
   BackButton,
+  BtnDanger,
+  BtnSecondary,
   Card,
   CardFooter,
   CardSkeleton,
   SectionLabel,
-  BtnSecondary,
-  BtnDanger,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { Trash2, Pencil, Phone, Mail, Building2, Stethoscope, BriefcaseMedical } from 'lucide-react';
+import { DetailHero } from '../../_components/DetailHero';
+import { InfoBlock } from '../../_components/InfoBlock';
+import { physFullName, physInitials } from '../../_lib/initials';
+import { useConfirm } from '@/components/ConfirmDialog';
 
-export default function PhysViewPage({ params }: { params: Promise<{ id: string }> }) {
+const HERO_ACCENT = 'from-warning/20 via-warning/5 to-transparent';
+
+export default function PhysDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { confirm, dialog } = useConfirm();
+  if (id === '-1') return <GetnamePage />;
+
   const router = useRouter();
   const isAdmin = useIsAdmin();
   const numId = Number(id);
   const { data: phys } = useEntity(['phys', numId], () => physesApi.getById(numId), '/physes');
 
-  if (!phys)
+  if (!phys) {
     return (
       <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
-
-  const fullName = [phys.lastName, phys.firstName, phys.middleName].filter(Boolean).join(' ');
-  const initials = ((phys.lastName?.[0] ?? '') + (phys.firstName?.[0] ?? '')).toUpperCase();
+  }
 
   async function handleDelete() {
-    if (!confirm('Удалить врача?')) return;
+    const ok = await confirm({
+      title: 'Удалить врача?',
+      description: `Врач #${numId} будет удален безвозвратно.`,
+      confirmLabel: 'Удалить',
+    });
+    if (!ok) return;
+
     await physesApi.delete(numId);
+    toast('Врач удалён', { description: phys ? physFullName(phys.lastName, phys.firstName, phys.middleName) : undefined });
     router.push('/physes');
   }
 
   return (
     <PageTransition className="mx-auto w-full space-y-4">
-      {/* Top bar */}
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/physes" />
         <span className="ml-auto text-xs text-muted-foreground">#{phys.physId}</span>
       </div>
 
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-warning/20 via-warning/5 to-transparent"
-          aria-hidden
-        />
-        <div className="relative flex flex-wrap items-start gap-4 p-5">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-card text-base font-bold text-warning ring-1 ring-warning/30">
-            {initials || <Stethoscope size={20} />}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-              Врач
-            </p>
-            <h2 className="truncate text-xl font-bold text-foreground">{fullName}</h2>
-            {phys.specName && (
-              <div className="mt-2">
-                <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
-                  <BriefcaseMedical size={11} className="text-muted-foreground" />
-                  {phys.specName}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <DetailHero accentGradient={HERO_ACCENT}>
+        <PhysHeroContent phys={phys} />
+      </DetailHero>
 
-      {/* Main card */}
       <Card>
         <div className="space-y-6 p-5">
-          {/* Contacts */}
-          <div>
-            <SectionLabel icon={Phone}>Контакты</SectionLabel>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <ContactBlock
-                label="Телефон"
-                icon={Phone}
-                value={phys.phone}
-                href={phys.phone ? `tel:${phys.phone.replace(/\s/g, '')}` : undefined}
-              />
-              <ContactBlock
-                label="Email"
-                icon={Mail}
-                value={phys.email}
-                href={phys.email ? `mailto:${phys.email}` : undefined}
-              />
-            </div>
-          </div>
-
-          {/* Orgs */}
-          {phys.orgs.length > 0 && (
-            <>
-              <hr className="border-border" />
-              <div>
-                <SectionLabel icon={Building2}>
-                  Организации{' '}
-                  <span className="ml-1 text-muted-foreground/60">· {phys.orgs.length}</span>
-                </SectionLabel>
-                <div className="flex flex-wrap gap-2">
-                  {phys.orgs.map((o) => (
-                    <span
-                      key={o.orgId}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-medium text-foreground"
-                    >
-                      <Building2 size={11} className="text-muted-foreground" />
-                      {o.orgName}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+          <ContactsSection phys={phys} />
+          {phys.orgs.length > 0 && <OrgsSection orgs={phys.orgs} />}
         </div>
 
         {isAdmin && (
@@ -135,49 +94,109 @@ export default function PhysViewPage({ params }: { params: Promise<{ id: string 
           </CardFooter>
         )}
       </Card>
+      {dialog}
     </PageTransition>
   );
 }
 
-function ContactBlock({
-  label,
-  icon: Icon,
-  value,
-  href,
-}: {
-  label: string;
-  icon: React.ElementType;
-  value?: string | null;
-  href?: string;
-}) {
-  const content = (
-    <>
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-card ring-1 ring-border">
-        <Icon size={14} className="text-muted-foreground" />
+function PhysHeroContent({ phys }: { phys: PhysResponse }) {
+  const fullName = physFullName(phys.lastName, phys.firstName, phys.middleName);
+  const initials = physInitials(phys.lastName, phys.firstName);
+
+  return (
+    <div className="flex flex-wrap items-start gap-4">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-card text-base font-bold text-warning ring-1 ring-warning/30">
+        {initials || <Stethoscope size={20} />}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-          {label}
+          Врач
         </p>
-        <p className="truncate text-sm font-medium text-foreground">
-          {value || <span className="text-muted-foreground/70">—</span>}
-        </p>
+        <h2 className="truncate text-xl font-bold text-foreground">{fullName}</h2>
+        {phys.specName && (
+          <div className="mt-2">
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+              <BriefcaseMedical size={11} className="text-muted-foreground" />
+              {phys.specName}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ContactsSection({ phys }: { phys: PhysResponse }) {
+  const phoneHref = phys.phone ? `tel:${phys.phone.replace(/\s/g, '')}` : undefined;
+  const emailHref = phys.email ? `mailto:${phys.email}` : undefined;
+
+  return (
+    <div>
+      <SectionLabel icon={Phone}>Контакты</SectionLabel>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <InfoBlock label="Телефон" icon={Phone} value={phys.phone} href={phoneHref} />
+        <InfoBlock label="Email" icon={Mail} value={phys.email} href={emailHref} />
+      </div>
+    </div>
+  );
+}
+
+function GetnamePage() {
+  return (
+    <PageTransition className="mx-auto w-full space-y-4">
+      <div className="flex items-center gap-2">
+        <BackButton href="/physes" />
+      </div>
+      <DetailHero accentGradient="from-primary/20 via-primary/5 to-transparent">
+        <div className="flex flex-wrap items-start gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-card text-2xl ring-1 ring-primary/30">
+            👾
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              Разработчик
+            </p>
+            <h2 className="text-xl font-bold text-foreground">getname</h2>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+                <BriefcaseMedical size={11} className="text-muted-foreground" />
+                Разработка ПО
+              </span>
+            </div>
+          </div>
+        </div>
+      </DetailHero>
+      <Card>
+        <div className="space-y-4 p-5">
+          <p className="font-mono text-sm italic text-muted-foreground">
+            «Че ты тут забыл, ты либо автор этой х@йни, либо хакер, который получил исходники, а мб этот разраб открыл репу»
+          </p>
+        </div>
+      </Card>
+   </PageTransition>
+  );
+}
+
+function OrgsSection({ orgs }: { orgs: OrgResponse[] }) {
+  return (
+    <>
+      <hr className="border-border" />
+      <div>
+        <SectionLabel icon={Building2}>
+          Организации <span className="ml-1 text-muted-foreground/60">· {orgs.length}</span>
+        </SectionLabel>
+        <div className="flex flex-wrap gap-2">
+          {orgs.map((o) => (
+            <span
+              key={o.orgId}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-medium text-foreground"
+            >
+              <Building2 size={11} className="text-muted-foreground" />
+              {o.orgName}
+            </span>
+          ))}
+        </div>
       </div>
     </>
   );
-
-  const baseCls =
-    'flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3';
-
-  if (href && value) {
-    return (
-      <a
-        href={href}
-        className={`${baseCls} transition-colors hover:border-primary/30 hover:bg-muted/60`}
-      >
-        {content}
-      </a>
-    );
-  }
-  return <div className={baseCls}>{content}</div>;
 }

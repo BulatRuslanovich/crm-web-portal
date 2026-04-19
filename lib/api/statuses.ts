@@ -12,10 +12,6 @@ export const STATUSES: StatusResponse[] = [
   { statusId: STATUS_CLOSED, statusName: 'Закрыт' },
 ];
 
-export const statusesApi = {
-  getAll: () => Promise.resolve({ data: STATUSES }),
-};
-
 export const STATUS_HEX: Record<string, string> = {
   запланирован: '#0d9488',
   открыт: '#d97706',

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { usersApi } from '@/lib/api/users';
 import { extractApiError } from '@/lib/api/errors';
 import {
@@ -12,7 +12,9 @@ import {
   Pagination,
 } from '@/components/ui';
 import { Plus, X, Mail, AtSign, Trash2, UserPlus2, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { SearchInput } from './SearchInput';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 const POLICY_LABEL: Record<string, string> = {
   Admin: 'Админ',
@@ -43,6 +45,7 @@ export function UsersSection() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const pageSize = 20;
+  const { confirm, dialog } = useConfirm();
 
   const { data, loading, reload } = useApi(
     ['admin-users', page],
@@ -86,6 +89,7 @@ export function UsersSection() {
       });
       setShowCreate(false);
       await reload();
+      toast.success('Пользователь создан', { description: fd.get('login') as string });
     } catch (err) {
       setError(extractApiError(err));
     }
@@ -101,9 +105,15 @@ export function UsersSection() {
   }
 
   async function handleDelete(userId: number) {
-    if (!confirm('Удалить пользователя?')) return;
+    const ok = await confirm({
+      title: 'Удалить пользователя?',
+      description: `Пользователь #${userId} будет удалён безвозвратно.`,
+      confirmLabel: 'Удалить',
+    });
+    if (!ok) return;
     await usersApi.delete(userId);
     await reload();
+    toast('Пользователь удалён');
   }
 
   if (loading) return <CardSkeleton />;
@@ -126,7 +136,6 @@ export function UsersSection() {
         </BtnSuccess>
       </div>
 
-      {/* Create form */}
       {showCreate && (
         <div className="animate-fade-in overflow-hidden rounded-2xl border border-primary/30 bg-card shadow-sm">
           <div className="flex items-center gap-3 border-b border-border bg-primary/5 px-5 py-3.5">
@@ -173,7 +182,6 @@ export function UsersSection() {
         </div>
       )}
 
-      {/* Users list */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3">
           <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
@@ -193,7 +201,6 @@ export function UsersSection() {
                 key={u.usrId}
                 className="flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-muted/40 lg:flex-row lg:items-center"
               >
-                {/* Identity */}
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary ring-1 ring-primary/20">
                     {initialsOf(u)}
@@ -229,7 +236,7 @@ export function UsersSection() {
                   </div>
                 </div>
 
-                {/* Role toggles */}
+    
                 <div className="flex flex-wrap items-center gap-1.5">
                   {policies.map((pol) => {
                     const has = u.policies.includes(pol.policyName);
@@ -251,7 +258,7 @@ export function UsersSection() {
                   })}
                 </div>
 
-                {/* Delete */}
+   
                 <div className="flex shrink-0 justify-end">
                   <button
                     onClick={() => handleDelete(u.usrId)}
@@ -274,6 +281,7 @@ export function UsersSection() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      {dialog}
     </div>
   );
 }

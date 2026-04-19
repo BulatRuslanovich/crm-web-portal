@@ -8,7 +8,7 @@ import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { Mail } from 'lucide-react';
-import { AuthFormShell } from '@/components/auth/auth-form-shell';
+import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
 
 interface FormValues {
   email: string;
@@ -38,6 +38,8 @@ export default function ForgotPasswordForm() {
     <AuthFormShell
       title="Восстановление пароля"
       subtitle="Введите email для получения кода сброса"
+      icon={Mail}
+      iconTone="primary"
       footer={<Link href="/login" className="text-foreground underline-offset-4 hover:underline">Вернуться ко входу</Link>}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

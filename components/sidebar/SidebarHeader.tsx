@@ -1,6 +1,13 @@
+'use client';
+
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+const CLICKS_TO_ACTIVATE = 5;
+const RESET_DELAY_MS = 1500;
 
 export function SidebarHeader({
   compact,
@@ -9,6 +16,30 @@ export function SidebarHeader({
   compact: boolean;
   onNavigate: () => void;
 }) {
+  const [party, setParty] = useState(false);
+  const clickCount = useRef(0);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function handleLogoClick() {
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+
+    clickCount.current += 1;
+
+    if (clickCount.current === CLICKS_TO_ACTIVATE) {
+      clickCount.current = 0;
+      setParty(true);
+      toast('Либо ты getname, либо ты просто кликаешь куда попало 🤨', {
+        description: 'Pharmo CRM · сделано с душой',
+        duration: 4000,
+      });
+      setTimeout(() => setParty(false), 700);
+    } else {
+      resetTimer.current = setTimeout(() => {
+        clickCount.current = 0;
+      }, RESET_DELAY_MS);
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -18,10 +49,18 @@ export function SidebarHeader({
     >
       <Link
         href="/dashboard"
-        onClick={onNavigate}
+        onClick={() => {
+          handleLogoClick();
+          onNavigate();
+        }}
         className="flex min-w-0 items-center gap-2.5"
       >
-        <div className="relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 ring-1 ring-primary/20">
+        <div
+          className={cn(
+            'relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 ring-1 ring-primary/20',
+            party && 'animate-logo-party',
+          )}
+        >
           <Image src="/icon.svg" width={24} height={24} alt="Pharmo" />
         </div>
         {!compact && (

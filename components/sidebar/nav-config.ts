@@ -21,7 +21,7 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-export const MAIN_NAV: NavItem[] = [
+const MAIN_NAV: NavItem[] = [
   { href: '/dashboard', label: 'Главная', icon: LayoutDashboard },
   { href: '/activs', label: 'Визиты', icon: CalendarCheck },
   { href: '/calendar', label: 'Календарь', icon: CalendarDays },
@@ -30,12 +30,12 @@ export const MAIN_NAV: NavItem[] = [
   { href: '/physes', label: 'Врачи', icon: Stethoscope },
 ];
 
-export const MANAGER_NAV: NavItem[] = [
+const MANAGER_NAV: NavItem[] = [
   { href: '/analytics', label: 'Аналитика', icon: TrendingUp },
   { href: '/reports', label: 'Отчёты', icon: FileDown },
 ];
 
-export const ADMIN_NAV: NavItem[] = [
+const ADMIN_NAV: NavItem[] = [
   { href: '/admin', label: 'Администрирование', icon: ShieldCheck },
 ];
 

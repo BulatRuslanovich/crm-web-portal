@@ -1,9 +1,9 @@
-export interface DateRange {
+interface DateRange {
   from: string;
   to: string;
 }
 
-export interface Preset {
+interface Preset {
   key: string;
   label: string;
   days: number;
@@ -18,7 +18,7 @@ export const PRESETS: Preset[] = [
 
 const DEFAULT_RANGE_DAYS = 30;
 
-export function fmtDate(d: Date): string {
+function fmtDate(d: Date): string {
   const yy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');

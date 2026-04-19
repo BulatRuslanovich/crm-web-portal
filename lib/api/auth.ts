@@ -2,7 +2,7 @@ import axios from 'axios';
 import { apiClient, BASE_URL } from './client';
 import type { UserResponse } from './types';
 
-export interface LoginRequest {
+interface LoginRequest {
   login: string;
   password: string;
 }
@@ -15,13 +15,13 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface AuthResponse {
+interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   user: UserResponse;
 }
 
-export interface PendingConfirmationResponse {
+interface PendingConfirmationResponse {
   email: string;
 }
 

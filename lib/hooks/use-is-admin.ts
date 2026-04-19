@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from './auth-context';
+import { useAuth } from '../auth-context';
 
 export function useIsAdmin(): boolean {
   const { user } = useAuth();

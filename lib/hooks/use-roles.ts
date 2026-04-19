@@ -1,8 +1,6 @@
 'use client';
 
-import { useAuth } from './auth-context';
-
-export type Role = 'Admin' | 'Director' | 'Manager' | 'Representative';
+import { useAuth } from '../auth-context';
 
 export function useRoles() {
   const { user } = useAuth();

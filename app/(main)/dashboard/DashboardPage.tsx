@@ -2,9 +2,9 @@
 
 import { Building2, CalendarDays, Stethoscope } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { useRoles } from '@/lib/use-roles';
-import { useUserFilter } from '@/lib/use-user-filter';
-import { usePickerUsers } from '@/lib/use-picker-users';
+import { useRoles } from '@/lib/hooks/use-roles';
+import { useUserFilter } from '@/lib/hooks/use-user-filter';
+import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
 import { UserFilter } from '@/components/UserFilter';
 import {

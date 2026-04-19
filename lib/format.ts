@@ -1,13 +1,12 @@
-/** Shared Intl formatters — created once, reused across renders. */
 
-export const dateTimeShort = new Intl.DateTimeFormat('ru-RU', {
+const dateTimeShort = new Intl.DateTimeFormat('ru-RU', {
   day: '2-digit',
   month: 'short',
   hour: '2-digit',
   minute: '2-digit',
 });
 
-export const dateTimeFull = new Intl.DateTimeFormat('ru-RU', {
+const dateTimeFull = new Intl.DateTimeFormat('ru-RU', {
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',

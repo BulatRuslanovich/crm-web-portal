@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 import type { ActivResponse } from '@/lib/api/types';
 import { useAuth } from '@/lib/auth-context';
-import { useRoles } from '@/lib/use-roles';
-import { useUserFilter } from '@/lib/use-user-filter';
-import { usePickerUsers } from '@/lib/use-picker-users';
+import { useRoles } from '@/lib/hooks/use-roles';
+import { useUserFilter } from '@/lib/hooks/use-user-filter';
+import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition } from '@/components/motion';
 import { Skeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';

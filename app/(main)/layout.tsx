@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Toaster } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
 import Sidebar from '@/components/Sidebar';
+import { ChaosOverlay } from '@/components/ChaosOverlay';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -54,6 +56,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-background">
       <Sidebar collapsed={collapsed} onToggle={toggle} />
+      <ChaosOverlay />
+      <Toaster position="bottom-right" />
       <main
         className={`px-4 py-6 pt-16 transition-all duration-300 sm:px-6 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
       >

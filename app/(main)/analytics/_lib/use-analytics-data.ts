@@ -1,5 +1,5 @@
 import { startOfDay, subDays } from 'date-fns';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 
 const PAGE_SIZE = 1000;

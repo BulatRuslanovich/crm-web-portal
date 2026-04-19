@@ -61,7 +61,6 @@ export default function AdminPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      {/* Hero */}
       <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-warning/10 via-muted to-card shadow-sm">
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-3">
@@ -76,16 +75,9 @@ export default function AdminPage() {
               <p className="mt-0.5 text-xs text-muted-foreground">{activeTab.subtitle}</p>
             </div>
           </div>
-          <div className="hidden shrink-0 sm:block">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/15 px-3 py-1 text-xs font-semibold text-warning">
-              <ShieldCheck size={12} />
-              Admin access
-            </span>
-          </div>
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {TABS.map((t) => {
           const Icon = t.icon;
@@ -125,7 +117,6 @@ export default function AdminPage() {
         })}
       </div>
 
-      {/* Content */}
       <div>
         {tab === 'users' && <UsersSection />}
         {tab === 'departments' && <DepartmentsSection />}

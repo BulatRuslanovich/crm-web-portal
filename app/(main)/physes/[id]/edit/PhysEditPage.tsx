@@ -1,159 +1,79 @@
 'use client';
 
-import { useState, useEffect, useMemo, use } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { useApi } from '@/lib/use-api';
-import { useSetDiff } from '@/lib/use-set-diff';
-import { physesApi } from '@/lib/api/physes';
-import { searchOrgOptions } from '@/lib/api/orgs';
-import { specsApi } from '@/lib/api/specs';
-import { extractApiError } from '@/lib/api/errors';
+import { useForm } from 'react-hook-form';
 import {
-  BackButton,
+  BriefcaseMedical,
+  Building2,
+  Pencil,
+  Phone,
+  Stethoscope,
+  User,
+} from 'lucide-react';
+import { searchOrgOptions } from '@/lib/api/orgs';
+import { extractApiError } from '@/lib/api/errors';
+import { toast } from 'sonner';
+import {
+  BtnPrimary,
+  BtnSecondary,
   Card,
   CardFooter,
   CardSkeleton,
-  Label,
-  Input,
   ErrorBox,
-  BtnPrimary,
-  BtnSecondary,
+  Input,
+  Label,
   SectionLabel,
 } from '@/components/ui';
-import { Combobox } from '@/components/Combobox';
-import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
+import { MultiCombobox } from '@/components/MultiCombobox';
+import { FormPageHeader } from '../../../_components/FormPageHeader';
+import { physFullName } from '../../../_lib/initials';
 import {
-  Pencil,
-  User,
-  BriefcaseMedical,
-  Phone,
-  Building2,
-  Stethoscope,
-} from 'lucide-react';
-
-interface FormValues {
-  specId: string;
-  lastName: string;
-  firstName: string;
-  middleName: string;
-  phone: string;
-  email: string;
-  position: string;
-}
+  PhysContactFields,
+  PhysNameFields,
+  PhysSpecField,
+} from '../../_components/PhysFields';
+import {
+  PHYS_DEFAULT_VALUES,
+  type PhysFormValues,
+  physToFormValues,
+  syncOrgs,
+  updatePhys,
+  useLoadedPhys,
+  usePhysOrgPicker,
+  useSpecOptions,
+} from './_lib/phys-edit';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const [apiError, setApiError] = useState('');
-  const [pickedOrgs, setPickedOrgs] = useState<MultiComboboxOption[]>([]);
-
   const numId = Number(id);
-  const { data: phys, error: physError } = useApi(['phys', numId], () =>
-    physesApi.getById(numId).then((r) => r.data),
-  );
+  const [apiError, setApiError] = useState('');
 
-  useEffect(() => {
-    if (physError) router.push('/physes');
-  }, [physError, router]);
-
-  const { data: specs = [] } = useApi(
-    'specs',
-    () => specsApi.getAll().then(({ data }) => data),
-    { dedupingInterval: 300_000 },
-  );
-
-  const orgs = useSetDiff(phys ? phys.orgs.map((o) => o.orgId) : []);
-
-  const selectedOrgs = useMemo<MultiComboboxOption[]>(() => {
-    const pool = new Map<string, MultiComboboxOption>();
-    if (phys) {
-      for (const o of phys.orgs) {
-        pool.set(String(o.orgId), { value: String(o.orgId), label: o.orgName });
-      }
-    }
-    for (const o of pickedOrgs) pool.set(o.value, o);
-    return [...orgs.selected]
-      .map((id) => pool.get(String(id)))
-      .filter((o): o is MultiComboboxOption => !!o);
-  }, [phys, pickedOrgs, orgs.selected]);
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    defaultValues: {
-      specId: '',
-      lastName: '',
-      firstName: '',
-      middleName: '',
-      phone: '',
-      email: '',
-      position: '',
-    },
-  });
+  const phys = useLoadedPhys(numId);
+  const specOptions = useSpecOptions();
+  const orgPicker = usePhysOrgPicker(phys);
+  const form = useForm<PhysFormValues>({ defaultValues: PHYS_DEFAULT_VALUES });
 
   useEffect(() => {
     if (!phys) return;
-    reset({
-      specId: phys.specId != null ? String(phys.specId) : '',
-      lastName: phys.lastName,
-      firstName: phys.firstName ?? '',
-      middleName: phys.middleName ?? '',
-      phone: phys.phone ?? '',
-      email: phys.email ?? '',
-    });
-  }, [phys, reset]);
+    form.reset(physToFormValues(phys));
+  }, [phys, form]);
 
-  if (!phys)
+  if (!phys) {
     return (
       <div className="mx-auto w-full">
         <CardSkeleton />
       </div>
     );
-
-  const fullName = [phys.lastName, phys.firstName, phys.middleName].filter(Boolean).join(' ');
-
-  const specOptions = specs.map((s) => ({
-    value: String(s.specId),
-    label: s.specName,
-  }));
-
-  const selectedOrgIds = [...orgs.selected].map(String);
-
-  function handleOrgChange(values: string[], opts?: MultiComboboxOption[]) {
-    const newSet = new Set(values.map(Number));
-    const current = orgs.selected;
-    for (const id of current) {
-      if (!newSet.has(id)) orgs.remove(id);
-    }
-    for (const id of newSet) {
-      if (!current.has(id)) orgs.add(id);
-    }
-    if (opts) setPickedOrgs(opts);
   }
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: PhysFormValues) {
     setApiError('');
     try {
-      await physesApi.update(numId, {
-        specId: values.specId ? Number(values.specId) : null,
-        lastName: values.lastName,
-        firstName: values.firstName || null,
-        middleName: values.middleName || null,
-        phone: values.phone || null,
-        email: values.email || null,
-      });
-
-      const { toAdd, toRemove } = orgs.diff();
-      await Promise.all([
-        ...toAdd.map((oid) => physesApi.linkOrg(numId, oid)),
-        ...toRemove.map((oid) => physesApi.unlinkOrg(numId, oid)),
-      ]);
-
+      await updatePhys(numId, values);
+      await syncOrgs(numId, orgPicker.diff());
+      toast.success('Изменения сохранены', { description: `${values.lastName} ${values.firstName}`.trim() });
       router.push(`/physes/${id}`);
     } catch (err) {
       setApiError(extractApiError(err));
@@ -162,117 +82,92 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <BackButton href={`/physes/${id}`} />
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
-            <Pencil size={15} className="text-warning" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-              Редактирование врача
-            </p>
-            <h2 className="flex min-w-0 items-center gap-1.5 truncate text-lg font-bold text-foreground">
-              <Stethoscope size={15} className="shrink-0 text-muted-foreground" />
-              <span className="truncate">{fullName}</span>
-            </h2>
-          </div>
-        </div>
-      </div>
+      <FormPageHeader
+        backHref={`/physes/${id}`}
+        icon={Pencil}
+        iconTone="warning"
+        kicker="Редактирование врача"
+        title={physFullName(phys.lastName, phys.firstName, phys.middleName)}
+        subtitleIcon={Stethoscope}
+      />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <div>
-              <SectionLabel icon={User}>ФИО</SectionLabel>
-              <div className="space-y-4">
-                <div>
-                  <Label required>Фамилия</Label>
-                  <Input type="text" {...register('lastName')} />
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label required>Имя</Label>
-                    <Input type="text" {...register('firstName')} />
-                  </div>
-                  <div>
-                    <Label required>Отчество</Label>
-                    <Input type="text" {...register('middleName')} />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Section icon={User} title="ФИО">
+              <PhysNameFields register={form.register} requireMiddleName />
+            </Section>
 
             <hr className="border-border" />
 
-            <div>
-              <SectionLabel icon={BriefcaseMedical}>Специальность</SectionLabel>
-              <div className="space-y-4">
-                <div>
-                  <Label>Специальность</Label>
-                  <Controller
-                    name="specId"
-                    control={control}
-                    render={({ field }) => (
-                      <Combobox
-                        options={specOptions}
-                        value={field.value}
-                        onChange={field.onChange}
-                        placeholder="Не указана"
-                        searchPlaceholder="Поиск специальности..."
-                      />
-                    )}
-                  />
-                </div>
-                <div>
-                  <Label>Должность</Label>
-                  <Input type="text" {...register('position')} />
-                </div>
-              </div>
-            </div>
+            <Section icon={BriefcaseMedical} title="Специальность">
+              <PhysSpecField
+                control={form.control}
+                options={specOptions}
+                placeholder="Не указана"
+              />
+              <PositionField register={form.register} />
+            </Section>
 
             <hr className="border-border" />
 
-            <div>
-              <SectionLabel icon={Phone}>Контакты</SectionLabel>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <Label>Телефон</Label>
-                  <Input type="tel" {...register('phone')} />
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <Input type="email" {...register('email')} />
-                </div>
-              </div>
-            </div>
+            <Section icon={Phone} title="Контакты">
+              <PhysContactFields register={form.register} />
+            </Section>
 
             <hr className="border-border" />
 
-            <div>
-              <SectionLabel icon={Building2}>Организации</SectionLabel>
+            <Section icon={Building2} title="Организации">
               <MultiCombobox
                 asyncSearch={searchOrgOptions}
-                selectedOptions={selectedOrgs}
-                value={selectedOrgIds}
-                onChange={handleOrgChange}
+                selectedOptions={orgPicker.selectedOptions}
+                value={orgPicker.selectedIds}
+                onChange={orgPicker.handleChange}
                 placeholder="Выберите организации"
                 searchPlaceholder="Поиск организации..."
               />
-            </div>
+            </Section>
 
             {apiError && <ErrorBox message={apiError} />}
           </div>
+
           <CardFooter>
             <BtnSecondary type="button" onClick={() => router.push(`/physes/${id}`)}>
               Отмена
             </BtnSecondary>
-            <BtnPrimary type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Сохранение...' : 'Сохранить'}
+            <BtnPrimary type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
             </BtnPrimary>
           </CardFooter>
         </Card>
       </form>
+    </div>
+  );
+}
+
+function Section({
+  icon,
+  title,
+  children,
+}: {
+  icon: typeof User;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <SectionLabel icon={icon}>{title}</SectionLabel>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function PositionField({ register }: { register: any }) {
+  return (
+    <div>
+      <Label>Должность</Label>
+      <Input type="text" {...register('position')} />
     </div>
   );
 }

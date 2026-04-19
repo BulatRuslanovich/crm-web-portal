@@ -1,15 +1,18 @@
 import { useState, useMemo, useRef } from 'react';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { specsApi } from '@/lib/api/specs';
 import { CardSkeleton, Input, BtnSuccess, Pagination } from '@/components/ui';
 import { Plus, GraduationCap, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { SearchInput } from './SearchInput';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 export function SpecsSection() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const formRef = useRef<HTMLFormElement>(null);
+    const { confirm, dialog } = useConfirm();
 
   const {
     data: allSpecs = [],
@@ -33,12 +36,19 @@ export function SpecsSection() {
     await specsApi.create(name);
     formRef.current?.reset();
     await reload();
+    toast.success('Специальность добавлена', { description: name });
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Удалить специальность?')) return;
+    const ok = await confirm({
+      title: 'Удалить специальность?',
+      description: `Специальность #${id} будет удалена безвозвратно.`,
+      confirmLabel: 'Удалить',
+    });
+    if (!ok) return;
     await specsApi.delete(id);
     await reload();
+    toast('Специальность удалена');
   }
 
   if (loading) return <CardSkeleton />;
@@ -110,6 +120,7 @@ export function SpecsSection() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      {dialog}
     </div>
   );
 }

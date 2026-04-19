@@ -7,9 +7,9 @@ import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
-import { AuthFormShell } from '@/components/auth/auth-form-shell';
-import { ResendButton } from '@/components/auth/resend-button';
-import { useResendCode } from '@/lib/use-resend-code';
+import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
+import { ResendButton } from '@/app/(auth)/_components/resend-button';
+import { useResendCode } from '@/lib/hooks/use-resend-code';
 import { KeyRound } from 'lucide-react';
 
 interface FormValues {
@@ -49,6 +49,8 @@ function ResetPasswordInner() {
     <AuthFormShell
       title="Новый пароль"
       subtitle="Введите код из письма и новый пароль"
+      icon={KeyRound}
+      iconTone="warning"
       footer={
         <Link href="/login" className="text-foreground underline-offset-4 hover:underline">
           Вернуться ко входу

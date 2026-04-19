@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { drugsApi } from '@/lib/api/drugs';
 import { extractApiError } from '@/lib/api/errors';
 import {
@@ -12,12 +12,15 @@ import {
   Pagination,
 } from '@/components/ui';
 import { Plus, X, Pill, Trash2, Package } from 'lucide-react';
+import { toast } from 'sonner';
 import { SearchInput } from './SearchInput';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 export function DrugsSection() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const { confirm, dialog } = useConfirm();
   const pageSize = 20;
 
   useEffect(() => {
@@ -50,22 +53,28 @@ export function DrugsSection() {
       });
       setShowCreate(false);
       await reload();
+      toast.success('Препарат добавлен', { description: fd.get('drugName') as string });
     } catch (err) {
       setError(extractApiError(err));
     }
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Удалить препарат?')) return;
+    const ok = await confirm({
+      title: 'Удалить препарат?',
+      description: `Препарат #${id} будет удалён безвозвратно.`,
+      confirmLabel: 'Удалить',
+    });
+    if (!ok) return;
     await drugsApi.delete(id);
     await reload();
+    toast('Препарат удалён');
   }
 
   if (loading) return <CardSkeleton />;
 
   return (
     <div className="space-y-4">
-      {/* Toolbar */}
       <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Поиск по названию…" />
         <BtnSuccess onClick={() => setShowCreate(!showCreate)}>
@@ -81,7 +90,6 @@ export function DrugsSection() {
         </BtnSuccess>
       </div>
 
-      {/* Create form */}
       {showCreate && (
         <div className="animate-fade-in overflow-hidden rounded-2xl border border-warning/30 bg-card shadow-sm">
           <div className="flex items-center gap-3 border-b border-border bg-warning/5 px-5 py-3.5">
@@ -120,7 +128,6 @@ export function DrugsSection() {
         </div>
       )}
 
-      {/* Drugs list */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3">
           <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
@@ -175,6 +182,7 @@ export function DrugsSection() {
       </div>
 
       <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      {dialog}
     </div>
   );
 }

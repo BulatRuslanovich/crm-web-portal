@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { UserPlus } from 'lucide-react';
-import { AuthFormShell } from '@/components/auth/auth-form-shell';
+import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
 
 interface FormValues {
   firstName: string;
@@ -68,10 +68,12 @@ export default function RegisterForm() {
     <AuthFormShell
       title="Регистрация"
       subtitle="Создайте аккаунт для работы с системой"
+      icon={UserPlus}
+      iconTone="primary"
       footer={
         <>
             <span className="text-muted-foreground">
-              Нет аккаунта?{' '}
+              Есть аккаунт?{' '}
               <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
                 Войти
               </Link>

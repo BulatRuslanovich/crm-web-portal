@@ -16,7 +16,7 @@ function toDatetimeLocal(d: Date) {
   return format(d, FMT_VALUE);
 }
 
-export interface DateTimePickerProps {
+interface DateTimePickerProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;

@@ -12,7 +12,7 @@ export interface ComboboxOption {
   sublabel?: string;
 }
 
-export interface ComboboxProps {
+interface ComboboxProps {
   /** Sync mode: pass a static list. */
   options?: ComboboxOption[];
   /** Async mode: fetcher called with query (empty on open). Must return options. */

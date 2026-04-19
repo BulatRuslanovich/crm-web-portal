@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { orgsApi } from '@/lib/api/orgs';
 import { PageTransition } from '@/components/motion';
 import { Skeleton } from '@/components/ui';

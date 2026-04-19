@@ -1,6 +1,6 @@
 'use client';
 
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { usersApi } from '@/lib/api/users';
 import type { UserResponse } from '@/lib/api/types';
 

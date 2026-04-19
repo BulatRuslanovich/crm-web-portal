@@ -7,9 +7,9 @@ import { useAuth } from '@/lib/auth-context';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
-import { AuthFormShell } from '@/components/auth/auth-form-shell';
-import { ResendButton } from '@/components/auth/resend-button';
-import { useResendCode } from '@/lib/use-resend-code';
+import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
+import { ResendButton } from '@/app/(auth)/_components/resend-button';
+import { useResendCode } from '@/lib/hooks/use-resend-code';
 import { ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 
@@ -45,6 +45,8 @@ function VerifyEmailInner() {
     <AuthFormShell
       title="Подтверждение email"
       subtitle={<>Код отправлен на <span className="font-medium text-foreground">{email}</span></>}
+      icon={ShieldCheck}
+      iconTone="success"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

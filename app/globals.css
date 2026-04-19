@@ -7,105 +7,104 @@
   --radius: 0.625rem;
 
   --background: oklch(1 0 0);               /* #FFFFFF */
-  --foreground: oklch(0.12 0 0);            /* #1A1A1A */
+  --foreground: oklch(0.18 0.005 60);       /* #1A1814 — warm near-black */
 
-  --card: oklch(0.977 0.005 60);            /* #F9F7F5 */
-  --card-foreground: oklch(0.12 0 0);
+  --card: oklch(0.985 0.003 70);            /* #FAFAF8 — едва заметная тёплость */
+  --card-foreground: oklch(0.18 0.005 60);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.18 0.005 60);
 
-  /* 🍊 Orange — главный акцент */
-  --primary: oklch(0.65 0.2 42);            /* #FF6900 */
+  --primary: oklch(0.68 0.215 42);          /* #FF6900 — фирменный оранж */
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.94 0.01 60);         /* #F5F3F0 */
-  --secondary-foreground: oklch(0.25 0 0);
+  --secondary: oklch(0.955 0.008 65);       /* #F5F2ED — warm-gray */
+  --secondary-foreground: oklch(0.25 0.005 60);
 
-  --muted: oklch(0.94 0.01 60);
-  --muted-foreground: oklch(0.52 0 0);      /* #888 */
+  --muted: oklch(0.955 0.008 65);           /* #F5F2ED */
+  --muted-foreground: oklch(0.52 0.008 60); /* #706B63 — тёплый серый */
 
-  --accent: oklch(0.97 0.03 55);            /* #FFF2EB */
-  --accent-foreground: oklch(0.4 0.14 42);  /* #C04E00 */
+  --accent: oklch(0.96 0.028 55);           /* #FFF2E8 — лёгкий персик */
+  --accent-foreground: oklch(0.52 0.17 42); /* #B84A00 — глубокий оранж */
 
-  --destructive: oklch(0.52 0.22 25);       /* #E53935 */
+  --destructive: oklch(0.58 0.22 27);       /* #E11D48 — чуть розовее красного */
   --destructive-foreground: oklch(1 0 0);
 
-  --success: oklch(0.67 0.18 152);          /* #2DBD72 */
+  --success: oklch(0.62 0.14 155);          /* #22A06B — спокойный зелёный */
   --success-foreground: oklch(1 0 0);
 
-  --warning: oklch(0.75 0.17 65);           /* #F5A623 */
-  --warning-foreground: oklch(0.12 0 0);
+  --warning: oklch(0.76 0.16 67);           /* #F5A623 — янтарный */
+  --warning-foreground: oklch(0.18 0.005 60);
 
-  --border: oklch(0.91 0.01 60);            /* #EDEAE6 */
-  --input: oklch(0.91 0.01 60);
-  --ring: oklch(0.65 0.2 42);              /* orange focus ring */
+  --border: oklch(0.915 0.008 70);          /* #EAE5DE — тёплый */
+  --input: oklch(0.915 0.008 70);
+  --ring: oklch(0.68 0.215 42);             /* оранжевый фокус-ринг */
 
-  --chart-1: oklch(0.65 0.2 42);           /* orange */
-  --chart-2: oklch(0.67 0.18 152);         /* green */
-  --chart-3: oklch(0.52 0.22 25);          /* red */
-  --chart-4: oklch(0.75 0.17 65);          /* amber */
-  --chart-5: oklch(0.55 0.15 250);         /* blue */
+  --chart-1: oklch(0.68 0.215 42);          /* orange */
+  --chart-2: oklch(0.62 0.14 155);          /* green */
+  --chart-3: oklch(0.58 0.22 27);           /* red */
+  --chart-4: oklch(0.76 0.16 67);           /* amber */
+  --chart-5: oklch(0.56 0.15 250);          /* blue */
 
-  --sidebar: oklch(0.977 0.005 60);           /* #F9F7F5 — тёплый белый, как --card */
-  --sidebar-foreground: oklch(0.12 0 0);      /* #1A1A1A */
-  --sidebar-primary: oklch(0.65 0.2 42);      /* #FF6900 — оранжевый акцент */
-  --sidebar-primary-foreground: oklch(1 0 0); /* белый текст на оранжевом */
-  --sidebar-accent: oklch(0.97 0.03 55);      /* #FFF2EB — светло-оранжевый hover */
-  --sidebar-accent-foreground: oklch(0.4 0.14 42); /* #C04E00 — тёмно-оранжевый текст */
-  --sidebar-border: oklch(0.91 0.01 60);      /* #EDEAE6 — тёплый бордер */
-  --sidebar-ring: oklch(0.65 0.2 42);         /* оранжевый фокус-ринг */
+  --sidebar: oklch(0.985 0.003 70);           /* #FAFAF8 — как card */
+  --sidebar-foreground: oklch(0.18 0.005 60); /* #1A1814 */
+  --sidebar-primary: oklch(0.68 0.215 42);    /* #FF6900 */
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0.028 55);     /* #FFF2E8 */
+  --sidebar-accent-foreground: oklch(0.52 0.17 42); /* #B84A00 */
+  --sidebar-border: oklch(0.915 0.008 70);    /* #EAE5DE */
+  --sidebar-ring: oklch(0.68 0.215 42);
 }
 
 .dark {
-  --background: oklch(0.12 0 0);
-  --foreground: oklch(0.97 0 0);
+  --background: oklch(0.15 0.005 70);       /* #16130F — warm near-black */
+  --foreground: oklch(0.96 0.008 80);       /* #F5F0E8 — warm off-white */
 
-  --card: oklch(0.17 0.005 60);
-  --card-foreground: oklch(0.97 0 0);
+  --card: oklch(0.20 0.007 70);             /* #1F1B15 */
+  --card-foreground: oklch(0.96 0.008 80);
 
-  --popover: oklch(0.17 0.005 60);
-  --popover-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.20 0.007 70);
+  --popover-foreground: oklch(0.96 0.008 80);
 
-  --primary: oklch(0.68 0.2 42);            /* чуть светлее на тёмном */
-  --primary-foreground: oklch(0.12 0 0);
+  --primary: oklch(0.72 0.21 50);           /* #FF7A1A — ярче для тёмного */
+  --primary-foreground: oklch(0.15 0.005 70);
 
-  --secondary: oklch(0.22 0.005 60);
-  --secondary-foreground: oklch(0.97 0 0);
+  --secondary: oklch(0.25 0.008 70);        /* #2A2620 */
+  --secondary-foreground: oklch(0.96 0.008 80);
 
-  --muted: oklch(0.22 0.005 60);
-  --muted-foreground: oklch(0.62 0 0);
+  --muted: oklch(0.25 0.008 70);
+  --muted-foreground: oklch(0.68 0.008 75); /* #A8A199 — тёплый серый */
 
-  --accent: oklch(0.25 0.04 42);
-  --accent-foreground: oklch(0.8 0.12 42);
+  --accent: oklch(0.30 0.06 50);            /* #3A2718 — глубокий тёплый */
+  --accent-foreground: oklch(0.83 0.11 55); /* #FFB380 — персиковый */
 
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.64 0.22 27);       /* #F43F5E */
+  --destructive-foreground: oklch(0.96 0.008 80);
 
-  --success: oklch(0.7 0.18 152);
-  --success-foreground: oklch(0.12 0 0);
+  --success: oklch(0.68 0.15 155);          /* #3EC085 */
+  --success-foreground: oklch(0.15 0.005 70);
 
-  --warning: oklch(0.78 0.17 65);
-  --warning-foreground: oklch(0.12 0 0);
+  --warning: oklch(0.78 0.16 67);           /* #FFB547 */
+  --warning-foreground: oklch(0.15 0.005 70);
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.68 0.2 42);
+  --ring: oklch(0.72 0.21 50);
 
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-1: oklch(0.72 0.21 50);           /* orange */
+  --chart-2: oklch(0.68 0.15 155);          /* green */
+  --chart-3: oklch(0.64 0.22 27);           /* red */
+  --chart-4: oklch(0.78 0.16 67);           /* amber */
+  --chart-5: oklch(0.66 0.16 250);          /* blue */
 
-  --sidebar: oklch(0.17 0.005 60);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.68 0.2 42);
-  --sidebar-primary-foreground: oklch(0.12 0 0);
-  --sidebar-accent: oklch(0.25 0.04 42);
-  --sidebar-accent-foreground: oklch(0.8 0.12 42);
+  --sidebar: oklch(0.20 0.007 70);
+  --sidebar-foreground: oklch(0.96 0.008 80);
+  --sidebar-primary: oklch(0.72 0.21 50);
+  --sidebar-primary-foreground: oklch(0.15 0.005 70);
+  --sidebar-accent: oklch(0.30 0.06 50);
+  --sidebar-accent-foreground: oklch(0.83 0.11 55);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.68 0.2 42);
+  --sidebar-ring: oklch(0.72 0.21 50);
 }
 
 @theme inline {
@@ -335,4 +334,36 @@ body {
 .leaflet-control-attribution {
   background: color-mix(in oklab, var(--card) 80%, transparent) !important;
   color: var(--muted-foreground) !important;
+}
+
+/* ── Easter egg: Konami chaos mode ─────────────────────────────────────── */
+.chaos-mode {
+  animation: chaos-hue 0.6s steps(1) infinite;
+}
+@keyframes chaos-hue {
+  0%   { filter: hue-rotate(0deg) saturate(1.8); }
+  25%  { filter: hue-rotate(90deg) saturate(2); }
+  50%  { filter: hue-rotate(180deg) saturate(2.2); }
+  75%  { filter: hue-rotate(270deg) saturate(2); }
+  100% { filter: hue-rotate(360deg) saturate(1.8); }
+}
+
+@keyframes chaos-appear {
+  from { opacity: 0; transform: scale(0.8) rotate(-3deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.animate-chaos-appear {
+  animation: chaos-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Easter egg: logo spin ──────────────────────────────────────────────── */
+@keyframes logo-party {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(-15deg) scale(1.2); }
+  50%  { transform: rotate(15deg) scale(1.3); }
+  75%  { transform: rotate(-10deg) scale(1.2); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+.animate-logo-party {
+  animation: logo-party 0.6s ease-in-out;
 }

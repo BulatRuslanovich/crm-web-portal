@@ -2,38 +2,29 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { CalendarCheck } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
-import { searchOrgOptions } from '@/lib/api/orgs';
-import { searchPhysOptions } from '@/lib/api/physes';
-import { searchDrugOptions } from '@/lib/api/drugs';
 import { extractApiError } from '@/lib/api/errors';
-import {
-  BackButton,
-  Card,
-  CardFooter,
-  Label,
-  Textarea,
-  ErrorBox,
-  BtnSecondary,
-  BtnSuccess,
-  SectionLabel,
-} from '@/components/ui';
-import { DateTimePicker } from '@/components/DateTimePicker';
-import { Combobox, type ComboboxOption } from '@/components/Combobox';
-import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
+import { toast } from 'sonner';
 import { STATUS_PLANNED } from '@/lib/api/statuses';
 import {
-  Building2,
-  Stethoscope,
-  CalendarCheck,
-  Target,
-  Clock,
-  FileText,
-  Pill,
-} from 'lucide-react';
-
-type TargetKind = 'org' | 'phys';
+  BtnSecondary,
+  BtnSuccess,
+  Card,
+  CardFooter,
+  ErrorBox,
+} from '@/components/ui';
+import type { ComboboxOption } from '@/components/Combobox';
+import type { MultiComboboxOption } from '@/components/MultiCombobox';
+import { FormPageHeader } from '../../_components/FormPageHeader';
+import { type TargetKind } from '../_components/TargetSwitcher';
+import { TargetSection } from './_components/TargetSection';
+import {
+  DescriptionSection,
+  DrugsSection,
+  TimeSection,
+} from './_components/ActivFormSections';
 
 interface FormValues {
   orgId: string;
@@ -43,6 +34,14 @@ interface FormValues {
   drugIds: string[];
 }
 
+const DEFAULT_VALUES: FormValues = {
+  orgId: '',
+  physId: '',
+  start: '',
+  description: '',
+  drugIds: [],
+};
+
 export default function CreateActivPage() {
   const router = useRouter();
   const [targetKind, setTargetKind] = useState<TargetKind>('org');
@@ -51,53 +50,39 @@ export default function CreateActivPage() {
   const [selectedDrugs, setSelectedDrugs] = useState<MultiComboboxOption[]>([]);
   const [apiError, setApiError] = useState('');
 
-  const {
-    handleSubmit,
-    control,
-    register,
-    setValue,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    defaultValues: {
-      orgId: '',
-      physId: '',
-      start: '',
-      description: '',
-      drugIds: [],
-    },
-  });
+  const form = useForm<FormValues>({ defaultValues: DEFAULT_VALUES });
 
   function switchTarget(kind: TargetKind) {
     setTargetKind(kind);
     if (kind === 'org') {
-      setValue('physId', '');
+      form.setValue('physId', '');
       setSelectedPhys(undefined);
     } else {
-      setValue('orgId', '');
+      form.setValue('orgId', '');
       setSelectedOrg(undefined);
     }
   }
 
   async function onSubmit(values: FormValues) {
     setApiError('');
-
-    const orgId = targetKind === 'org' && values.orgId ? Number(values.orgId) : null;
-    const physId = targetKind === 'phys' && values.physId ? Number(values.physId) : null;
-
-    if ((orgId == null) === (physId == null)) {
-      setApiError(targetKind === 'org' ? 'Выберите организацию' : 'Выберите врача');
+    const ids = buildTargetIds(values, targetKind);
+    if (ids.error) {
+      setApiError(ids.error);
       return;
     }
 
     try {
       const { data } = await activsApi.create({
-        orgId,
-        physId,
+        orgId: ids.orgId,
+        physId: ids.physId,
         statusId: STATUS_PLANNED,
         start: values.start,
         end: null,
         description: values.description,
         drugIds: values.drugIds.map(Number),
+      });
+      toast.success('Визит создан', {
+        description: targetKind === 'org' ? selectedOrg?.label : selectedPhys?.label,
       });
       router.push(`/activs/${data.activId}`);
     } catch (err) {
@@ -107,144 +92,36 @@ export default function CreateActivPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <BackButton />
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
-            <CalendarCheck size={16} className="text-primary" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground">Новый визит</h2>
-        </div>
-      </div>
+      <FormPageHeader icon={CalendarCheck} iconTone="primary" title="Новый визит" />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            {/* Target */}
-            <div>
-              <SectionLabel icon={Target}>Цель визита</SectionLabel>
-              <div className="mb-3 grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/50 p-1">
-                <button
-                  type="button"
-                  onClick={() => switchTarget('org')}
-                  className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                    targetKind === 'org'
-                      ? 'bg-card text-foreground shadow-sm ring-1 ring-border'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Building2 size={15} /> Организация
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchTarget('phys')}
-                  className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                    targetKind === 'phys'
-                      ? 'bg-card text-foreground shadow-sm ring-1 ring-border'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Stethoscope size={15} /> Врач
-                </button>
-              </div>
-
-              {targetKind === 'org' ? (
-                <div>
-                  <Label required>Организация</Label>
-                  <Controller
-                    name="orgId"
-                    control={control}
-                    rules={{ required: targetKind === 'org' }}
-                    render={({ field }) => (
-                      <Combobox
-                        asyncSearch={searchOrgOptions}
-                        selectedOption={selectedOrg}
-                        value={field.value}
-                        onChange={(val, opt) => {
-                          field.onChange(val);
-                          setSelectedOrg(opt);
-                        }}
-                        placeholder="Выберите организацию"
-                        searchPlaceholder="Поиск организации..."
-                      />
-                    )}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <Label required>Врач</Label>
-                  <Controller
-                    name="physId"
-                    control={control}
-                    rules={{ required: targetKind === 'phys' }}
-                    render={({ field }) => (
-                      <Combobox
-                        asyncSearch={searchPhysOptions}
-                        selectedOption={selectedPhys}
-                        value={field.value}
-                        onChange={(val, opt) => {
-                          field.onChange(val);
-                          setSelectedPhys(opt);
-                        }}
-                        placeholder="Выберите врача"
-                        searchPlaceholder="Поиск врача..."
-                      />
-                    )}
-                  />
-                </div>
-              )}
-            </div>
+            <TargetSection
+              control={form.control}
+              targetKind={targetKind}
+              onSwitch={switchTarget}
+              selectedOrg={selectedOrg}
+              selectedPhys={selectedPhys}
+              onPickOrg={setSelectedOrg}
+              onPickPhys={setSelectedPhys}
+            />
 
             <hr className="border-border" />
 
-            {/* Time */}
-            <div>
-              <SectionLabel icon={Clock}>Время</SectionLabel>
-              <Label>Дата начала</Label>
-              <Controller
-                name="start"
-                control={control}
-                render={({ field }) => (
-                  <DateTimePicker
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Выберите дату и время"
-                  />
-                )}
-              />
-            </div>
+            <TimeSection control={form.control} />
 
             <hr className="border-border" />
 
-            {/* Description */}
-            <div>
-              <SectionLabel icon={FileText}>Описание</SectionLabel>
-              <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
-            </div>
+            <DescriptionSection register={form.register} />
 
             <hr className="border-border" />
 
-            {/* Drugs */}
-            <div>
-              <SectionLabel icon={Pill}>Препараты</SectionLabel>
-              <Controller
-                name="drugIds"
-                control={control}
-                render={({ field }) => (
-                  <MultiCombobox
-                    asyncSearch={searchDrugOptions}
-                    selectedOptions={selectedDrugs}
-                    value={field.value}
-                    onChange={(vals, opts) => {
-                      field.onChange(vals);
-                      if (opts) setSelectedDrugs(opts);
-                    }}
-                    placeholder="Выберите препараты"
-                    searchPlaceholder="Поиск препарата..."
-                  />
-                )}
-              />
-            </div>
+            <DrugsSection
+              control={form.control}
+              selected={selectedDrugs}
+              onSelectedChange={setSelectedDrugs}
+            />
 
             {apiError && <ErrorBox message={apiError} />}
           </div>
@@ -253,12 +130,32 @@ export default function CreateActivPage() {
             <BtnSecondary type="button" onClick={() => router.back()}>
               Отмена
             </BtnSecondary>
-            <BtnSuccess type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Создание...' : 'Создать визит'}
+            <BtnSuccess type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Создание...' : 'Создать визит'}
             </BtnSuccess>
           </CardFooter>
         </Card>
       </form>
     </div>
   );
+}
+
+interface TargetIds {
+  orgId: number | null;
+  physId: number | null;
+  error?: string;
+}
+
+function buildTargetIds(values: FormValues, kind: TargetKind): TargetIds {
+  const orgId = kind === 'org' && values.orgId ? Number(values.orgId) : null;
+  const physId = kind === 'phys' && values.physId ? Number(values.physId) : null;
+
+  if ((orgId == null) === (physId == null)) {
+    return {
+      orgId,
+      physId,
+      error: kind === 'org' ? 'Выберите организацию' : 'Выберите врача',
+    };
+  }
+  return { orgId, physId };
 }

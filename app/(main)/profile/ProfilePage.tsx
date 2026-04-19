@@ -174,7 +174,6 @@ export default function ProfilePage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      {/* Hero */}
       <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted to-card shadow-sm">
         <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-wrap items-center gap-5 p-6">
@@ -221,7 +220,6 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      {/* Personal info */}
       <SectionCard
         icon={User}
         title="Личные данные"
@@ -284,7 +282,6 @@ export default function ProfilePage() {
         )}
       </SectionCard>
 
-      {/* Security */}
       <SectionCard
         icon={Shield}
         title="Безопасность"
@@ -353,7 +350,6 @@ export default function ProfilePage() {
         )}
       </SectionCard>
 
-      {/* Logout */}
       <SectionCard
         icon={LogOut}
         title="Выход"

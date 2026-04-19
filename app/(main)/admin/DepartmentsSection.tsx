@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useApi } from '@/lib/use-api';
+import { useApi } from '@/lib/hooks/use-api';
 import { usersApi } from '@/lib/api/users';
 import { departmentsApi } from '@/lib/api/departments';
 import { extractApiError } from '@/lib/api/errors';
@@ -23,8 +23,10 @@ import {
   Users,
   Eye,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { DepartmentResponse } from '@/lib/api/types';
 import { isAxiosError } from 'axios';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 function DepartmentMembersModal({
   department,
@@ -170,6 +172,7 @@ export function DepartmentsSection() {
   const [createError, setCreateError] = useState('');
   const [newName, setNewName] = useState('');
   const [editing, setEditing] = useState<DepartmentResponse | null>(null);
+  const { confirm, dialog } = useConfirm();
 
   const { data, loading, reload } = useApi(
     ['admin-departments', page],
@@ -197,6 +200,7 @@ export function DepartmentsSection() {
       setShowCreate(false);
       setNewName('');
       await reload();
+      toast.success('Департамент создан', { description: name });
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 409) {
         setCreateError('Департамент с таким названием уже существует');
@@ -207,10 +211,18 @@ export function DepartmentsSection() {
   }
 
   async function handleDelete(d: DepartmentResponse) {
-    if (!confirm(`Удалить департамент «${d.departmentName}»?`)) return;
+    const ok = confirm({
+      title: 'Удалить департамент?',
+      description: `Департамент «${d.departmentName}» будет удалён безвозвратно. Пользователи из этого департамента не будут удалены, но потеряют доступ к своим визитам, если не будут в других департаментах.`,
+      confirmLabel: 'Удалить',
+    });
+    
+    if (!ok) return;  
+
     try {
       await departmentsApi.delete(d.departmentId);
       await reload();
+      toast('Департамент удалён', { description: d.departmentName });
     } catch (err) {
       alert(extractApiError(err));
     }
@@ -347,6 +359,8 @@ export function DepartmentsSection() {
           }}
         />
       )}
+
+      {dialog}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { SidebarNav } from './SidebarNav';
 import { SidebarThemeSwitch } from './SidebarThemeSwitch';
 import { SidebarUser } from './SidebarUser';
 
-export interface SidebarContentProps {
+interface SidebarContentProps {
   compact: boolean;
   groups: NavGroup[];
   displayName: string;

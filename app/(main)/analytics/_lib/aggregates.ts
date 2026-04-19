@@ -66,7 +66,7 @@ export function buildByStatus(activs: ActivResponse[]): { name: string; value: n
   return [...map.entries()].map(([name, value]) => ({ name, value }));
 }
 
-export interface Summary {
+interface Summary {
   total: number;
   closed: number;
   closedPct: number;

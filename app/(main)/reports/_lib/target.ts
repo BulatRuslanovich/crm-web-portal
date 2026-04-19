@@ -1,6 +1,6 @@
 import type { ActivResponse } from '@/lib/api/types';
 
-export type TargetKind = 'phys' | 'org' | 'none';
+type TargetKind = 'phys' | 'org' | 'none';
 
 export function targetKind(a: ActivResponse): TargetKind {
   if (a.physId != null) return 'phys';

@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
 import { LogIn } from 'lucide-react';
-import { AuthFormShell } from '@/components/auth/auth-form-shell';
+import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
 
 interface FormValues {
   login: string;
@@ -38,8 +38,10 @@ export default function LoginForm() {
 
   return (
     <AuthFormShell
-  title="Вход"
-  subtitle="Войдите в свой аккаунт"
+      title="Вход"
+      subtitle="Войдите в свой аккаунт"
+      icon={LogIn}
+      iconTone="success"
   footer={
     <>
         <Link href="/forgot-password" className="text-foreground underline-offset-4 hover:underline">
