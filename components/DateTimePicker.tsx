@@ -186,13 +186,13 @@ function TimeSelect({
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
       className={cn(
-        'h-8 rounded-sm border border-input bg-transparent px-2 text-center text-sm tabular-nums text-foreground outline-none transition-[color,box-shadow]',
+        'h-8 rounded-sm border border-input bg-popover px-2 text-center text-sm tabular-nums text-popover-foreground outline-none transition-[color,box-shadow]',
         'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
         'dark:bg-input/30',
       )}
     >
       {options.map((v) => (
-        <option key={v} value={v}>
+        <option key={v} value={v} className="bg-popover text-popover-foreground">
           {String(v).padStart(2, '0')}
         </option>
       ))}

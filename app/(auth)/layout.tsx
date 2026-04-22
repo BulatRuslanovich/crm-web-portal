@@ -47,7 +47,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="animate-fade-in relative z-10 w-full max-w-sm">
         <div className="mb-7 flex flex-col items-center text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
-            <Image src="/icon.svg" width={32} height={32} alt="icon" />
+            <Image src="/icon.svg" width={56} height={56} alt="Pharmo" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Pharmo CRM</h1>
           <p className="mt-1 text-sm text-muted-foreground">Система управления визитами</p>

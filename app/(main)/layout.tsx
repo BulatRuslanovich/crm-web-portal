@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { Toaster } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
 import Sidebar from '@/components/Sidebar';
@@ -9,6 +11,7 @@ import { ChaosOverlay } from '@/components/ChaosOverlay';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
 
   const [collapsed, setCollapsed] = useState(() => {
@@ -32,19 +35,26 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     });
   };
 
-  if (isLoading) {
+  if (true || isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="animate-fade-in flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <span className="text-lg font-bold text-primary-foreground">P</span>
-            </div>
-            <div className="animate-skeleton absolute inset-0 rounded-xl bg-primary opacity-40" />
+      <div className="flex min-h-screen items-center justify-center bg-background px-6">
+        <div className="animate-fade-in flex w-full max-w-xs flex-col items-center gap-5">
+          <div className="relative flex size-16 items-center justify-center rounded-2xl bg-card shadow-sm ring-1 ring-border">
+            <Image src="/icon.svg" width={52} height={52} alt="Pharmo" priority />
+            <div className="absolute -inset-1 rounded-[1.25rem] border border-primary/20" />
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-sm font-medium text-foreground">Pharmo CRM</p>
-            <p className="text-xs text-muted-foreground">Загрузка...</p>
+
+          <div className="w-full space-y-3 text-center">
+            <div>
+              <p className="text-sm font-bold tracking-tight text-foreground">Pharmo CRM</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Подготовка рабочего пространства</p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-1.5" aria-hidden="true">
+              <span className="h-1.5 rounded-full bg-primary" />
+              <span className="animate-skeleton h-1.5 rounded-full bg-primary/60" />
+              <span className="animate-skeleton h-1.5 rounded-full bg-primary/25 [animation-delay:180ms]" />
+            </div>
           </div>
         </div>
       </div>
@@ -57,7 +67,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-background">
       <Sidebar collapsed={collapsed} onToggle={toggle} />
       <ChaosOverlay />
-      <Toaster position="bottom-right" />
+      <Toaster position="top-right" theme={resolvedTheme === 'dark' ? 'dark' : 'light'} />
       <main
         className={`px-4 py-6 pt-16 transition-all duration-300 sm:px-6 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
       >

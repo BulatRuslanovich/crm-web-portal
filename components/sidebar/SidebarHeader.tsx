@@ -61,7 +61,7 @@ export function SidebarHeader({
             party && 'animate-logo-party',
           )}
         >
-          <Image src="/icon.svg" width={24} height={24} alt="Pharmo" />
+          <Image src="/icon.svg" width={30} height={30} alt="Pharmo" />
         </div>
         {!compact && (
           <div className="min-w-0">
