@@ -1,13 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { BriefcaseMedical, Phone, Plus, User } from 'lucide-react';
-import { useApi } from '@/lib/hooks/use-api';
 import { physesApi } from '@/lib/api/physes';
-import { specsApi } from '@/lib/api/specs';
-import { extractApiError } from '@/lib/api/errors';
 import { toast } from 'sonner';
 import {
   BtnSecondary,
@@ -15,57 +11,36 @@ import {
   Card,
   CardFooter,
   ErrorBox,
-  SectionLabel,
 } from '@/components/ui';
 import { FormPageHeader } from '../../_components/FormPageHeader';
+import { FormSection } from '../../_components/FormSection';
+import { useSpecOptions } from '../../_lib/dictionary-options';
+import { useSubmitAction } from '../../_lib/use-submit-action';
 import { PhysContactFields, PhysNameFields, PhysSpecField } from '../_components/PhysFields';
-
-interface FormValues {
-  lastName: string;
-  firstName: string;
-  middleName: string;
-  specId: string;
-  phone: string;
-  email: string;
-}
-
-const DEFAULT_VALUES: FormValues = {
-  lastName: '',
-  firstName: '',
-  middleName: '',
-  specId: '',
-  phone: '',
-  email: '',
-};
+import {
+  PHYS_DEFAULT_VALUES,
+  physFormToCreateRequest,
+  type PhysFormValues,
+} from '../_lib/phys-form';
 
 export default function CreatePhysPage() {
   const router = useRouter();
-  const [apiError, setApiError] = useState('');
   const specOptions = useSpecOptions();
+  const submitAction = useSubmitAction({ fallbackError: 'Ошибка создания' });
 
   const {
     register,
     handleSubmit,
     control,
     formState: { isSubmitting },
-  } = useForm<FormValues>({ defaultValues: DEFAULT_VALUES });
+  } = useForm<PhysFormValues>({ defaultValues: PHYS_DEFAULT_VALUES });
 
-  async function onSubmit(values: FormValues) {
-    setApiError('');
-    try {
-      const { data } = await physesApi.create({
-        specId: Number(values.specId),
-        lastName: values.lastName,
-        firstName: values.firstName,
-        middleName: values.middleName,
-        phone: values.phone,
-        email: values.email,
-      });
+  async function onSubmit(values: PhysFormValues) {
+    await submitAction.submit(async () => {
+      const { data } = await physesApi.create(physFormToCreateRequest(values));
       toast.success('Врач добавлен', { description: `${values.lastName} ${values.firstName}`.trim() });
       router.push(`/physes/${data.physId}`);
-    } catch (err) {
-      setApiError(extractApiError(err, 'Ошибка создания'));
-    }
+    });
   }
 
   return (
@@ -75,23 +50,23 @@ export default function CreatePhysPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <Section icon={User} title="ФИО">
+            <FormSection icon={User} title="ФИО">
               <PhysNameFields register={register} withPlaceholders />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={BriefcaseMedical} title="Специальность">
+            <FormSection icon={BriefcaseMedical} title="Специальность">
               <PhysSpecField control={control} options={specOptions} required />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={Phone} title="Контакты">
+            <FormSection icon={Phone} title="Контакты">
               <PhysContactFields register={register} withPlaceholders required />
-            </Section>
+            </FormSection>
 
-            {apiError && <ErrorBox message={apiError} />}
+            {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
           <CardFooter>
@@ -106,30 +81,4 @@ export default function CreatePhysPage() {
       </form>
     </div>
   );
-}
-
-function Section({
-  icon,
-  title,
-  children,
-}: {
-  icon: typeof User;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <SectionLabel icon={icon}>{title}</SectionLabel>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
-function useSpecOptions() {
-  const { data: specs = [] } = useApi(
-    'specs',
-    () => specsApi.getAll().then(({ data }) => data),
-    { dedupingInterval: 300_000 },
-  );
-  return specs.map((s) => ({ value: String(s.specId), label: s.specName }));
 }

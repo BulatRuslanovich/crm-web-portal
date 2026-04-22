@@ -1,20 +1,21 @@
 'use client';
 
 import { Controller } from 'react-hook-form';
+import type { Control, FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { Input, Label } from '@/components/ui';
 import { Combobox, type ComboboxOption } from '@/components/Combobox';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-type FormControl = any;
-type FormRegister = any;
-
-interface NameProps {
-  register: FormRegister;
+interface NameProps<T extends FieldValues> {
+  register: UseFormRegister<T>;
   withPlaceholders?: boolean;
   requireMiddleName?: boolean;
 }
 
-export function PhysNameFields({ register, withPlaceholders, requireMiddleName }: NameProps) {
+export function PhysNameFields<T extends FieldValues>({
+  register,
+  withPlaceholders,
+  requireMiddleName,
+}: NameProps<T>) {
   return (
     <>
       <div>
@@ -22,7 +23,7 @@ export function PhysNameFields({ register, withPlaceholders, requireMiddleName }
         <Input
           type="text"
           placeholder={withPlaceholders ? 'Иванов' : undefined}
-          {...register('lastName')}
+          {...register('lastName' as Path<T>)}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -31,7 +32,7 @@ export function PhysNameFields({ register, withPlaceholders, requireMiddleName }
           <Input
             type="text"
             placeholder={withPlaceholders ? 'Иван' : undefined}
-            {...register('firstName')}
+            {...register('firstName' as Path<T>)}
           />
         </div>
         <div>
@@ -39,7 +40,7 @@ export function PhysNameFields({ register, withPlaceholders, requireMiddleName }
           <Input
             type="text"
             placeholder={withPlaceholders ? 'Иванович' : undefined}
-            {...register('middleName')}
+            {...register('middleName' as Path<T>)}
           />
         </div>
       </div>
@@ -47,13 +48,17 @@ export function PhysNameFields({ register, withPlaceholders, requireMiddleName }
   );
 }
 
-interface ContactProps {
-  register: FormRegister;
+interface ContactProps<T extends FieldValues> {
+  register: UseFormRegister<T>;
   withPlaceholders?: boolean;
   required?: boolean;
 }
 
-export function PhysContactFields({ register, withPlaceholders, required }: ContactProps) {
+export function PhysContactFields<T extends FieldValues>({
+  register,
+  withPlaceholders,
+  required,
+}: ContactProps<T>) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
@@ -61,7 +66,7 @@ export function PhysContactFields({ register, withPlaceholders, required }: Cont
         <Input
           type="tel"
           placeholder={withPlaceholders ? '+7 999 000 00 00' : undefined}
-          {...register('phone')}
+          {...register('phone' as Path<T>)}
         />
       </div>
       <div>
@@ -69,32 +74,37 @@ export function PhysContactFields({ register, withPlaceholders, required }: Cont
         <Input
           type="email"
           placeholder={withPlaceholders ? 'doctor@example.com' : undefined}
-          {...register('email')}
+          {...register('email' as Path<T>)}
         />
       </div>
     </div>
   );
 }
 
-interface SpecProps {
-  control: FormControl;
+interface SpecProps<T extends FieldValues> {
+  control: Control<T>;
   options: ComboboxOption[];
   required?: boolean;
   placeholder?: string;
 }
 
-export function PhysSpecField({ control, options, required, placeholder }: SpecProps) {
+export function PhysSpecField<T extends FieldValues>({
+  control,
+  options,
+  required,
+  placeholder,
+}: SpecProps<T>) {
   return (
     <div>
       <Label required={required}>Специальность</Label>
       <Controller
-        name="specId"
+        name={'specId' as Path<T>}
         control={control}
         rules={{ required }}
         render={({ field }) => (
           <Combobox
             options={options}
-            value={field.value}
+            value={field.value as string}
             onChange={field.onChange}
             placeholder={placeholder ?? 'Выберите специальность'}
             searchPlaceholder="Поиск специальности..."

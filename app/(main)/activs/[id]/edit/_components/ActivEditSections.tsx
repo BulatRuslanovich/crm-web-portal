@@ -1,6 +1,7 @@
 'use client';
 
 import { Controller } from 'react-hook-form';
+import type { Control, FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { CircleDot, Clock, FileText, Pill } from 'lucide-react';
 import { Label, SectionLabel, Textarea } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
@@ -10,22 +11,18 @@ import { searchDrugOptions } from '@/lib/api/drugs';
 import { STATUSES } from '@/lib/api/statuses';
 import type { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-type FormControl = any;
-type FormRegister = any;
-
-export function StatusField({ control }: { control: FormControl }) {
+export function StatusField<T extends FieldValues>({ control }: { control: Control<T> }) {
   const options = STATUSES.map((s) => ({ value: String(s.statusId), label: s.statusName }));
   return (
     <div>
       <SectionLabel icon={CircleDot}>Статус</SectionLabel>
       <Controller
-        name="statusId"
+        name={'statusId' as Path<T>}
         control={control}
         render={({ field }) => (
           <Combobox
             options={options}
-            value={field.value}
+            value={field.value as string}
             onChange={field.onChange}
             placeholder="Выберите статус"
           />
@@ -35,7 +32,7 @@ export function StatusField({ control }: { control: FormControl }) {
   );
 }
 
-export function TimeFields({ control }: { control: FormControl }) {
+export function TimeFields<T extends FieldValues>({ control }: { control: Control<T> }) {
   return (
     <div>
       <SectionLabel icon={Clock}>Время визита</SectionLabel>
@@ -47,7 +44,7 @@ export function TimeFields({ control }: { control: FormControl }) {
   );
 }
 
-function DateTimeField({
+function DateTimeField<T extends FieldValues>({
   name,
   label,
   placeholder,
@@ -56,27 +53,39 @@ function DateTimeField({
   name: 'start' | 'end';
   label: string;
   placeholder: string;
-  control: FormControl;
+  control: Control<T>;
 }) {
   return (
     <div>
       <Label>{label}</Label>
       <Controller
-        name={name}
+        name={name as Path<T>}
         control={control}
         render={({ field }) => (
-          <DateTimePicker value={field.value} onChange={field.onChange} placeholder={placeholder} />
+          <DateTimePicker
+            value={field.value as string}
+            onChange={field.onChange}
+            placeholder={placeholder}
+          />
         )}
       />
     </div>
   );
 }
 
-export function DescriptionField({ register }: { register: FormRegister }) {
+export function DescriptionField<T extends FieldValues>({
+  register,
+}: {
+  register: UseFormRegister<T>;
+}) {
   return (
     <div>
       <SectionLabel icon={FileText}>Описание</SectionLabel>
-      <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
+      <Textarea
+        rows={3}
+        placeholder="Описание визита..."
+        {...register('description' as Path<T>)}
+      />
     </div>
   );
 }

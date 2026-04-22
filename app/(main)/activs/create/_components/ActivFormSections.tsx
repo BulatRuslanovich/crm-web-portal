@@ -1,27 +1,24 @@
 'use client';
 
 import { Controller } from 'react-hook-form';
+import type { Control, FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { Clock, FileText, Pill } from 'lucide-react';
 import { Label, SectionLabel, Textarea } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import { MultiCombobox, type MultiComboboxOption } from '@/components/MultiCombobox';
 import { searchDrugOptions } from '@/lib/api/drugs';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-type FormControl = any;
-type FormRegister = any;
-
-export function TimeSection({ control }: { control: FormControl }) {
+export function TimeSection<T extends FieldValues>({ control }: { control: Control<T> }) {
   return (
     <div>
       <SectionLabel icon={Clock}>Время</SectionLabel>
       <Label>Дата начала</Label>
       <Controller
-        name="start"
+        name={'start' as Path<T>}
         control={control}
         render={({ field }) => (
           <DateTimePicker
-            value={field.value}
+            value={field.value as string}
             onChange={field.onChange}
             placeholder="Выберите дату и время"
           />
@@ -31,33 +28,45 @@ export function TimeSection({ control }: { control: FormControl }) {
   );
 }
 
-export function DescriptionSection({ register }: { register: FormRegister }) {
+export function DescriptionSection<T extends FieldValues>({
+  register,
+}: {
+  register: UseFormRegister<T>;
+}) {
   return (
     <div>
       <SectionLabel icon={FileText}>Описание</SectionLabel>
-      <Textarea rows={3} placeholder="Описание визита..." {...register('description')} />
+      <Textarea
+        rows={3}
+        placeholder="Описание визита..."
+        {...register('description' as Path<T>)}
+      />
     </div>
   );
 }
 
-interface DrugsProps {
-  control: FormControl;
+interface DrugsProps<T extends FieldValues> {
+  control: Control<T>;
   selected: MultiComboboxOption[];
   onSelectedChange: (opts: MultiComboboxOption[]) => void;
 }
 
-export function DrugsSection({ control, selected, onSelectedChange }: DrugsProps) {
+export function DrugsSection<T extends FieldValues>({
+  control,
+  selected,
+  onSelectedChange,
+}: DrugsProps<T>) {
   return (
     <div>
       <SectionLabel icon={Pill}>Препараты</SectionLabel>
       <Controller
-        name="drugIds"
+        name={'drugIds' as Path<T>}
         control={control}
         render={({ field }) => (
           <MultiCombobox
             asyncSearch={searchDrugOptions}
             selectedOptions={selected}
-            value={field.value}
+            value={(field.value ?? []) as string[]}
             onChange={(vals, opts) => {
               field.onChange(vals);
               if (opts) onSelectedChange(opts);

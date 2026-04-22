@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Building2, FileText, MapPin, Pencil } from 'lucide-react';
-import { useApi } from '@/lib/hooks/use-api';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
-import { extractApiError } from '@/lib/api/errors';
 import { toast } from 'sonner';
-import type { OrgResponse } from '@/lib/api/types';
 import {
   BtnPrimary,
   BtnSecondary,
@@ -17,31 +14,31 @@ import {
   CardFooter,
   CardSkeleton,
   ErrorBox,
-  SectionLabel,
 } from '@/components/ui';
 import { FormPageHeader } from '../../../_components/FormPageHeader';
+import { FormSection } from '../../../_components/FormSection';
+import { useOrgTypeOptions } from '../../../_lib/dictionary-options';
+import { useSubmitAction } from '../../../_lib/use-submit-action';
 import { OrgInnField, OrgLocationFields, OrgMainFields } from '../../_components/OrgFields';
-import type { OrgFormValues } from '../../create/CreateOrgPage';
-
-const DEFAULT_VALUES: OrgFormValues = {
-  orgTypeId: '',
-  orgName: '',
-  inn: '',
-  address: '',
-  latitude: '',
-  longitude: '',
-};
+import {
+  ORG_DEFAULT_VALUES,
+  orgFormToUpdateRequest,
+  orgToFormValues,
+  type OrgFormValues,
+} from '../../_lib/org-form';
 
 export default function OrgEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const numId = Number(id);
-  const [apiError, setApiError] = useState('');
+  const submitAction = useSubmitAction({
+    fallbackError: 'Неизвестная ошибка при обновлении организации',
+  });
 
   const { data: org } = useEntity(['org', numId], () => orgsApi.getById(numId), '/orgs');
   const typeOptions = useOrgTypeOptions();
 
-  const form = useForm<OrgFormValues>({ defaultValues: DEFAULT_VALUES });
+  const form = useForm<OrgFormValues>({ defaultValues: ORG_DEFAULT_VALUES });
 
   useEffect(() => {
     if (!org) return;
@@ -57,21 +54,11 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
   }
 
   async function onSubmit(values: OrgFormValues) {
-    setApiError('');
-    try {
-      await orgsApi.update(numId, {
-        orgTypeId: Number(values.orgTypeId),
-        orgName: values.orgName,
-        inn: values.inn || null,
-        address: values.address || null,
-        latitude: values.latitude ? Number(values.latitude) : null,
-        longitude: values.longitude ? Number(values.longitude) : null,
-      });
+    await submitAction.submit(async () => {
+      await orgsApi.update(numId, orgFormToUpdateRequest(values));
       toast.success('Изменения сохранены', { description: values.orgName });
       router.push(`/orgs/${id}`);
-    } catch (err) {
-      setApiError(extractApiError(err, 'Неизвестная ошибка при обновлении организации'));
-    }
+    });
   }
 
   return (
@@ -87,27 +74,27 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <Section icon={Building2} title="Основная информация">
+            <FormSection icon={Building2} title="Основная информация">
               <OrgMainFields
                 register={form.register}
                 control={form.control}
                 typeOptions={typeOptions}
               />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={FileText} title="Реквизиты">
+            <FormSection icon={FileText} title="Реквизиты">
               <OrgInnField register={form.register} />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={MapPin} title="Местоположение">
+            <FormSection icon={MapPin} title="Местоположение">
               <OrgLocationFields register={form.register} />
-            </Section>
+            </FormSection>
 
-            {apiError && <ErrorBox message={apiError} />}
+            {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
           <CardFooter>
@@ -122,41 +109,4 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
       </form>
     </div>
   );
-}
-
-function Section({
-  icon,
-  title,
-  children,
-}: {
-  icon: typeof Building2;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <SectionLabel icon={icon}>{title}</SectionLabel>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
-function useOrgTypeOptions() {
-  const { data: types = [] } = useApi(
-    'org-types',
-    () => orgsApi.getTypes().then(({ data }) => data),
-    { dedupingInterval: 300_000 },
-  );
-  return types.map((t) => ({ value: String(t.orgTypeId), label: t.orgTypeName }));
-}
-
-function orgToFormValues(org: OrgResponse): OrgFormValues {
-  return {
-    orgTypeId: String(org.orgTypeId),
-    orgName: org.orgName,
-    inn: org.inn ?? '',
-    address: org.address ?? '',
-    latitude: org.latitude != null ? String(org.latitude) : '',
-    longitude: org.longitude != null ? String(org.longitude) : '',
-  };
 }

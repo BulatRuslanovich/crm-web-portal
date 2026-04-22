@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, use } from 'react';
+import { useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Building2, Pencil, Stethoscope } from 'lucide-react';
@@ -8,7 +8,6 @@ import type { LucideIcon } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { useRoles } from '@/lib/hooks/use-roles';
-import { extractApiError } from '@/lib/api/errors';
 import { toast } from 'sonner';
 import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 import type { ActivResponse } from '@/lib/api/types';
@@ -22,21 +21,19 @@ import {
   StatusBadge,
 } from '@/components/ui';
 import { FormPageHeader } from '../../../_components/FormPageHeader';
+import { useSubmitAction } from '../../../_lib/use-submit-action';
 import {
   DescriptionField,
   DrugsField,
   StatusField,
   TimeFields,
 } from './_components/ActivEditSections';
-
-interface FormValues {
-  statusId: string;
-  start: string;
-  end: string;
-  description: string;
-}
-
-const DEFAULT_VALUES: FormValues = { statusId: '1', start: '', end: '', description: '' };
+import {
+  EDIT_ACTIV_DEFAULT_VALUES,
+  activFormToUpdateRequest,
+  activToFormValues,
+  type EditActivFormValues,
+} from '../../_lib/activ-form';
 
 export default function ActivEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -44,10 +41,10 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
   const { canManageActivs: canEditFields } = useRoles();
   const numId = Number(id);
 
-  const [apiError, setApiError] = useState('');
+  const submitAction = useSubmitAction({ fallbackError: 'Ошибка обновления' });
   const activ = useLoadedActiv(numId);
   const drugPicker = useDrugPicker(activ);
-  const form = useForm<FormValues>({ defaultValues: DEFAULT_VALUES });
+  const form = useForm<EditActivFormValues>({ defaultValues: EDIT_ACTIV_DEFAULT_VALUES });
 
   useEffect(() => {
     if (!activ) return;
@@ -62,16 +59,13 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
     );
   }
 
-  async function onSubmit(values: FormValues) {
-    setApiError('');
-    try {
+  async function onSubmit(values: EditActivFormValues) {
+    await submitAction.submit(async () => {
       await updateActiv(numId, activ!, values, canEditFields);
       await syncDrugs(numId, drugPicker.diff());
       toast.success('Изменения сохранены');
       router.push(`/activs/${id}`);
-    } catch (err) {
-      setApiError(extractApiError(err, 'Ошибка обновления'));
-    }
+    });
   }
 
   return (
@@ -93,7 +87,7 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
             <hr className="border-border" />
             <DrugsField picker={drugPicker} />
 
-            {apiError && <ErrorBox message={apiError} />}
+            {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
           <CardFooter>
@@ -160,27 +154,13 @@ function EditHeader({ activ, backHref }: { activ: ActivResponse; backHref: strin
   );
 }
 
-function activToFormValues(activ: ActivResponse): FormValues {
-  return {
-    statusId: String(activ.statusId),
-    start: activ.start ? activ.start.slice(0, 16) : '',
-    end: activ.end ? activ.end.slice(0, 16) : '',
-    description: activ.description ?? '',
-  };
-}
-
 async function updateActiv(
   numId: number,
   activ: ActivResponse,
-  values: FormValues,
+  values: EditActivFormValues,
   canEditFields: boolean,
 ) {
-  await activsApi.update(numId, {
-    statusId: canEditFields ? Number(values.statusId) : activ.statusId,
-    start: canEditFields ? values.start || null : activ.start,
-    end: canEditFields ? values.end || null : activ.end,
-    description: values.description || null,
-  });
+  await activsApi.update(numId, activFormToUpdateRequest(activ, values, canEditFields));
 }
 
 async function syncDrugs(

@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { CalendarCheck } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
-import { extractApiError } from '@/lib/api/errors';
 import { toast } from 'sonner';
-import { STATUS_PLANNED } from '@/lib/api/statuses';
 import {
   BtnSecondary,
   BtnSuccess,
@@ -18,6 +16,7 @@ import {
 import type { ComboboxOption } from '@/components/Combobox';
 import type { MultiComboboxOption } from '@/components/MultiCombobox';
 import { FormPageHeader } from '../../_components/FormPageHeader';
+import { useSubmitAction } from '../../_lib/use-submit-action';
 import { type TargetKind } from '../_components/TargetSwitcher';
 import { TargetSection } from './_components/TargetSection';
 import {
@@ -25,22 +24,12 @@ import {
   DrugsSection,
   TimeSection,
 } from './_components/ActivFormSections';
-
-interface FormValues {
-  orgId: string;
-  physId: string;
-  start: string;
-  description: string;
-  drugIds: string[];
-}
-
-const DEFAULT_VALUES: FormValues = {
-  orgId: '',
-  physId: '',
-  start: '',
-  description: '',
-  drugIds: [],
-};
+import {
+  CREATE_ACTIV_DEFAULT_VALUES,
+  activFormToCreateRequest,
+  buildTargetIds,
+  type CreateActivFormValues,
+} from '../_lib/activ-form';
 
 export default function CreateActivPage() {
   const router = useRouter();
@@ -48,9 +37,9 @@ export default function CreateActivPage() {
   const [selectedOrg, setSelectedOrg] = useState<ComboboxOption | undefined>();
   const [selectedPhys, setSelectedPhys] = useState<ComboboxOption | undefined>();
   const [selectedDrugs, setSelectedDrugs] = useState<MultiComboboxOption[]>([]);
-  const [apiError, setApiError] = useState('');
+  const submitAction = useSubmitAction({ fallbackError: 'Ошибка создания визита' });
 
-  const form = useForm<FormValues>({ defaultValues: DEFAULT_VALUES });
+  const form = useForm<CreateActivFormValues>({ defaultValues: CREATE_ACTIV_DEFAULT_VALUES });
 
   function switchTarget(kind: TargetKind) {
     setTargetKind(kind);
@@ -63,31 +52,21 @@ export default function CreateActivPage() {
     }
   }
 
-  async function onSubmit(values: FormValues) {
-    setApiError('');
+  async function onSubmit(values: CreateActivFormValues) {
+    submitAction.setError('');
     const ids = buildTargetIds(values, targetKind);
     if (ids.error) {
-      setApiError(ids.error);
+      submitAction.setError(ids.error);
       return;
     }
 
-    try {
-      const { data } = await activsApi.create({
-        orgId: ids.orgId,
-        physId: ids.physId,
-        statusId: STATUS_PLANNED,
-        start: values.start,
-        end: null,
-        description: values.description,
-        drugIds: values.drugIds.map(Number),
-      });
+    await submitAction.submit(async () => {
+      const { data } = await activsApi.create(activFormToCreateRequest(values, ids));
       toast.success('Визит создан', {
         description: targetKind === 'org' ? selectedOrg?.label : selectedPhys?.label,
       });
       router.push(`/activs/${data.activId}`);
-    } catch (err) {
-      setApiError(extractApiError(err, 'Ошибка создания визита'));
-    }
+    });
   }
 
   return (
@@ -123,7 +102,7 @@ export default function CreateActivPage() {
               onSelectedChange={setSelectedDrugs}
             />
 
-            {apiError && <ErrorBox message={apiError} />}
+            {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
           <CardFooter>
@@ -138,24 +117,4 @@ export default function CreateActivPage() {
       </form>
     </div>
   );
-}
-
-interface TargetIds {
-  orgId: number | null;
-  physId: number | null;
-  error?: string;
-}
-
-function buildTargetIds(values: FormValues, kind: TargetKind): TargetIds {
-  const orgId = kind === 'org' && values.orgId ? Number(values.orgId) : null;
-  const physId = kind === 'phys' && values.physId ? Number(values.physId) : null;
-
-  if ((orgId == null) === (physId == null)) {
-    return {
-      orgId,
-      physId,
-      error: kind === 'org' ? 'Выберите организацию' : 'Выберите врача',
-    };
-  }
-  return { orgId, physId };
 }

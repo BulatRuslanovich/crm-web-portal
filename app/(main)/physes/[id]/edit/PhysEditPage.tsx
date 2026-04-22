@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import type { UseFormRegister } from 'react-hook-form';
 import {
   BriefcaseMedical,
   Building2,
@@ -12,7 +13,6 @@ import {
   User,
 } from 'lucide-react';
 import { searchOrgOptions } from '@/lib/api/orgs';
-import { extractApiError } from '@/lib/api/errors';
 import { toast } from 'sonner';
 import {
   BtnPrimary,
@@ -23,11 +23,12 @@ import {
   ErrorBox,
   Input,
   Label,
-  SectionLabel,
 } from '@/components/ui';
 import { MultiCombobox } from '@/components/MultiCombobox';
 import { FormPageHeader } from '../../../_components/FormPageHeader';
+import { FormSection } from '../../../_components/FormSection';
 import { physFullName } from '../../../_lib/initials';
+import { useSubmitAction } from '../../../_lib/use-submit-action';
 import {
   PhysContactFields,
   PhysNameFields,
@@ -37,18 +38,20 @@ import {
   PHYS_DEFAULT_VALUES,
   type PhysFormValues,
   physToFormValues,
+} from '../../_lib/phys-form';
+import { useSpecOptions } from '../../../_lib/dictionary-options';
+import {
   syncOrgs,
   updatePhys,
   useLoadedPhys,
   usePhysOrgPicker,
-  useSpecOptions,
 } from './_lib/phys-edit';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const numId = Number(id);
-  const [apiError, setApiError] = useState('');
+  const submitAction = useSubmitAction();
 
   const phys = useLoadedPhys(numId);
   const specOptions = useSpecOptions();
@@ -69,15 +72,12 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   }
 
   async function onSubmit(values: PhysFormValues) {
-    setApiError('');
-    try {
+    await submitAction.submit(async () => {
       await updatePhys(numId, values);
       await syncOrgs(numId, orgPicker.diff());
       toast.success('Изменения сохранены', { description: `${values.lastName} ${values.firstName}`.trim() });
       router.push(`/physes/${id}`);
-    } catch (err) {
-      setApiError(extractApiError(err));
-    }
+    });
   }
 
   return (
@@ -94,30 +94,30 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <Section icon={User} title="ФИО">
+            <FormSection icon={User} title="ФИО">
               <PhysNameFields register={form.register} requireMiddleName />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={BriefcaseMedical} title="Специальность">
+            <FormSection icon={BriefcaseMedical} title="Специальность">
               <PhysSpecField
                 control={form.control}
                 options={specOptions}
                 placeholder="Не указана"
               />
               <PositionField register={form.register} />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={Phone} title="Контакты">
+            <FormSection icon={Phone} title="Контакты">
               <PhysContactFields register={form.register} />
-            </Section>
+            </FormSection>
 
             <hr className="border-border" />
 
-            <Section icon={Building2} title="Организации">
+            <FormSection icon={Building2} title="Организации">
               <MultiCombobox
                 asyncSearch={searchOrgOptions}
                 selectedOptions={orgPicker.selectedOptions}
@@ -126,9 +126,9 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
                 placeholder="Выберите организации"
                 searchPlaceholder="Поиск организации..."
               />
-            </Section>
+            </FormSection>
 
-            {apiError && <ErrorBox message={apiError} />}
+            {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
           <CardFooter>
@@ -145,25 +145,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   );
 }
 
-function Section({
-  icon,
-  title,
-  children,
-}: {
-  icon: typeof User;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <SectionLabel icon={icon}>{title}</SectionLabel>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function PositionField({ register }: { register: any }) {
+function PositionField({ register }: { register: UseFormRegister<PhysFormValues> }) {
   return (
     <div>
       <Label>Должность</Label>
