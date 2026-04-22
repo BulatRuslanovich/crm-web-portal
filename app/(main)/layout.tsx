@@ -35,7 +35,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     });
   };
 
-  if (true || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-6">
         <div className="animate-fade-in flex w-full max-w-xs flex-col items-center gap-5">
