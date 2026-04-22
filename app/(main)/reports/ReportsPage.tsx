@@ -71,7 +71,7 @@ export default function ReportsPage() {
     if (user && !canView) router.push('/dashboard');
   }, [user, canView, router]);
 
-  const initial = defaultRange();
+  const initial = useMemo(() => defaultRange(), []);
   const [dateFrom, setDateFrom] = useState(initial.from);
   const [dateTo, setDateTo] = useState(initial.to);
   const [statusFilter, setStatusFilter] = useState<number[]>([]);
@@ -83,7 +83,7 @@ export default function ReportsPage() {
     enabled: canView,
     dateFrom, dateTo, statusFilter, usrId: usrIdParam,
   });
-  const filtered = activs ?? [];
+  const filtered = useMemo(() => activs ?? [], [activs]);
 
   const stats = useMemo(() => computeStats(filtered), [filtered]);
   const activePresetKey = useMemo(() => matchPreset(dateFrom, dateTo), [dateFrom, dateTo]);

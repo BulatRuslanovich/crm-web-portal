@@ -35,9 +35,14 @@ const HERO_ACCENT = 'from-warning/20 via-warning/5 to-transparent';
 
 export default function PhysDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { confirm, dialog } = useConfirm();
+
   if (id === '-1') return <GetnamePage />;
 
+  return <PhysDetailContent id={id} />;
+}
+
+function PhysDetailContent({ id }: { id: string }) {
+  const { confirm, dialog } = useConfirm();
   const router = useRouter();
   const isAdmin = useIsAdmin();
   const numId = Number(id);

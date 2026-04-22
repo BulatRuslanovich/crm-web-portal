@@ -19,6 +19,7 @@ import { useTheme } from 'next-themes';
 import { Locate } from 'lucide-react';
 import type { OrgResponse } from '@/lib/api/types';
 import { colorForType } from './palette';
+import type { FlyToOrgTarget } from './MapPage';
 
 /* ── colored DivIcon ────────────────────────────────────────────────────── */
 function makeIcon(color: string): L.DivIcon {
@@ -100,14 +101,14 @@ function FlyTo({
   target,
   markerRefs,
 }: {
-  target: OrgResponse | null;
+  target: FlyToOrgTarget | null;
   markerRefs: React.RefObject<Map<number, L.Marker>>;
 }) {
   const map = useMap();
   useEffect(() => {
     if (!target) return;
-    map.flyTo([target.latitude, target.longitude], 15, { duration: 0.7 });
-    const marker = markerRefs.current.get(target.orgId);
+    map.flyTo([target.org.latitude, target.org.longitude], 15, { duration: 0.7 });
+    const marker = markerRefs.current.get(target.org.orgId);
     if (marker) {
       setTimeout(() => marker.openPopup(), 750);
     }
@@ -182,7 +183,7 @@ function OrgPopup({ org }: { org: OrgResponse }) {
 
 interface Props {
   orgs: OrgResponse[];
-  flyToOrg?: OrgResponse | null;
+  flyToOrg?: FlyToOrgTarget | null;
 }
 
 export default function MapClient({ orgs, flyToOrg }: Props) {

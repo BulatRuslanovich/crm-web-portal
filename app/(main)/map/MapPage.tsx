@@ -25,11 +25,16 @@ const MapClient = dynamic(() => import('./MapClient'), {
   loading: () => <Skeleton className="h-full w-full rounded-2xl" />,
 });
 
+export interface FlyToOrgTarget {
+  org: OrgResponse;
+  nonce: number;
+}
+
 export default function MapPage() {
   const [typeFilter, setTypeFilter] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'located' | 'missing'>('located');
-  const [flyToOrg, setFlyToOrg] = useState<OrgResponse | null>(null);
+  const [flyToOrg, setFlyToOrg] = useState<FlyToOrgTarget | null>(null);
 
   const { data: orgsData, loading } = useApi('map-orgs', () =>
     orgsApi.getAll(1, 1000).then((r) => r.data),
@@ -64,7 +69,7 @@ export default function MapPage() {
   const hasFilter = search !== '' || typeFilter !== null;
 
   function handleFlyTo(org: OrgResponse) {
-    setFlyToOrg({ ...org, _tick: Date.now() } as OrgResponse);
+    setFlyToOrg((prev) => ({ org, nonce: (prev?.nonce ?? 0) + 1 }));
   }
 
   return (

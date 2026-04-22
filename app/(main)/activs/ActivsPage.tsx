@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { CalendarCheck, Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
@@ -129,7 +129,7 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
 }
 
 function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
-  const quote = useRef(randomQuote()).current;
+  const [quote] = useState(randomQuote);
 
   return (
     <EmptyState

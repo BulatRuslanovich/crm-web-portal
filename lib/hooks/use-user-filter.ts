@@ -15,10 +15,9 @@ function readStored(): string {
 }
 
 export function useUserFilter(): [string, (v: string) => void] {
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(readStored);
 
   useEffect(() => {
-    setValue(readStored());
     const onChange = (e: Event) => {
       const ce = e as CustomEvent<string>;
       setValue(ce.detail ?? '');

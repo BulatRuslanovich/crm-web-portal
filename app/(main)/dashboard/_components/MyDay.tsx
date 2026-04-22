@@ -144,7 +144,7 @@ export function MyDay({
   activs: ActivResponse[];
   loading?: boolean;
 }) {
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
 
   const todaysVisits = useMemo(
     () =>
@@ -160,7 +160,7 @@ export function MyDay({
 
   const stats = useMemo(() => computeStats(todaysVisits), [todaysVisits]);
 
-  const nowMs = today.getTime();
+  const nowMs = useMemo(() => today.getTime(), [today]);
   const nextVisit = useMemo(
     () =>
       todaysVisits.find(
