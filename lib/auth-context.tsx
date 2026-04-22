@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { authApi, type RegisterRequest } from './api/auth';
+import { refreshAccessToken } from './api/client';
 import { usersApi } from './api/users';
 import type { UserResponse } from './api/types';
 
@@ -36,8 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
+        if (!localStorage.getItem('accessToken')) {
+          await refreshAccessToken();
+        }
         const { data } = await usersApi.getMe();
         setUser(data);
         setIsAuthenticated(true);
@@ -53,7 +55,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (loginVal: string, password: string) => {
     const { data } = await authApi.login({ login: loginVal, password });
     localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
     setIsAuthenticated(true);
     setUser(data.user);
   }, []);
@@ -69,20 +70,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const confirmEmail = useCallback(async (email: string, code: string) => {
     const { data } = await authApi.confirmEmail(email, code);
     localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
     setUser(data.user);
     setIsAuthenticated(true);
   }, []);
 
   const logout = useCallback(async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) await authApi.logout(refreshToken);
+      await authApi.logout();
     } catch {
       // ignore
     } finally {
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
       setIsAuthenticated(false);
       setUser(null);
     }

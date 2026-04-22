@@ -17,7 +17,6 @@ export interface RegisterRequest {
 
 interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
   user: UserResponse;
 }
 
@@ -29,6 +28,7 @@ export const authApi = {
   login: (data: LoginRequest) =>
     axios.post<AuthResponse>(`${BASE_URL}/api/auth/login`, data, {
       headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
     }),
 
   register: (data: RegisterRequest) =>
@@ -42,6 +42,7 @@ export const authApi = {
       { email, code },
       {
         headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
       },
     ),
 
@@ -68,6 +69,5 @@ export const authApi = {
       },
     ),
 
-  logout: (refreshToken: string) =>
-    apiClient.post('/api/auth/logout', JSON.stringify(refreshToken)),
+  logout: () => apiClient.post('/api/auth/logout'),
 };

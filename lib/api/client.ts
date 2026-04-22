@@ -7,6 +7,7 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:500
 export const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
   timeout: 10000,
   paramsSerializer: (params) => {
     const searchParams = new URLSearchParams();
@@ -34,23 +35,20 @@ apiClient.interceptors.request.use((config) => {
 
 let refreshPromise: Promise<string> | null = null;
 
-function refreshAccessToken(): Promise<string> {
+export function refreshAccessToken(): Promise<string> {
   if (refreshPromise) return refreshPromise;
 
   refreshPromise = (async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) throw new Error('no refresh token');
-
-    const { data } = await axios.post(
+    const { data } = await axios.post<{ accessToken: string }>(
       `${BASE_URL}/api/auth/refresh`,
-      JSON.stringify(refreshToken),
-      { headers: { 'Content-Type': 'application/json' } },
+      undefined,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      },
     );
     localStorage.setItem('accessToken', data.accessToken);
-    if (data.refreshToken) {
-      localStorage.setItem('refreshToken', data.refreshToken);
-    }
-    return data.accessToken as string;
+    return data.accessToken;
   })().finally(() => {
     refreshPromise = null;
   });
@@ -70,7 +68,6 @@ apiClient.interceptors.response.use(
         return apiClient(original);
       } catch {
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
         window.dispatchEvent(new Event('auth:expired'));
       }
     }
