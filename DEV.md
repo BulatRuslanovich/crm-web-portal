@@ -70,9 +70,11 @@ docker compose up -d
 ```bash
 # .env.local
 NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Единственная переменная портала — `NEXT_PUBLIC_API_URL` ([lib/api/client.ts:5](lib/api/client.ts#L5)).
+`NEXT_PUBLIC_API_URL` используется API-клиентом ([lib/api/client.ts:5](lib/api/client.ts#L5)).
+`NEXT_PUBLIC_SITE_URL` используется для metadata, sitemap и robots.
 
 > **Важно:** `NEXT_PUBLIC_*` встраивается в бандл при сборке. После смены — перезапусти `npm run dev` (или пересобери `npm run build`).
 

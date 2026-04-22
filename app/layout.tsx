@@ -10,6 +10,8 @@ const nunito = Nunito({
   display: 'swap',
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://crmwebapi.ru';
+
 export const metadata: Metadata = {
   title: {
     template: '%s · Pharmo CRM',
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     siteName: 'Pharmo CRM',
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL ?? 'https://crmwebapi.ru'),
+  metadataBase: new URL(SITE_URL),
   robots: {
     index: true,
     follow: true,

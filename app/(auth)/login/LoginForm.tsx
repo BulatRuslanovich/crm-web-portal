@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
-import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
+import { Input, Label, ErrorBox, BtnSuccess, FieldError } from '@/components/ui';
 import { LogIn } from 'lucide-react';
 import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
+import { authRules } from '@/app/(auth)/_lib/validation';
 
 interface FormValues {
   login: string;
@@ -23,7 +24,7 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({ defaultValues: { login: '', password: '' } });
 
   async function onSubmit(values: FormValues) {
@@ -60,13 +61,15 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label>Логин</Label>
-          <Input type="text" placeholder="Введите логин" {...register('login')} />
+          <Label required>Логин</Label>
+          <Input type="text" placeholder="Введите логин" {...register('login', authRules.login)} />
+          <FieldError message={errors.login?.message} />
         </div>
 
         <div>
-          <Label>Пароль</Label>
-          <Input type="password" placeholder="Введите пароль" {...register('password')} />
+          <Label required>Пароль</Label>
+          <Input type="password" placeholder="Введите пароль" {...register('password', { required: authRules.password.required })} />
+          <FieldError message={errors.password?.message} />
         </div>
 
         {apiError && <ErrorBox message={apiError} />}

@@ -6,11 +6,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
+import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess, FieldError } from '@/components/ui';
 import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
 import { ResendButton } from '@/app/(auth)/_components/resend-button';
 import { useResendCode } from '@/lib/hooks/use-resend-code';
 import { KeyRound } from 'lucide-react';
+import { authRules } from '@/app/(auth)/_lib/validation';
 
 interface FormValues {
   code: string;
@@ -24,7 +25,7 @@ function ResetPasswordInner() {
 
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>({
+  const { register, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm<FormValues>({
     defaultValues: { code: '', password: '', confirmPassword: '' },
   });
 
@@ -59,22 +60,32 @@ function ResetPasswordInner() {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label>Код подтверждения</Label>
+          <Label required>Код подтверждения</Label>
           <Input
             type="text"
             maxLength={6}
             className="h-12! text-center! font-mono! text-xl! tracking-widest!"
             placeholder="000000"
-            {...register('code')}
+            {...register('code', authRules.code)}
           />
+          <FieldError message={errors.code?.message} />
         </div>
         <div>
-          <Label>Новый пароль</Label>
-          <Input type="password" placeholder="••••••••" {...register('password')} />
+          <Label required>Новый пароль</Label>
+          <Input type="password" placeholder="••••••••" {...register('password', authRules.password)} />
+          <FieldError message={errors.password?.message} />
         </div>
         <div>
-          <Label>Подтвердите пароль</Label>
-          <Input type="password" placeholder="••••••••" {...register('confirmPassword')} />
+          <Label required>Подтвердите пароль</Label>
+          <Input
+            type="password"
+            placeholder="••••••••"
+            {...register('confirmPassword', {
+              required: 'Подтвердите пароль',
+              validate: (v) => v === getValues('password') || 'Пароли не совпадают',
+            })}
+          />
+          <FieldError message={errors.confirmPassword?.message} />
         </div>
 
         {(apiError ?? resendError) && <ErrorBox message={(apiError ?? resendError)!} />}

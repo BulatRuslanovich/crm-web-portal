@@ -6,12 +6,13 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess } from '@/components/ui';
+import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess, FieldError } from '@/components/ui';
 import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
 import { ResendButton } from '@/app/(auth)/_components/resend-button';
 import { useResendCode } from '@/lib/hooks/use-resend-code';
 import { ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import { authRules } from '@/app/(auth)/_lib/validation';
 
 interface FormValues {
   code: string;
@@ -24,7 +25,7 @@ function VerifyEmailInner() {
 
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
     defaultValues: { code: '' },
   });
 
@@ -50,14 +51,15 @@ function VerifyEmailInner() {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label>Код подтверждения</Label>
+          <Label required>Код подтверждения</Label>
           <Input
             type="text"
             maxLength={6}
             className="h-12! text-center! font-mono! text-xl! tracking-widest!"
             placeholder="000000"
-            {...register('code')}
+            {...register('code', authRules.code)}
           />
+          <FieldError message={errors.code?.message} />
         </div>
 
         {(apiError ?? resendError) && <ErrorBox message={(apiError ?? resendError)!} />}

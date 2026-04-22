@@ -16,7 +16,7 @@
 
 ## О проекте
 
-Фронтенд CRM для фарм компаний: дашборд, активности, организации, контакты, аналитика, карта и админ-панель. Работает в паре с [CrmWebApi](https://github.com/BulatRuslanovich/crm_api).
+Фронтенд CRM для фарм компаний: дашборд, активности, организации, контакты, аналитика, карта и админ-панель. Работает в паре с [crm_api](https://github.com/BulatRuslanovich/crm_api).
 
 
 ## Стек технологий
@@ -37,11 +37,6 @@
 | Линтинг | ESLint, Prettier |
 | Инфраструктура | Docker, Node 20, Caddy |
 
-## Архитектура
-
-```
-Pages (App Router)  →  Hooks (useApi / useEntity)  →  API-клиенты (axios)  →  CrmWebApi
-```
 
 Ключевые точки:
 
@@ -82,7 +77,8 @@ npm run dev
 
 | Переменная | Обязательна | По умолчанию | Описание |
 |---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | да | `http://localhost:5000` | URL бэкенда ([CrmWebApi](https://github.com/BulatRuslanovich/crm_api)) |
+| `NEXT_PUBLIC_API_URL` | да | `http://localhost:5000` | URL бэкенда ([crm_api](https://github.com/BulatRuslanovich/crm_api)) |
+| `NEXT_PUBLIC_SITE_URL` | да для production | `https://crmwebapi.ru` | Публичный URL портала для metadata, sitemap и robots |
 
 `NEXT_PUBLIC_*` встраивается в бандл на этапе `npm run build` — пересборка обязательна при смене URL.
 
@@ -90,10 +86,3 @@ npm run dev
 
 - **[DEV.md](DEV.md)** — памятка разработчику: как поднять портал локально
 
----
-
-<div align="center">
-
-MIT © [BulatRuslanovich](https://github.com/BulatRuslanovich)
-
-</div>

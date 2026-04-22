@@ -143,6 +143,11 @@ export function Label({ required, children }: { required?: boolean; children: Re
   );
 }
 
+export function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="mt-1 text-xs font-medium text-destructive">{message}</p>;
+}
+
 export function ErrorBox({ message }: { message: string }) {
   return (
     <Alert variant="destructive" className="animate-fade-in whitespace-pre-line">

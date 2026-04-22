@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { extractApiError } from '@/lib/api/errors';
-import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
+import { Input, Label, ErrorBox, BtnSuccess, FieldError } from '@/components/ui';
 import { UserPlus } from 'lucide-react';
 import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
+import { authRules } from '@/app/(auth)/_lib/validation';
 
 interface FormValues {
   firstName: string;
@@ -28,7 +29,8 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    getValues,
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
       firstName: '',
@@ -85,32 +87,41 @@ export default function RegisterForm() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label required>Имя</Label>
-            <Input type="text" placeholder="Иван" {...register('firstName')} />
+            <Input type="text" placeholder="Иван" {...register('firstName', authRules.firstName)} />
+            <FieldError message={errors.firstName?.message} />
           </div>
           <div>
             <Label required>Фамилия</Label>
-            <Input type="text" placeholder="Иванов" {...register('lastName')} />
+            <Input type="text" placeholder="Иванов" {...register('lastName', authRules.lastName)} />
+            <FieldError message={errors.lastName?.message} />
           </div>
         </div>
         <div>
           <Label required>Логин</Label>
-          <Input type="text" placeholder="ivanov" {...register('login')} />
+          <Input type="text" placeholder="ivanov" {...register('login', authRules.login)} />
+          <FieldError message={errors.login?.message} />
         </div>
         <div>
           <Label required>Email</Label>
-          <Input type="email" placeholder="ivan@example.com" {...register('email')} />
+          <Input type="email" placeholder="ivan@example.com" {...register('email', authRules.email)} />
+          <FieldError message={errors.email?.message} />
         </div>
         <div>
           <Label required>Пароль</Label>
-          <Input type="password" placeholder="Минимум 8 символов" {...register('password')} />
+          <Input type="password" placeholder="Минимум 8 символов" {...register('password', authRules.password)} />
+          <FieldError message={errors.password?.message} />
         </div>
         <div>
           <Label required>Подтвердите пароль</Label>
           <Input
             type="password"
             placeholder="Минимум 8 символов"
-            {...register('confirmPassword')}
+            {...register('confirmPassword', {
+              required: 'Подтвердите пароль',
+              validate: (v) => v === getValues('password') || 'Пароли не совпадают',
+            })}
           />
+          <FieldError message={errors.confirmPassword?.message} />
         </div>
 
         {apiError && <ErrorBox message={apiError} />}

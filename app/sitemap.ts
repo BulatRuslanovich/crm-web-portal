@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://crmwebapi.ru';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://crmwebapi.ru';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

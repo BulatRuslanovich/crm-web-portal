@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { Input, Label, ErrorBox, BtnSuccess } from '@/components/ui';
+import { Input, Label, ErrorBox, BtnSuccess, FieldError } from '@/components/ui';
 import { Mail } from 'lucide-react';
 import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
+import { authRules } from '@/app/(auth)/_lib/validation';
 
 interface FormValues {
   email: string;
@@ -21,7 +22,7 @@ export default function ForgotPasswordForm() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({ defaultValues: { email: '' } });
 
   async function onSubmit(values: FormValues) {
@@ -44,8 +45,9 @@ export default function ForgotPasswordForm() {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label>Email</Label>
-          <Input type="email" placeholder="ivan@example.com" {...register('email')} />
+          <Label required>Email</Label>
+          <Input type="email" placeholder="ivan@example.com" {...register('email', authRules.email)} />
+          <FieldError message={errors.email?.message} />
         </div>
 
         {apiError && <ErrorBox message={apiError} />}
