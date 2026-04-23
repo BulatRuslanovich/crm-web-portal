@@ -7,7 +7,7 @@ import { Label, SectionLabel } from '@/components/ui';
 import { Combobox, type ComboboxOption } from '@/components/Combobox';
 import { searchOrgOptions } from '@/lib/api/orgs';
 import { searchPhysOptions } from '@/lib/api/physes';
-import { TargetSwitcher, type TargetKind } from '../../_components/TargetSwitcher';
+import { TargetSwitcher, type TargetKind } from './TargetSwitcher';
 
 interface Props<T extends FieldValues> {
   control: Control<T>;
@@ -19,7 +19,7 @@ interface Props<T extends FieldValues> {
   onPickPhys: (o: ComboboxOption | undefined) => void;
 }
 
-export function TargetSection<T extends FieldValues>({
+export function TargetField<T extends FieldValues>({
   control,
   targetKind,
   onSwitch,

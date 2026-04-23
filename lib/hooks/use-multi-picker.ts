@@ -9,10 +9,6 @@ interface SeedItem {
   option: MultiComboboxOption;
 }
 
-/**
- * Wires a MultiCombobox to useSetDiff: keeps selected ids, remembers initial set for diffing,
- * and merges initial-seed options with options picked from async search.
- */
 export function useMultiPicker(seed: SeedItem[]) {
   const [picked, setPicked] = useState<MultiComboboxOption[]>([]);
   const diff = useSetDiff(seed.map((s) => s.id));

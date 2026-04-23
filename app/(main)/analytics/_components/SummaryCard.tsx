@@ -1,5 +1,6 @@
 import { ToneIcon } from '../../_components/ToneIcon';
 import type { Tone } from '../../_lib/tone';
+import React from 'react';
 
 export function SummaryCard({
   label,

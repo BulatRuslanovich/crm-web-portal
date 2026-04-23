@@ -5,8 +5,8 @@ import type { LucideIcon } from 'lucide-react';
 import { StatusBadge } from '@/components/ui';
 import type { ActivResponse } from '@/lib/api/types';
 import { DetailHero } from '@/app/(main)/_components/DetailHero';
-import { StatusStepper } from '../../_components/StatusStepper';
-import { statusAccentGradient } from '../../_lib/activ-format';
+import { StatusStepper } from './StatusStepper';
+import { statusAccentGradient } from '@/app/(main)/activs/_lib/helper';
 
 interface Props {
   activ: ActivResponse;

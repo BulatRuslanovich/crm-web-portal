@@ -1,4 +1,5 @@
 import { toneClass, type Tone } from '../_lib/tone';
+import React from 'react';
 
 export function ToneIcon({
   icon: Icon,

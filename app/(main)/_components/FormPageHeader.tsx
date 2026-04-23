@@ -3,6 +3,7 @@
 import type { LucideIcon } from 'lucide-react';
 import { BackButton } from '@/components/ui';
 import type { IconTone } from './ListPageHeader';
+import React from 'react';
 
 const TONE_CLASS: Record<IconTone, string> = {
   primary: 'bg-primary/10 ring-primary/15 text-primary',
@@ -15,7 +16,6 @@ interface Props {
   icon: LucideIcon;
   iconTone: IconTone;
   title: string;
-  /** Optional subtitle rendered above the title (e.g. "Редактирование визита"). */
   kicker?: string;
   subtitleIcon?: LucideIcon;
   trailing?: React.ReactNode;

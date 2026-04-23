@@ -3,7 +3,7 @@
 import { CalendarDays, Clock } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { SectionLabel } from '@/components/ui';
-import { type DateTimeParts, formatDateTime, formatDuration } from '../../_lib/activ-format';
+import { DateTimeParts, formatDateTime, formatDuration } from '@/app/(main)/activs/_lib/helper';
 
 interface Props {
   start: string | null;

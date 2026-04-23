@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, forwardRef } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown, Search, Check, X, Loader2 } from 'lucide-react';
 
@@ -13,11 +13,8 @@ export interface ComboboxOption {
 }
 
 interface ComboboxProps {
-  /** Sync mode: pass a static list. */
   options?: ComboboxOption[];
-  /** Async mode: fetcher called with query (empty on open). Must return options. */
   asyncSearch?: (query: string) => Promise<ComboboxOption[]>;
-  /** Async mode: full option object for the current `value` (for display when not in search results). */
   selectedOption?: ComboboxOption;
 
   value?: string;

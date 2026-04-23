@@ -72,7 +72,7 @@ export default function PhysesPage() {
       {loading ? (
         <ListSkeleton rows={5} />
       ) : physes.length === 0 ? (
-        <EmptyPhyses hasFilter={hasFilter} canCreate={!!isAdmin} />
+        <EmptyPhyses hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">

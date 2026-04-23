@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import Image from 'next/image';
 
@@ -30,7 +30,6 @@ function ThemeToggle() {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
-      {/* subtle grid background */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
         style={{
@@ -39,7 +38,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           backgroundSize: '40px 40px',
         }}
       />
-      {/* radial glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,hsl(var(--primary)/0.08),transparent)]" />
 
       <ThemeToggle />

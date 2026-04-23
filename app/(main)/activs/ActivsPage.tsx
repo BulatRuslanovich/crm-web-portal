@@ -17,9 +17,8 @@ import { ListPageHeader } from '../_components/ListPageHeader';
 import { SearchBar } from '../_components/SearchBar';
 import { useDebouncedSearch } from '../_lib/use-debounced-search';
 import { ActivRow } from './_components/ActivRow';
-import { StatusFilter } from './_components/StatusFilter';
-import { dayGroupLabel, dayGroupOrder } from './_lib/activ-format';
-import { randomQuote } from './_lib/empty-quotes';
+import { StatusFilter } from '../_components/StatusFilter';
+import { groupActivsByDay } from '@/app/(main)/activs/_lib/helper';
 
 const PAGE_SIZE = 25;
 const SORT_FIELD = 'start';
@@ -30,19 +29,18 @@ export default function ActivsPage() {
   const canFilterByUser = isAdmin || isDirector || isManager;
 
   const [page, setPage] = useState(1);
-  const resetPage = () => setPage(1);
-  const { input, setInput, debounced: search } = useDebouncedSearch(resetPage);
+  const { input, setInput, debounced: search } = useDebouncedSearch(() => setPage(1));
   const [statusFilter, setStatusFilterRaw] = useState<number[]>([]);
   const [filterUsrId, setFilterUsrIdRaw] = useUserFilter();
   const { users: pickerUsers } = usePickerUsers(canFilterByUser);
 
   const setStatusFilter = (next: number[]) => {
     setStatusFilterRaw(next);
-    resetPage();
+    setPage(1);
   };
   const setFilterUsrId = (next: string) => {
     setFilterUsrIdRaw(next);
-    resetPage();
+    setPage(1);
   };
 
   const usrIdParam = filterUsrId ? Number(filterUsrId) : undefined;
@@ -129,7 +127,6 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
 }
 
 function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
-  const [quote] = useState(randomQuote);
 
   return (
     <EmptyState
@@ -137,10 +134,6 @@ function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
       action={
         hasFilter ? undefined : (
           <div className="flex flex-col items-center gap-3">
-            <p className="max-w-xs text-center text-sm italic text-muted-foreground">
-              «{quote.text}»
-            </p>
-            <p className="text-xs text-muted-foreground/60">— {quote.author}</p>
             <Link href="/activs/create" className="text-sm font-medium text-foreground hover:underline">
               Создать первый визит
             </Link>
@@ -151,13 +144,4 @@ function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
   );
 }
 
-function groupActivsByDay(activs: ActivResponse[]): Array<[string, ActivResponse[]]> {
-  const map = new Map<string, ActivResponse[]>();
-  for (const activ of activs) {
-    const key = dayGroupLabel(activ.start);
-    const bucket = map.get(key) ?? [];
-    bucket.push(activ);
-    map.set(key, bucket);
-  }
-  return [...map.entries()].sort((a, b) => dayGroupOrder(a[0]) - dayGroupOrder(b[0]));
-}
+

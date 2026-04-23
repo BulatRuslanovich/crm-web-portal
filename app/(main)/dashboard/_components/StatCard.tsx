@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui';
 import { HoverCard } from '@/components/motion';
 import { ToneIcon } from '../../_components/ToneIcon';
 import type { Tone } from '../../_lib/tone';
+import React from 'react';
 
 export function StatCard({
   label,

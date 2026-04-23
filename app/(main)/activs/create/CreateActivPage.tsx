@@ -14,16 +14,11 @@ import {
   ErrorBox,
 } from '@/components/ui';
 import type { ComboboxOption } from '@/components/Combobox';
-import type { MultiComboboxOption } from '@/components/MultiCombobox';
 import { FormPageHeader } from '../../_components/FormPageHeader';
 import { useSubmitAction } from '../../_lib/use-submit-action';
 import { type TargetKind } from '../_components/TargetSwitcher';
-import { TargetSection } from './_components/TargetSection';
-import {
-  DescriptionSection,
-  DrugsSection,
-  TimeSection,
-} from './_components/ActivFormSections';
+import { TargetField } from '../_components/TargetField';
+
 import {
   CREATE_ACTIV_DEFAULT_VALUES,
   activFormToCreateRequest,
@@ -31,13 +26,19 @@ import {
   type CreateActivFormValues,
 } from '../_lib/activ-form';
 
+import { useDrugPicker } from '@/app/(main)/activs/_lib/usr-drug-picker';
+import { DrugsField } from '@/app/(main)/activs/_components/DrugsField';
+import { DescriptionField } from '@/app/(main)/activs/_components/DescriptionField';
+import { syncDrugs } from '@/app/(main)/activs/_lib/helper';
+import { DateTimeField } from '@/app/(main)/activs/_components/DateTimeField';
+
 export default function CreateActivPage() {
   const router = useRouter();
   const [targetKind, setTargetKind] = useState<TargetKind>('org');
   const [selectedOrg, setSelectedOrg] = useState<ComboboxOption | undefined>();
   const [selectedPhys, setSelectedPhys] = useState<ComboboxOption | undefined>();
-  const [selectedDrugs, setSelectedDrugs] = useState<MultiComboboxOption[]>([]);
   const submitAction = useSubmitAction({ fallbackError: 'Ошибка создания визита' });
+  const drugPicker = useDrugPicker(undefined);
 
   const form = useForm<CreateActivFormValues>({ defaultValues: CREATE_ACTIV_DEFAULT_VALUES });
 
@@ -54,14 +55,15 @@ export default function CreateActivPage() {
 
   async function onSubmit(values: CreateActivFormValues) {
     submitAction.setError('');
-    const ids = buildTargetIds(values, targetKind);
-    if (ids.error) {
-      submitAction.setError(ids.error);
+    const id = buildTargetIds(values, targetKind);
+    if (id.error) {
+      submitAction.setError(id.error);
       return;
     }
 
     await submitAction.submit(async () => {
-      const { data } = await activsApi.create(activFormToCreateRequest(values, ids));
+      const { data } = await activsApi.create(activFormToCreateRequest(values, id));
+      await syncDrugs(data.activId, drugPicker.diff());
       toast.success('Визит создан', {
         description: targetKind === 'org' ? selectedOrg?.label : selectedPhys?.label,
       });
@@ -76,7 +78,7 @@ export default function CreateActivPage() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <TargetSection
+            <TargetField
               control={form.control}
               targetKind={targetKind}
               onSwitch={switchTarget}
@@ -88,19 +90,20 @@ export default function CreateActivPage() {
 
             <hr className="border-border" />
 
-            <TimeSection control={form.control} />
-
-            <hr className="border-border" />
-
-            <DescriptionSection register={form.register} />
-
-            <hr className="border-border" />
-
-            <DrugsSection
+            <DateTimeField
+              name="start"
+              label="Дата начала"
+              placeholder="Выберите дату и время"
               control={form.control}
-              selected={selectedDrugs}
-              onSelectedChange={setSelectedDrugs}
             />
+
+            <hr className="border-border" />
+
+            <DescriptionField control={form.control} />
+
+            <hr className="border-border" />
+
+            <DrugsField picker={drugPicker} />
 
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>

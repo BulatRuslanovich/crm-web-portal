@@ -9,6 +9,7 @@ import {
   Stethoscope,
   TrendingUp,
 } from 'lucide-react';
+import React from 'react';
 
 export interface NavItem {
   href: string;

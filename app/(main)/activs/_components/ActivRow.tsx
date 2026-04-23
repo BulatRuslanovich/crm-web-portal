@@ -3,11 +3,10 @@
 import Link from 'next/link';
 import { Building2, Stethoscope, Pill, User } from 'lucide-react';
 import { StatusBadge } from '@/components/ui';
-import { MONTHS_ABBR } from '@/app/(main)/_lib/ru-dates';
+import { MONTHS_ABBR, WEEKDAYS_SHORT } from '@/app/(main)/_lib/ru-dates';
 import type { ActivResponse } from '@/lib/api/types';
-import { statusStripeClass } from '../_lib/activ-format';
-
-const WEEKDAYS_SHORT = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+import React from 'react';
+import { statusStripeClass } from '@/app/(main)/activs/_lib/helper';
 
 interface Props {
   activ: ActivResponse;
@@ -62,19 +61,19 @@ function ActivMeta({
   return (
     <div className="min-w-0 flex-1">
       <div className="flex min-w-0 items-center gap-1.5">
-        <Icon size={13} className="shrink-0 text-muted-foreground/70" />
-        <p className="truncate text-sm font-semibold text-foreground">{target.name ?? '—'}</p>
+        <Icon size={13} className="text-muted-foreground/70 shrink-0" />
+        <p className="text-foreground truncate text-sm font-semibold">{target.name ?? '—'}</p>
       </div>
-      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-        {time && <span className="font-medium tabular-nums text-foreground/80">{time}</span>}
-        {time && <Dot />}
+      <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        {time && <span className="text-foreground/80 font-medium tabular-nums">{time}</span>}
+        {time && <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />}
         <span className="flex items-center gap-1">
           <User size={11} />
           {activ.usrLogin}
         </span>
         {activ.drugs.length > 0 && (
           <>
-            <Dot />
+            <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />;
             <span className="flex items-center gap-1">
               <Pill size={11} />
               {activ.drugs.length}
@@ -83,14 +82,10 @@ function ActivMeta({
         )}
       </div>
       {activ.description && (
-        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground/80">{activ.description}</p>
+        <p className="text-muted-foreground/80 mt-1 line-clamp-1 text-xs">{activ.description}</p>
       )}
     </div>
   );
-}
-
-function Dot() {
-  return <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />;
 }
 
 function resolveTarget(activ: ActivResponse) {

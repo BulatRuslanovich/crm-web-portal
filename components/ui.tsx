@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,11 +9,9 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input as ShadInput } from '@/components/ui/input';
-import { Textarea as ShadTextarea } from '@/components/ui/textarea';
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-/* ── Status Badge ──────────────────────────────────────────────────────────── */
 export function StatusBadge({ name }: { name: string }) {
   const n = name.toLowerCase();
   const variant: React.ComponentProps<typeof Badge>['variant'] =
@@ -44,7 +42,6 @@ export function StatusBadge({ name }: { name: string }) {
   );
 }
 
-/* ── Field (read-only label + value) ───────────────────────────────────────── */
 export function Field({
   label,
   value,
@@ -67,7 +64,6 @@ export function Field({
   );
 }
 
-/* ── Card ──────────────────────────────────────────────────────────────────── */
 export function Card({
   children,
   className = '',
@@ -96,7 +92,6 @@ export function CardFooter({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ── Section Header (inside detail pages) ─────────────────────────────────── */
 export function SectionLabel({
   children,
   icon: Icon,
@@ -118,7 +113,6 @@ export function SectionLabel({
   );
 }
 
-/* ── Form Controls ─────────────────────────────────────────────────────────── */
 export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className = '', ...props }, ref) => (
     <ShadInput ref={ref} className={cn('h-10', className)} {...props} />
@@ -129,8 +123,15 @@ Input.displayName = 'Input';
 export const Textarea = forwardRef<
   HTMLTextAreaElement,
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
->(({ className = '', ...props }, ref) => (
-  <ShadTextarea ref={ref} className={cn('resize-none', className)} {...props} />
+>(({ className = '', ...props }) => (
+  <textarea
+    data-slot="textarea"
+    className={cn(
+      'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+      className,
+    )}
+    {...props}
+  />
 ));
 Textarea.displayName = 'Textarea';
 
@@ -166,7 +167,6 @@ export function SuccessBox({ message }: { message: string }) {
   );
 }
 
-/* ── Buttons ───────────────────────────────────────────────────────────────── */
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function BtnPrimary({ children, className = '', ...props }: BtnProps) {
@@ -208,7 +208,6 @@ export function BtnDanger({ children, className = '', ...props }: BtnProps) {
   );
 }
 
-/* ── Link Button ─────────────────────────────────────────────────────────── */
 export function LinkButton({
   href,
   variant = 'success',
@@ -225,7 +224,6 @@ export function LinkButton({
   );
 }
 
-/* ── Back Button ───────────────────────────────────────────────────────────── */
 export function BackButton({ href, onClick }: { href?: string; onClick?: () => void }) {
   const router = useRouter();
   const content = (
@@ -252,7 +250,6 @@ export function BackButton({ href, onClick }: { href?: string; onClick?: () => v
   );
 }
 
-/* ── Skeleton ──────────────────────────────────────────────────────────────── */
 export function Skeleton({ className = '' }: { className?: string }) {
   return <ShadSkeleton className={cn('rounded-md', className)} />;
 }
@@ -287,20 +284,15 @@ export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   );
 }
 
-/* ── Empty State ───────────────────────────────────────────────────────────── */
 export function EmptyState({ message, action }: { message: string; action?: React.ReactNode }) {
   return (
     <div className="animate-fade-in rounded-xl border bg-card px-4 py-20 text-center shadow-sm">
-      <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-xl bg-muted">
-        <span className="text-2xl">&#128203;</span>
-      </div>
       <p className="text-sm text-muted-foreground">{message}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }
 
-/* ── Pagination ────────────────────────────────────────────────────────────── */
 export function Pagination({
   page,
   totalPages,

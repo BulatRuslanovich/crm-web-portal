@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ActivViewPage from './ActivDetailPage';
+import ActivViewPage from './DetailActivPage';
 
 export const metadata: Metadata = {
   title: 'Просмотр активности',

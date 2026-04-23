@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 type IconTone = 'primary' | 'success' | 'warning';
 

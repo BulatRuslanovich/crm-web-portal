@@ -58,7 +58,7 @@ export default function OrgsPage() {
       {loading ? (
         <ListSkeleton rows={5} />
       ) : orgs.length === 0 ? (
-        <EmptyOrgs hasFilter={hasFilter} canCreate={!!isAdmin} />
+        <EmptyOrgs hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
           <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">

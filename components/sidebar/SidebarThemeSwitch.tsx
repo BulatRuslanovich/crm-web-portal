@@ -1,5 +1,6 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 type ThemeOption = { value: 'light' | 'dark' | 'system'; icon: React.ElementType; label: string };
 

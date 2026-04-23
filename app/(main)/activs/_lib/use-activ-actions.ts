@@ -44,7 +44,3 @@ export function useActivActions({ activ, reload }: Params) {
 
   return { acting, setStatus };
 }
-
-export function nowIso(): string {
-  return new Date().toISOString();
-}

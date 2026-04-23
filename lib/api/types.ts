@@ -29,7 +29,6 @@ export interface CreateActivRequest {
   start: string;
   end: string | null;
   description: string;
-  drugIds: number[];
 }
 
 export interface UpdateActivRequest {

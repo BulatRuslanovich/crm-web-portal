@@ -1,6 +1,7 @@
 import { Calendar, SlidersHorizontal, X } from 'lucide-react';
 import { STATUSES, STATUS_HEX } from '@/lib/api/statuses';
 import { PRESETS } from '../_lib/date-range';
+import React from 'react';
 
 const DEFAULT_COLOR = '#94a3b8';
 

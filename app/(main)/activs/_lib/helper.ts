@@ -1,5 +1,15 @@
+import { activsApi } from '@/lib/api/activs';
+
+export async function syncDrugs(numId: number, diff: { toAdd: number[]; toRemove: number[] }) {
+  await Promise.all([
+    ...diff.toAdd.map((did) => activsApi.addDrug(numId, did)),
+    ...diff.toRemove.map((did) => activsApi.removeDrug(numId, did)),
+  ]);
+}
+
 import { MONTHS_ABBR } from '@/app/(main)/_lib/ru-dates';
 import { startOfDay } from '@/app/(main)/_lib/date';
+import { ActivResponse } from '@/lib/api/types';
 
 const MS_PER_DAY = 86_400_000;
 const MS_PER_MIN = 60_000;
@@ -81,4 +91,15 @@ export function statusAccentGradient(statusName: string): string {
 
 function pad2(n: number): string {
   return n.toString().padStart(2, '0');
+}
+
+export function groupActivsByDay(activs: ActivResponse[]): Array<[string, ActivResponse[]]> {
+  const map = new Map<string, ActivResponse[]>();
+  for (const activ of activs) {
+    const key = dayGroupLabel(activ.start);
+    const bucket = map.get(key) ?? [];
+    bucket.push(activ);
+    map.set(key, bucket);
+  }
+  return [...map.entries()].sort((a, b) => dayGroupOrder(a[0]) - dayGroupOrder(b[0]));
 }

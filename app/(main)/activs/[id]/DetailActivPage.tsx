@@ -18,14 +18,14 @@ import {
 import { PageTransition } from '@/components/motion';
 import type { ActivResponse, DrugResponse } from '@/lib/api/types';
 import { InfoBlock } from '../../_components/InfoBlock';
-import { ActivHero } from './_components/ActivHero';
-import { TimeSection } from './_components/TimeSection';
-import { ActivQuickActions } from './_components/ActivQuickActions';
+import { ActivHero } from '../_components/ActivHero';
+import { TimeSection } from '../_components/TimeSection';
+import { ActivQuickActions } from '../_components/ActivQuickActions';
 import { toast } from 'sonner';
-import { nowIso, useActivActions } from './_lib/use-activ-actions';
+import { useActivActions } from '../_lib/use-activ-actions';
 import { useConfirm } from '@/components/ConfirmDialog';
 
-export default function ActivDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function DetailActivPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const { user } = useAuth();
@@ -70,7 +70,7 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
     <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/activs" />
-        <span className="ml-auto text-xs text-muted-foreground">#{activ.activId}</span>
+        <span className="text-muted-foreground ml-auto text-xs">#{activ.activId}</span>
       </div>
 
       <ActivHero activ={activ} />
@@ -93,9 +93,9 @@ export default function ActivDetailPage({ params }: { params: Promise<{ id: stri
             canEdit={perms.canEdit}
             canDelete={perms.canDelete}
             isLocked={perms.isLocked}
-            onOpen={() => setStatus(STATUS_OPEN, { start: nowIso() })}
+            onOpen={() => setStatus(STATUS_OPEN, { start: new Date().toISOString() })}
             onSave={() => setStatus(STATUS_SAVED)}
-            onClose={() => setStatus(STATUS_CLOSED, { end: nowIso() })}
+            onClose={() => setStatus(STATUS_CLOSED, { end: new Date().toISOString() })}
             onEdit={() => router.push(`/activs/${id}/edit`)}
             onDelete={handleDelete}
           />

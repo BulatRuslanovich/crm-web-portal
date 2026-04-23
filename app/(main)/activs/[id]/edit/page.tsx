@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ActivEditPage from './ActivEditPage';
+import EditActivPage from './EditActivPage';
 
 export const metadata: Metadata = {
   title: 'Редактирование активности',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  return <ActivEditPage params={params} />;
+  return <EditActivPage params={params} />;
 }

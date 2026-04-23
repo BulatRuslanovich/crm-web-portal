@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useApi } from '@/lib/hooks/use-api';
 import { usersApi } from '@/lib/api/users';
 import { departmentsApi } from '@/lib/api/departments';
@@ -216,8 +216,8 @@ export function DepartmentsSection() {
       description: `Департамент «${d.departmentName}» будет удалён безвозвратно. Пользователи из этого департамента не будут удалены, но потеряют доступ к своим визитам, если не будут в других департаментах.`,
       confirmLabel: 'Удалить',
     });
-    
-    if (!ok) return;  
+
+    if (!ok) return;
 
     try {
       await departmentsApi.delete(d.departmentId);
@@ -355,7 +355,7 @@ export function DepartmentsSection() {
           department={editing}
           onClose={() => {
             setEditing(null);
-            reload();
+            reload().then();
           }}
         />
       )}

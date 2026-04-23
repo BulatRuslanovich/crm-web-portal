@@ -20,6 +20,6 @@ export async function searchDrugOptions(query: string) {
   return data.items.map((d) => ({
     value: String(d.drugId),
     label: d.drugName,
-    sublabel: d.brand || undefined,
+    sublabel: d.brand,
   }));
 }

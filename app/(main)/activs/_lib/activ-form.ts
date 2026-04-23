@@ -11,15 +11,13 @@ export interface CreateActivFormValues {
   physId: string;
   start: string;
   description: string;
-  drugIds: string[];
 }
 
 export const CREATE_ACTIV_DEFAULT_VALUES: CreateActivFormValues = {
   orgId: '',
   physId: '',
   start: '',
-  description: '',
-  drugIds: [],
+  description: ''
 };
 
 export interface EditActivFormValues {
@@ -66,8 +64,7 @@ export function activFormToCreateRequest(
     statusId: STATUS_PLANNED,
     start: values.start,
     end: null,
-    description: values.description,
-    drugIds: values.drugIds.map(Number),
+    description: values.description
   };
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown, Search, Check, X, Loader2 } from 'lucide-react';
 

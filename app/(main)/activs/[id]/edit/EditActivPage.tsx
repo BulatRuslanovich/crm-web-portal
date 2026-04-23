@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, use } from 'react';
+import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Building2, Pencil, Stethoscope } from 'lucide-react';
+import { Building2, Clock, Pencil, Stethoscope } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { toast } from 'sonner';
-import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 import type { ActivResponse } from '@/lib/api/types';
 import {
   BtnPrimary,
@@ -18,24 +17,26 @@ import {
   CardFooter,
   CardSkeleton,
   ErrorBox,
+  SectionLabel,
   StatusBadge,
 } from '@/components/ui';
 import { FormPageHeader } from '../../../_components/FormPageHeader';
 import { useSubmitAction } from '../../../_lib/use-submit-action';
-import {
-  DescriptionField,
-  DrugsField,
-  StatusField,
-  TimeFields,
-} from './_components/ActivEditSections';
+
 import {
   EDIT_ACTIV_DEFAULT_VALUES,
   activFormToUpdateRequest,
   activToFormValues,
   type EditActivFormValues,
 } from '../../_lib/activ-form';
+import { DescriptionField } from '@/app/(main)/activs/_components/DescriptionField';
+import { useDrugPicker } from '@/app/(main)/activs/_lib/usr-drug-picker';
+import { DrugsField } from '@/app/(main)/activs/_components/DrugsField';
+import { syncDrugs } from '@/app/(main)/activs/_lib/helper';
+import { DateTimeField } from '@/app/(main)/activs/_components/DateTimeField';
+import { StatusField } from '@/app/(main)/activs/_components/StatusField';
 
-export default function ActivEditPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditActivPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const { canManageActivs: canEditFields } = useRoles();
@@ -79,11 +80,28 @@ export default function ActivEditPage({ params }: { params: Promise<{ id: string
               <>
                 <StatusField control={form.control} />
                 <hr className="border-border" />
-                <TimeFields control={form.control} />
+
+                <div>
+                  <SectionLabel icon={Clock}>Время визита</SectionLabel>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <DateTimeField
+                      name="start"
+                      label="Начало"
+                      placeholder="Дата начала"
+                      control={form.control}
+                    />
+                    <DateTimeField
+                      name="end"
+                      label="Конец"
+                      placeholder="Дата окончания"
+                      control={form.control}
+                    />
+                  </div>
+                </div>
                 <hr className="border-border" />
               </>
             )}
-            <DescriptionField register={form.register} />
+            <DescriptionField control={form.control} />
             <hr className="border-border" />
             <DrugsField picker={drugPicker} />
 
@@ -117,25 +135,6 @@ function useLoadedActiv(numId: number): ActivResponse | undefined {
   return data;
 }
 
-function useDrugPicker(activ: ActivResponse | undefined) {
-  return useMultiPicker(
-    useMemo(
-      () =>
-        activ
-          ? activ.drugs.map((d) => ({
-              id: d.drugId,
-              option: {
-                value: String(d.drugId),
-                label: d.drugName,
-                sublabel: d.brand || undefined,
-              },
-            }))
-          : [],
-      [activ],
-    ),
-  );
-}
-
 function EditHeader({ activ, backHref }: { activ: ActivResponse; backHref: string }) {
   const isPhys = activ.physId != null;
   const TargetIcon: LucideIcon = isPhys ? Stethoscope : Building2;
@@ -161,14 +160,4 @@ async function updateActiv(
   canEditFields: boolean,
 ) {
   await activsApi.update(numId, activFormToUpdateRequest(activ, values, canEditFields));
-}
-
-async function syncDrugs(
-  numId: number,
-  diff: { toAdd: number[]; toRemove: number[] },
-) {
-  await Promise.all([
-    ...diff.toAdd.map((did) => activsApi.addDrug(numId, did)),
-    ...diff.toRemove.map((did) => activsApi.removeDrug(numId, did)),
-  ]);
 }

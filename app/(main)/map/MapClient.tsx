@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -96,7 +96,6 @@ function FitBounds({ orgs }: { orgs: OrgResponse[] }) {
   return null;
 }
 
-/* ── fly-to on demand ───────────────────────────────────────────────────── */
 function FlyTo({
   target,
   markerRefs,
@@ -116,7 +115,6 @@ function FlyTo({
   return null;
 }
 
-/* ── locate me control ──────────────────────────────────────────────────── */
 function LocateControl() {
   const map = useMap();
   const [busy, setBusy] = useState(false);
@@ -150,11 +148,10 @@ function LocateControl() {
   );
 }
 
-/* ── popup body ─────────────────────────────────────────────────────────── */
 function OrgPopup({ org }: { org: OrgResponse }) {
   const color = colorForType(org.orgTypeId);
   return (
-    <div className="min-w-[200px] text-[13px] leading-snug">
+    <div className="min-w-50 text-[13px] leading-snug">
       <div className="mb-1 flex items-center gap-1.5">
         <span
           className="inline-block h-2 w-2 rounded-full"
