@@ -22,7 +22,7 @@ interface FormValues {
 }
 
 export default function RegisterForm() {
-  const { register: authRegister } = useAuth();
+  const { register: authRegister, login } = useAuth();
   const router = useRouter();
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -51,7 +51,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const { email } = await authRegister({
+      const { email, emailConfirmationRequired } = await authRegister({
         login: values.login.trim(),
         password: values.password,
         firstName: values.firstName.trim(),
@@ -59,7 +59,12 @@ export default function RegisterForm() {
         email: values.email.trim(),
       });
 
-      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      if (emailConfirmationRequired) {
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      } else {
+        await login(values.login.trim(), values.password);
+        router.push('/dashboard');
+      }
     } catch (err) {
       setApiError(extractApiError(err));
     }

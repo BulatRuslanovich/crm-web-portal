@@ -22,6 +22,7 @@ interface AuthResponse {
 
 interface PendingConfirmationResponse {
   email: string;
+  emailConfirmationRequired: boolean;
 }
 
 export const authApi = {
