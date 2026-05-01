@@ -12,11 +12,7 @@ import { FormCardFooter } from '@/components/FormCardFooter';
 import { useSpecOptions } from '@/lib/dictionary-options';
 import { useSubmitAction } from '@/lib/use-submit-action';
 import { PhysContactFields, PhysNameFields, PhysSpecField } from '@/components/PhysFields';
-import {
-  PHYS_DEFAULT_VALUES,
-  physFormToCreateRequest,
-  type PhysFormValues,
-} from '@/lib/phys-form';
+import { PHYS_DEFAULT_VALUES, physFormToCreateRequest, type PhysFormValues } from '@/lib/phys-form';
 
 export default function CreatePhysPage() {
   const router = useRouter();
@@ -33,7 +29,9 @@ export default function CreatePhysPage() {
   async function onSubmit(values: PhysFormValues) {
     await submitAction.submit(async () => {
       const { data } = await physesApi.create(physFormToCreateRequest(values));
-      toast.success('Врач добавлен', { description: `${values.lastName} ${values.firstName}`.trim() });
+      toast.success('Врач добавлен', {
+        description: `${values.lastName} ${values.firstName}`.trim(),
+      });
       router.push(`/physes/${data.physId}`);
     });
   }

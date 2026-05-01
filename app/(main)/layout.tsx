@@ -37,23 +37,25 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-6">
+      <div className="bg-background flex min-h-screen items-center justify-center px-6">
         <div className="animate-fade-in flex w-full max-w-xs flex-col items-center gap-5">
-          <div className="relative flex size-16 items-center justify-center rounded-2xl bg-card shadow-sm ring-1 ring-border">
+          <div className="bg-card ring-border relative flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1">
             <Image src="/icon.svg" width={52} height={52} alt="Pharmo" priority />
-            <div className="absolute -inset-1 rounded-[1.25rem] border border-primary/20" />
+            <div className="border-primary/20 absolute -inset-1 rounded-[1.25rem] border" />
           </div>
 
           <div className="w-full space-y-3 text-center">
             <div>
-              <p className="text-sm font-bold tracking-tight text-foreground">Pharmo CRM</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">Подготовка рабочего пространства</p>
+              <p className="text-foreground text-sm font-bold tracking-tight">Pharmo CRM</p>
+              <p className="text-muted-foreground mt-0.5 text-xs">
+                Подготовка рабочего пространства
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-1.5" aria-hidden="true">
-              <span className="h-1.5 rounded-full bg-primary" />
-              <span className="animate-skeleton h-1.5 rounded-full bg-primary/60" />
-              <span className="animate-skeleton h-1.5 rounded-full bg-primary/25 [animation-delay:180ms]" />
+              <span className="bg-primary h-1.5 rounded-full" />
+              <span className="animate-skeleton bg-primary/60 h-1.5 rounded-full" />
+              <span className="animate-skeleton bg-primary/25 h-1.5 rounded-full [animation-delay:180ms]" />
             </div>
           </div>
         </div>
@@ -64,7 +66,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Sidebar collapsed={collapsed} onToggle={toggle} />
       <ChaosOverlay />
       <Toaster position="top-right" theme={resolvedTheme === 'dark' ? 'dark' : 'light'} />

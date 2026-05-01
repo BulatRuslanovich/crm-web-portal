@@ -61,7 +61,7 @@ export default function PhysesPage() {
         }
       />
 
-      <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+      <div className="border-border bg-card rounded-2xl border p-3 shadow-sm">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -75,7 +75,7 @@ export default function PhysesPage() {
         <EmptyPhyses hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
             {physes.map((phys, i) => (
               <PhysRow key={phys.physId} phys={phys} first={i === 0} />
             ))}
@@ -94,16 +94,16 @@ function PhysRow({ phys, first }: { phys: PhysResponse; first: boolean }) {
   return (
     <Link
       href={`/physes/${phys.physId}`}
-      className={`group flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 hover:bg-muted/60 ${
-        first ? '' : 'border-t border-border'
+      className={`group hover:bg-muted/60 flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 ${
+        first ? '' : 'border-border border-t'
       }`}
     >
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-warning/15 text-xs font-bold text-warning ring-1 ring-warning/25 transition-transform duration-200 group-hover:scale-105">
+      <div className="bg-warning/15 text-warning ring-warning/25 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold ring-1 transition-transform duration-200 group-hover:scale-105">
         {initials || <Stethoscope size={16} />}
       </div>
       <PhysMeta phys={phys} name={name} />
       {phys.orgs.length > 0 && (
-        <div className="hidden shrink-0 items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground sm:flex">
+        <div className="bg-muted text-muted-foreground hidden shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium sm:flex">
           <Building2 size={11} />
           {phys.orgs.length}
         </div>
@@ -115,21 +115,21 @@ function PhysRow({ phys, first }: { phys: PhysResponse; first: boolean }) {
 function PhysMeta({ phys, name }: { phys: PhysResponse; name: string }) {
   return (
     <div className="min-w-0 flex-1">
-      <p className="truncate text-sm font-semibold text-foreground">{name}</p>
+      <p className="text-foreground truncate text-sm font-semibold">{name}</p>
       <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
         {phys.specName && (
-          <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          <span className="bg-muted text-muted-foreground inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium">
             {phys.specName}
           </span>
         )}
         {phys.phone && (
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="text-muted-foreground flex items-center gap-1 text-xs">
             <Phone size={11} />
             {phys.phone}
           </span>
         )}
         {phys.email && (
-          <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
+          <span className="text-muted-foreground hidden items-center gap-1 text-xs sm:flex">
             <Mail size={11} />
             <span className="max-w-[160px] truncate">{phys.email}</span>
           </span>
@@ -145,7 +145,10 @@ function EmptyPhyses({ hasFilter, canCreate }: { hasFilter: boolean; canCreate: 
       message={hasFilter ? 'Ничего не найдено' : 'Врачей пока нет'}
       action={
         !hasFilter && canCreate ? (
-          <Link href="/physes/create" className="text-sm font-medium text-foreground hover:underline">
+          <Link
+            href="/physes/create"
+            className="text-foreground text-sm font-medium hover:underline"
+          >
             Добавить первого врача
           </Link>
         ) : undefined

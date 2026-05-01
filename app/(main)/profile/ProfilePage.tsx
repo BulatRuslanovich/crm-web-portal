@@ -84,14 +84,14 @@ function SectionCard({
             ? 'bg-destructive/10 text-destructive ring-destructive/20'
             : 'bg-muted text-muted-foreground ring-border';
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+    <section className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border flex items-center gap-3 border-b px-5 py-4">
         <div className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
           <Icon size={16} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-bold text-foreground">{title}</h3>
-          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+          <h3 className="text-foreground text-sm font-bold">{title}</h3>
+          {subtitle && <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -101,7 +101,7 @@ function SectionCard({
 
 function CardFooterBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-muted/40 px-5 py-3">
+    <div className="border-border bg-muted/40 flex flex-wrap items-center justify-end gap-2 border-t px-5 py-3">
       {children}
     </div>
   );
@@ -132,9 +132,9 @@ export default function ProfilePage() {
   const displayName = user.firstName
     ? `${user.firstName} ${user.lastName ?? ''}`.trim()
     : user.login;
-  const initials = ((user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? ''))
-    .toUpperCase()
-    || user.login.slice(0, 2).toUpperCase();
+  const initials =
+    ((user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? '')).toUpperCase() ||
+    user.login.slice(0, 2).toUpperCase();
 
   async function onProfileSubmit(values: ProfileFormValues) {
     setProfileApiError('');
@@ -174,26 +174,26 @@ export default function ProfilePage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted to-card shadow-sm">
-        <div className="absolute -top-20 -right-20 h-60 w-60 rounded-full bg-primary/10 blur-3xl" />
+      <section className="border-border from-primary/10 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
+        <div className="bg-primary/10 absolute -top-20 -right-20 h-60 w-60 rounded-full blur-3xl" />
         <div className="relative flex flex-wrap items-center gap-5 p-6">
           <div className="relative">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground shadow-lg ring-4 ring-card">
+            <div className="bg-primary text-primary-foreground ring-card flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold shadow-lg ring-4">
               {initials}
             </div>
-            <span className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-success text-success-foreground ring-2 ring-card">
+            <span className="bg-success text-success-foreground ring-card absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full ring-2">
               <BadgeCheck size={13} />
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               Профиль
             </p>
-            <h2 className="truncate text-2xl font-bold text-foreground">{displayName}</h2>
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+            <h2 className="text-foreground truncate text-2xl font-bold">{displayName}</h2>
+            <div className="text-muted-foreground mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
               <span className="inline-flex items-center gap-1.5">
                 <AtSign size={12} />
-                <span className="font-medium text-foreground/90">{user.login}</span>
+                <span className="text-foreground/90 font-medium">{user.login}</span>
               </span>
               {user.email && (
                 <span className="inline-flex items-center gap-1.5">
@@ -291,12 +291,12 @@ export default function ProfilePage() {
         {!editingPassword ? (
           <>
             <div className="flex items-start gap-3 px-5 py-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted ring-1 ring-border">
+              <div className="bg-muted ring-border flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1">
                 <KeyRound size={13} className="text-muted-foreground" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">Пароль</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="text-foreground text-sm font-medium">Пароль</p>
+                <p className="text-muted-foreground mt-0.5 text-xs">
                   Рекомендуем менять пароль раз в 90 дней
                 </p>
               </div>
@@ -323,16 +323,28 @@ export default function ProfilePage() {
             <div className="space-y-3 p-5">
               <div>
                 <Label required>Текущий пароль</Label>
-                <Input type="password" autoComplete="current-password" {...passwordForm.register('oldPassword')} />
+                <Input
+                  type="password"
+                  autoComplete="current-password"
+                  {...passwordForm.register('oldPassword')}
+                />
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <Label required>Новый пароль</Label>
-                  <Input type="password" autoComplete="new-password" {...passwordForm.register('newPassword')} />
+                  <Input
+                    type="password"
+                    autoComplete="new-password"
+                    {...passwordForm.register('newPassword')}
+                  />
                 </div>
                 <div>
                   <Label required>Повторите пароль</Label>
-                  <Input type="password" autoComplete="new-password" {...passwordForm.register('confirm')} />
+                  <Input
+                    type="password"
+                    autoComplete="new-password"
+                    {...passwordForm.register('confirm')}
+                  />
                 </div>
               </div>
               {passwordApiError && <ErrorBox message={passwordApiError} />}
@@ -357,7 +369,7 @@ export default function ProfilePage() {
         tone="destructive"
       >
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             После выхода потребуется ввести логин и пароль заново.
           </p>
           <BtnDanger onClick={logout}>

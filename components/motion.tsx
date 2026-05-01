@@ -72,7 +72,10 @@ export function HoverCard({
 }) {
   return (
     <motion.div
-      whileHover={{ y: -2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.09), 0 2px 4px -2px rgb(0 0 0 / 0.06)' }}
+      whileHover={{
+        y: -2,
+        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.09), 0 2px 4px -2px rgb(0 0 0 / 0.06)',
+      }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       className={className}
     >
@@ -80,4 +83,3 @@ export function HoverCard({
     </motion.div>
   );
 }
-

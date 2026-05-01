@@ -78,24 +78,24 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
             <button
               type="button"
               className={cn(
-                'flex h-10 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
+                'border-input flex h-10 w-full items-center gap-2 rounded-md border bg-transparent px-3 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
                 'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
                 'disabled:cursor-not-allowed disabled:opacity-50',
                 'dark:bg-input/30',
               )}
             >
-              <Calendar size={15} className="shrink-0 text-muted-foreground" />
+              <Calendar size={15} className="text-muted-foreground shrink-0" />
               {validDate ? (
-                <span className="flex-1 text-foreground">{format(validDate, FMT_DISPLAY)}</span>
+                <span className="text-foreground flex-1">{format(validDate, FMT_DISPLAY)}</span>
               ) : (
-                <span className="flex-1 text-muted-foreground">{placeholder}</span>
+                <span className="text-muted-foreground flex-1">{placeholder}</span>
               )}
               {validDate && (
                 <span
                   role="button"
                   tabIndex={-1}
                   onClick={handleClear}
-                  className="shrink-0 rounded-sm p-0.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground shrink-0 rounded-sm p-0.5"
                 >
                   <X size={14} />
                 </span>
@@ -107,7 +107,7 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
             <Popover.Content
               sideOffset={6}
               align="start"
-              className="animate-fade-in-scale z-50 rounded-md border bg-popover text-popover-foreground shadow-md"
+              className="animate-fade-in-scale bg-popover text-popover-foreground z-50 rounded-md border shadow-md"
             >
               <DayPicker
                 mode="single"
@@ -118,11 +118,7 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
                 fixedWeeks
                 components={{
                   Chevron: ({ orientation }) =>
-                    orientation === 'left' ? (
-                      <ChevronLeft size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    ),
+                    orientation === 'left' ? <ChevronLeft size={16} /> : <ChevronRight size={16} />,
                 }}
                 classNames={{
                   root: 'p-3',
@@ -144,12 +140,13 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
                   selected:
                     '[&_.rdp-day_button]:bg-primary [&_.rdp-day_button]:text-primary-foreground [&_.rdp-day_button]:hover:bg-primary/90 [&_.rdp-day_button]:font-medium',
                   today: '[&_.rdp-day_button]:border [&_.rdp-day_button]:border-primary',
-                  outside: '[&_.rdp-day_button]:text-muted-foreground [&_.rdp-day_button]:opacity-40',
+                  outside:
+                    '[&_.rdp-day_button]:text-muted-foreground [&_.rdp-day_button]:opacity-40',
                 }}
               />
 
               <div className="flex items-center gap-3 border-t px-3 py-2.5">
-                <Clock size={15} className="shrink-0 text-muted-foreground" />
+                <Clock size={15} className="text-muted-foreground shrink-0" />
                 <div className="flex items-center gap-1">
                   <TimeSelect value={hours} max={23} onChange={handleHoursChange} />
                   <span className="text-muted-foreground">:</span>
@@ -186,7 +183,7 @@ function TimeSelect({
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
       className={cn(
-        'h-8 rounded-sm border border-input bg-popover px-2 text-center text-sm tabular-nums text-popover-foreground outline-none transition-[color,box-shadow]',
+        'border-input bg-popover text-popover-foreground h-8 rounded-sm border px-2 text-center text-sm tabular-nums transition-[color,box-shadow] outline-none',
         'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
         'dark:bg-input/30',
       )}

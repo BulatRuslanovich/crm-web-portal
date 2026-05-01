@@ -4,13 +4,27 @@ import { formatFull } from '@/lib/format';
 import { targetKind, targetKindLabel, targetLabel } from './target';
 
 const HEADER = [
-  'ID', 'Тип цели', 'Цель', 'Статус', 'Начало', 'Конец',
-  'Сотрудник', 'Препараты', 'Описание',
+  'ID',
+  'Тип цели',
+  'Цель',
+  'Статус',
+  'Начало',
+  'Конец',
+  'Сотрудник',
+  'Препараты',
+  'Описание',
 ] as const;
 
 const COLUMN_WIDTHS = [
-  { wch: 6 }, { wch: 14 }, { wch: 32 }, { wch: 14 },
-  { wch: 18 }, { wch: 18 }, { wch: 16 }, { wch: 32 }, { wch: 48 },
+  { wch: 6 },
+  { wch: 14 },
+  { wch: 32 },
+  { wch: 14 },
+  { wch: 18 },
+  { wch: 18 },
+  { wch: 16 },
+  { wch: 32 },
+  { wch: 48 },
 ];
 
 function escapeCsv(v: string | null | undefined): string {

@@ -15,8 +15,8 @@ export function CollapseToggle({
       aria-label={collapsed ? 'Развернуть' : 'Свернуть'}
       className={cn(
         'absolute top-16 -right-3 z-10 hidden size-6 cursor-pointer items-center justify-center',
-        'rounded-full border border-sidebar-border bg-sidebar text-muted-foreground shadow-sm',
-        'transition-all hover:border-primary/40 hover:text-sidebar-accent-foreground md:flex',
+        'border-sidebar-border bg-sidebar text-muted-foreground rounded-full border shadow-sm',
+        'hover:border-primary/40 hover:text-sidebar-accent-foreground transition-all md:flex',
       )}
     >
       {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}

@@ -30,11 +30,11 @@ function LoadingSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="rounded-2xl border border-border bg-card py-20 text-center">
-      <p className="text-sm text-muted-foreground">Нет данных для анализа</p>
+    <div className="border-border bg-card rounded-2xl border py-20 text-center">
+      <p className="text-muted-foreground text-sm">Нет данных для анализа</p>
       <Link
         href="/activs/create"
-        className="mt-3 inline-block text-sm font-medium text-foreground hover:underline"
+        className="text-foreground mt-3 inline-block text-sm font-medium hover:underline"
       >
         Создать первый визит
       </Link>

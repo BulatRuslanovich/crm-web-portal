@@ -4,14 +4,7 @@ import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister } from 'react-hook-form';
-import {
-  BriefcaseMedical,
-  Building2,
-  Pencil,
-  Phone,
-  Stethoscope,
-  User,
-} from 'lucide-react';
+import { BriefcaseMedical, Building2, Pencil, Phone, Stethoscope, User } from 'lucide-react';
 import { searchOrgOptions } from '@/lib/api/orgs';
 import { toast } from 'sonner';
 import { Card, CardSkeleton, ErrorBox, Input, Label } from '@/components/ui';
@@ -23,17 +16,8 @@ import { physFullName } from '@/lib/initials';
 import { useSubmitAction } from '@/lib/use-submit-action';
 import { useSpecOptions } from '@/lib/dictionary-options';
 import { PhysContactFields, PhysNameFields, PhysSpecField } from '@/components/PhysFields';
-import {
-  PHYS_DEFAULT_VALUES,
-  type PhysFormValues,
-  physToFormValues,
-} from '@/lib/phys-form';
-import {
-  syncOrgs,
-  updatePhys,
-  useLoadedPhys,
-  usePhysOrgPicker,
-} from '@/lib/phys-edit';
+import { PHYS_DEFAULT_VALUES, type PhysFormValues, physToFormValues } from '@/lib/phys-form';
+import { syncOrgs, updatePhys, useLoadedPhys, usePhysOrgPicker } from '@/lib/phys-edit';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -63,7 +47,9 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     await submitAction.submit(async () => {
       await updatePhys(numId, values);
       await syncOrgs(numId, orgPicker.diff());
-      toast.success('Изменения сохранены', { description: `${values.lastName} ${values.firstName}`.trim() });
+      toast.success('Изменения сохранены', {
+        description: `${values.lastName} ${values.firstName}`.trim(),
+      });
       router.push(`/physes/${id}`);
     });
   }

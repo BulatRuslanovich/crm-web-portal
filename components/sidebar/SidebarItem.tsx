@@ -4,8 +4,7 @@ import type { NavItem } from './nav-config';
 
 const BASE_CLS =
   'group relative flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-150';
-const ACTIVE_CLS =
-  'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm';
+const ACTIVE_CLS = 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm';
 const IDLE_CLS =
   'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground';
 
@@ -34,7 +33,7 @@ export function SidebarItem({
       )}
     >
       {active && !compact && (
-        <span className="absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" />
+        <span className="bg-sidebar-primary absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full" />
       )}
       <Icon
         size={18}

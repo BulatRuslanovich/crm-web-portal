@@ -20,7 +20,9 @@ function getRoleLabel(policies: string[]): string {
   return 'Сотрудник';
 }
 
-function getDisplayName(user: { firstName?: string; lastName?: string; login?: string } | null): string {
+function getDisplayName(
+  user: { firstName?: string; lastName?: string; login?: string } | null,
+): string {
   if (!user) return '';
   if (user.firstName) {
     return user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
@@ -45,8 +47,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const policies = user?.policies ?? [];
   const isAdmin = policies.includes('Admin');
-  const canSeeReports =
-    isAdmin || policies.includes('Director') || policies.includes('Manager');
+  const canSeeReports = isAdmin || policies.includes('Director') || policies.includes('Manager');
   const groups = buildNavGroups({ canSeeReports, isAdmin });
 
   const contentProps = {
@@ -67,7 +68,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <>
       <aside
-        className="fixed top-0 bottom-0 left-0 z-40 hidden border-r border-sidebar-border transition-[width] duration-300 md:block"
+        className="border-sidebar-border fixed top-0 bottom-0 left-0 z-40 hidden border-r transition-[width] duration-300 md:block"
         style={{ width: collapsed ? WIDTH_COLLAPSED : WIDTH_EXPANDED }}
       >
         <SidebarContent compact={collapsed} {...contentProps} />
@@ -90,7 +91,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="animate-slide-in-left fixed top-0 bottom-0 left-0 z-50 w-64 border-r border-sidebar-border shadow-2xl md:hidden">
+          <aside className="animate-slide-in-left border-sidebar-border fixed top-0 bottom-0 left-0 z-50 w-64 border-r shadow-2xl md:hidden">
             <SidebarContent compact={false} {...contentProps} />
           </aside>
         </>

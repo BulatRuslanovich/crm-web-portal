@@ -18,25 +18,23 @@
 
 Фронтенд CRM для фарм компаний: дашборд, активности, организации, контакты, аналитика, карта и админ-панель. Работает в паре с [crm_api](https://github.com/BulatRuslanovich/crm_api).
 
-
 ## Стек технологий
 
-| Категория | Технологии |
-|---|---|
-| Фреймворк | Next.js 16 (App Router, React Compiler) |
-| UI | React 19, Radix UI |
-| Язык | TypeScript 5 |
-| Стилизация | Tailwind CSS 4 |
-| Формы | React Hook Form |
-| Данные | SWR, Axios |
-| Анимации | Framer Motion |
-| Графики | Recharts |
-| Карты | Leaflet, React-Leaflet |
-| Даты | date-fns, react-day-picker |
-| Темы | next-themes |
-| Линтинг | ESLint, Prettier |
-| Инфраструктура | Docker, Node 20, Caddy |
-
+| Категория      | Технологии                              |
+| -------------- | --------------------------------------- |
+| Фреймворк      | Next.js 16 (App Router, React Compiler) |
+| UI             | React 19, Radix UI                      |
+| Язык           | TypeScript 5                            |
+| Стилизация     | Tailwind CSS 4                          |
+| Формы          | React Hook Form                         |
+| Данные         | SWR, Axios                              |
+| Анимации       | Framer Motion                           |
+| Графики        | Recharts                                |
+| Карты          | Leaflet, React-Leaflet                  |
+| Даты           | date-fns, react-day-picker              |
+| Темы           | next-themes                             |
+| Линтинг        | ESLint, Prettier                        |
+| Инфраструктура | Docker, Node 20, Caddy                  |
 
 Ключевые точки:
 
@@ -48,19 +46,19 @@
 
 ## Разделы приложения
 
-| Раздел | Путь | Описание |
-|---|---|---|
-| Авторизация | [app/(auth)/](app/(auth)/) | логин, регистрация, OTP, сброс пароля |
-| Дашборд | [app/(main)/dashboard/](app/(main)/dashboard/) | ключевые метрики |
-| Активности | [app/(main)/activs/](app/(main)/activs/) | визиты и активности |
-| Организации | [app/(main)/orgs/](app/(main)/orgs/) | справочник организаций |
-| Контакты | [app/(main)/physes/](app/(main)/physes/) | справочник физлиц |
-| Аналитика | [app/(main)/analytics/](app/(main)/analytics/) | графики |
-| Отчёты | [app/(main)/reports/](app/(main)/reports/) | отчёты по активностям |
-| Календарь | [app/(main)/calendar/](app/(main)/calendar/) | календарь активностей |
-| Карта | [app/(main)/map/](app/(main)/map/) | карта организаций |
-| Профиль | [app/(main)/profile/](app/(main)/profile/) | профиль пользователя |
-| Админ | [app/(main)/admin/](app/(main)/admin/) | панель администратора |
+| Раздел      | Путь                                             | Описание                              |
+| ----------- | ------------------------------------------------ | ------------------------------------- |
+| Авторизация | [app/(auth)/](<app/(auth)/>)                     | логин, регистрация, OTP, сброс пароля |
+| Дашборд     | [app/(main)/dashboard/](<app/(main)/dashboard/>) | ключевые метрики                      |
+| Активности  | [app/(main)/activs/](<app/(main)/activs/>)       | визиты и активности                   |
+| Организации | [app/(main)/orgs/](<app/(main)/orgs/>)           | справочник организаций                |
+| Контакты    | [app/(main)/physes/](<app/(main)/physes/>)       | справочник физлиц                     |
+| Аналитика   | [app/(main)/analytics/](<app/(main)/analytics/>) | графики                               |
+| Отчёты      | [app/(main)/reports/](<app/(main)/reports/>)     | отчёты по активностям                 |
+| Календарь   | [app/(main)/calendar/](<app/(main)/calendar/>)   | календарь активностей                 |
+| Карта       | [app/(main)/map/](<app/(main)/map/>)             | карта организаций                     |
+| Профиль     | [app/(main)/profile/](<app/(main)/profile/>)     | профиль пользователя                  |
+| Админ       | [app/(main)/admin/](<app/(main)/admin/>)         | панель администратора                 |
 
 ## Запуск
 
@@ -75,14 +73,13 @@ npm run dev
 
 ## Переменные окружения
 
-| Переменная | Обязательна | По умолчанию | Описание |
-|---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | да | `http://localhost:5000` | URL бэкенда ([crm_api](https://github.com/BulatRuslanovich/crm_api)) |
-| `NEXT_PUBLIC_SITE_URL` | да для production | `https://crmwebapi.ru` | Публичный URL портала для metadata, sitemap и robots |
+| Переменная             | Обязательна       | По умолчанию            | Описание                                                             |
+| ---------------------- | ----------------- | ----------------------- | -------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`  | да                | `http://localhost:5000` | URL бэкенда ([crm_api](https://github.com/BulatRuslanovich/crm_api)) |
+| `NEXT_PUBLIC_SITE_URL` | да для production | `https://crmwebapi.ru`  | Публичный URL портала для metadata, sitemap и robots                 |
 
 `NEXT_PUBLIC_*` встраивается в бандл на этапе `npm run build` — пересборка обязательна при смене URL.
 
 ## Документация
 
 - **[DEV.md](DEV.md)** — памятка разработчику: как поднять портал локально
-

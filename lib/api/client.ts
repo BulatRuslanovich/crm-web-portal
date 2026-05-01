@@ -32,7 +32,6 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-
 let refreshPromise: Promise<string> | null = null;
 
 export function refreshAccessToken(): Promise<string> {

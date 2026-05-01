@@ -28,7 +28,7 @@ interface Props {
 export function StatusStepper({ currentStatusId }: Props) {
   if (currentStatusId === STATUS_CANCELED) {
     return (
-      <div className="flex items-center justify-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive">
+      <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold">
         <Ban size={13} />
         Визит отменён
       </div>
@@ -62,10 +62,14 @@ function StepMarker({
   const isCurrent = index === currentIdx;
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${markerClass(isCurrent, reached)}`}>
+      <div
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${markerClass(isCurrent, reached)}`}
+      >
         {reached && !isCurrent ? <Check size={11} /> : index + 1}
       </div>
-      <span className={`text-[10px] font-medium whitespace-nowrap ${reached ? 'text-foreground' : 'text-muted-foreground/70'}`}>
+      <span
+        className={`text-[10px] font-medium whitespace-nowrap ${reached ? 'text-foreground' : 'text-muted-foreground/70'}`}
+      >
         {step.label}
       </span>
     </div>

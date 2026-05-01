@@ -75,7 +75,7 @@ export function DrugsSection() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 shadow-sm sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Поиск по названию…" />
         <BtnSuccess onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? (
@@ -91,12 +91,12 @@ export function DrugsSection() {
       </div>
 
       {showCreate && (
-        <div className="animate-fade-in overflow-hidden rounded-2xl border border-warning/30 bg-card shadow-sm">
-          <div className="flex items-center gap-3 border-b border-border bg-warning/5 px-5 py-3.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/15 ring-1 ring-warning/25">
+        <div className="animate-fade-in border-warning/30 bg-card overflow-hidden rounded-2xl border shadow-sm">
+          <div className="border-border bg-warning/5 flex items-center gap-3 border-b px-5 py-3.5">
+            <div className="bg-warning/15 ring-warning/25 flex h-8 w-8 items-center justify-center rounded-lg ring-1">
               <Pill size={14} className="text-warning" />
             </div>
-            <p className="text-sm font-bold text-foreground">Новый препарат</p>
+            <p className="text-foreground text-sm font-bold">Новый препарат</p>
           </div>
           <form action={handleCreate}>
             <div className="space-y-3 p-5">
@@ -116,7 +116,7 @@ export function DrugsSection() {
               </div>
               {error && <ErrorBox message={error} />}
             </div>
-            <div className="flex justify-end gap-2 border-t border-border bg-muted/40 px-5 py-3">
+            <div className="border-border bg-muted/40 flex justify-end gap-2 border-t px-5 py-3">
               <BtnSecondary type="button" onClick={() => setShowCreate(false)}>
                 Отмена
               </BtnSecondary>
@@ -128,32 +128,32 @@ export function DrugsSection() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3">
-          <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+        <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3">
+          <p className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
             Препаратов: {drugs.length}
           </p>
         </div>
-        <div className="divide-y divide-border">
+        <div className="divide-border divide-y">
           {drugs.map((d) => (
             <div
               key={d.drugId}
-              className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-muted/40"
+              className="hover:bg-muted/40 flex items-center gap-3 px-5 py-3.5 transition-colors"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-1 ring-warning/20">
+              <div className="bg-warning/10 ring-warning/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1">
                 <Pill size={15} className="text-warning" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-foreground">{d.drugName}</p>
-                <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <p className="text-foreground truncate text-sm font-semibold">{d.drugName}</p>
+                <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-2 text-xs">
                   {d.brand && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium">
+                    <span className="border-border bg-muted inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium">
                       <Package size={10} />
                       {d.brand}
                     </span>
                   )}
                   {d.form && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-medium">
+                    <span className="border-border bg-background inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium">
                       {d.form}
                     </span>
                   )}
@@ -162,7 +162,7 @@ export function DrugsSection() {
               </div>
               <button
                 onClick={() => handleDelete(d.drugId)}
-                className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                className="border-border bg-background text-muted-foreground hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-all"
                 title="Удалить"
                 aria-label="Удалить"
               >
@@ -172,8 +172,8 @@ export function DrugsSection() {
           ))}
           {drugs.length === 0 && (
             <div className="px-5 py-12 text-center">
-              <Pill size={28} className="mx-auto mb-2 text-muted-foreground/40" />
-              <p className="text-sm text-muted-foreground">
+              <Pill size={28} className="text-muted-foreground/40 mx-auto mb-2" />
+              <p className="text-muted-foreground text-sm">
                 {debouncedSearch ? 'Ничего не найдено' : 'Препаратов пока нет'}
               </p>
             </div>

@@ -40,7 +40,9 @@ export default function MapTrackPage() {
   const { canSeeAllActivs, isManager, isRepresentative } = useRoles();
   const canPickUser = canSeeAllActivs || isManager;
 
-  const [usrId, setUsrId] = useState<string>(() => (isRepresentative && user ? String(user.usrId) : ''));
+  const [usrId, setUsrId] = useState<string>(() =>
+    isRepresentative && user ? String(user.usrId) : '',
+  );
   const [dateFrom, setDateFrom] = useState<string>(() => defaultStart());
   const [dateTo, setDateTo] = useState<string>(() => defaultEnd());
 
@@ -57,12 +59,10 @@ export default function MapTrackPage() {
 
   const { users } = usePickerUsers(canPickUser);
 
-  const { data, loading } = useApi(
-    ['map-track', effectiveUsrId, fromIso, toIso],
-    () =>
-      activsApi
-        .getAll(1, PAGE_SIZE, undefined, 'end', false, undefined, fromIso, toIso, effectiveUsrId)
-        .then((r) => r.data),
+  const { data, loading } = useApi(['map-track', effectiveUsrId, fromIso, toIso], () =>
+    activsApi
+      .getAll(1, PAGE_SIZE, undefined, 'end', false, undefined, fromIso, toIso, effectiveUsrId)
+      .then((r) => r.data),
   );
 
   const points = useMemo(() => extractTrackedActivs(data?.items ?? []), [data]);
@@ -76,14 +76,20 @@ export default function MapTrackPage() {
         kicker="Маршрут"
         title="Трекинг визитов"
         tone="primary"
-        subtitle={!loading && (
-          <>
-            {points.length} точек на маршруте
-            {hasFilters && data && data.items.length !== points.length && (
-              <> <span className="text-muted-foreground/50">·</span> {data.items.length - points.length} без координат</>
-            )}
-          </>
-        )}
+        subtitle={
+          !loading && (
+            <>
+              {points.length} точек на маршруте
+              {hasFilters && data && data.items.length !== points.length && (
+                <>
+                  {' '}
+                  <span className="text-muted-foreground/50">·</span>{' '}
+                  {data.items.length - points.length} без координат
+                </>
+              )}
+            </>
+          )
+        }
       />
 
       {/* Filters */}
@@ -91,11 +97,11 @@ export default function MapTrackPage() {
         {canPickUser ? (
           <UserFilter users={users} value={usrId} onChange={setUsrId} currentUsrId={user?.usrId} />
         ) : (
-          <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted ring-1 ring-border">
+          <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
+            <div className="bg-muted ring-border flex h-8 w-8 items-center justify-center rounded-lg ring-1">
               <Users size={14} className="text-muted-foreground" />
             </div>
-            <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+            <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
               Только мои визиты
             </span>
           </div>
@@ -115,7 +121,7 @@ export default function MapTrackPage() {
       )}
 
       {/* Map */}
-      <div className="relative min-h-[400px] flex-1 overflow-hidden rounded-2xl border border-border shadow-sm">
+      <div className="border-border relative min-h-[400px] flex-1 overflow-hidden rounded-2xl border shadow-sm">
         {loading ? (
           <Skeleton className="h-full w-full rounded-2xl" />
         ) : points.length === 0 ? (
@@ -140,8 +146,8 @@ function DateRangeFilter({
   onToChange: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-1 flex-wrap items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
-      <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+    <div className="border-border bg-card flex flex-1 flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
+      <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
         Период
       </span>
       <div className="min-w-[200px] flex-1">
@@ -157,10 +163,10 @@ function DateRangeFilter({
 function EmptyState() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted ring-1 ring-border">
+      <div className="bg-muted ring-border flex h-12 w-12 items-center justify-center rounded-2xl ring-1">
         <MapPinOff size={20} className="text-muted-foreground" />
       </div>
-      <p className="max-w-sm text-sm text-muted-foreground">
+      <p className="text-muted-foreground max-w-sm text-sm">
         За выбранный период нет завершённых визитов с координатами.
       </p>
     </div>
@@ -169,8 +175,9 @@ function EmptyState() {
 
 function extractTrackedActivs(items: ActivResponse[]): TrackedActiv[] {
   return items
-    .filter((a): a is ActivResponse & { latitude: number; longitude: number; end: string } =>
-      a.latitude != null && a.longitude != null && a.end != null,
+    .filter(
+      (a): a is ActivResponse & { latitude: number; longitude: number; end: string } =>
+        a.latitude != null && a.longitude != null && a.end != null,
     )
     .map((a) => ({
       activId: a.activId,

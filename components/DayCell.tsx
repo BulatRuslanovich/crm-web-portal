@@ -6,7 +6,12 @@ import type { GridCell } from '@/lib/grid';
 const MAX_VISIBLE = 3;
 const DEFAULT_COLOR = '#94a3b8';
 
-function cellClass(isSelected: boolean, isToday: boolean, outOfMonth: boolean, isWeekend: boolean): string {
+function cellClass(
+  isSelected: boolean,
+  isToday: boolean,
+  outOfMonth: boolean,
+  isWeekend: boolean,
+): string {
   if (isSelected) return 'border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30';
   if (isToday) return 'border-primary/40 bg-primary/5';
   if (outOfMonth) return 'border-border/50 bg-card/40 hover:bg-muted/40';
@@ -79,7 +84,7 @@ export function DayCell({
           {date.getDate()}
         </span>
         {activs.length > 0 && !isToday && (
-          <span className="text-[10px] font-semibold text-muted-foreground/70">
+          <span className="text-muted-foreground/70 text-[10px] font-semibold">
             {activs.length}
           </span>
         )}
@@ -91,7 +96,7 @@ export function DayCell({
             <EventRow key={a.activId} activ={a} outOfMonth={outOfMonth} />
           ))}
           {overflow > 0 && (
-            <div className="px-1 text-[10px] font-medium text-muted-foreground/80">
+            <div className="text-muted-foreground/80 px-1 text-[10px] font-medium">
               +{overflow} ещё
             </div>
           )}

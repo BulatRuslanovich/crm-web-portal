@@ -37,17 +37,17 @@ export function AnalyticsHero({
   activsCount: number;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-muted to-card shadow-sm">
+    <div className="border-border from-primary/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
       <div className="relative flex flex-wrap items-start justify-between gap-4 p-5">
         <div className="flex items-center gap-3">
           <ToneIcon icon={TrendingUp} tone="primary" size="lg" />
           <div>
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               Аналитика
             </p>
-            <h2 className="text-xl font-bold text-foreground">Динамика визитов</h2>
+            <h2 className="text-foreground text-xl font-bold">Динамика визитов</h2>
             {!loading && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-0.5 text-xs">
                 {activsCount} визитов за последние {periodDays} дн.
               </p>
             )}

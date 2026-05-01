@@ -7,7 +7,7 @@ const DEFAULT_COLOR = '#94a3b8';
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+    <p className="text-muted-foreground mb-2 text-[10px] font-semibold tracking-wider uppercase">
       {children}
     </p>
   );
@@ -50,7 +50,7 @@ function DateInput({
 }) {
   return (
     <div>
-      <label className="mb-1.5 flex items-center gap-1 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+      <label className="text-muted-foreground mb-1.5 flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase">
         <Calendar size={10} />
         {label}
       </label>
@@ -58,7 +58,7 @@ function DateInput({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-9 rounded-xl border border-border bg-background px-3 text-sm text-foreground transition-all focus:border-ring focus:ring-2 focus:ring-ring/40 focus:outline-none"
+        className="border-border bg-background text-foreground focus:border-ring focus:ring-ring/40 h-9 rounded-xl border px-3 text-sm transition-all focus:ring-2 focus:outline-none"
       />
     </div>
   );
@@ -119,18 +119,18 @@ export function FiltersCard({
   showReset: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <div className="border-border bg-card rounded-2xl border p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={14} className="text-muted-foreground" />
-          <p className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+          <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
             Фильтры
           </p>
         </div>
         {showReset && (
           <button
             onClick={onReset}
-            className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-destructive"
+            className="text-muted-foreground hover:text-destructive inline-flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors"
           >
             <X size={12} />
             Сбросить

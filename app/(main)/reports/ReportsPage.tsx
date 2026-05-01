@@ -11,11 +11,7 @@ import { STATUS_CLOSED } from '@/lib/api/statuses';
 import { PageTransition } from '@/components/motion';
 import { ListSkeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
-import {
-  defaultRange,
-  matchPreset,
-  rangeForPreset,
-} from '@/lib/date-range';
+import { defaultRange, matchPreset, rangeForPreset } from '@/lib/date-range';
 import { exportCsv, exportXlsx } from '@/lib/export';
 import { useReportsData } from '@/lib/use-reports-data';
 import { ReportsHero } from '@/components/ReportsHero';
@@ -42,9 +38,9 @@ function EmptyState({
   onReset: () => void;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card py-20 text-center">
-      <FileSpreadsheet size={28} className="mx-auto mb-2 text-muted-foreground/40" />
-      <p className="text-sm text-muted-foreground">
+    <div className="border-border bg-card rounded-2xl border py-20 text-center">
+      <FileSpreadsheet size={28} className="text-muted-foreground/40 mx-auto mb-2" />
+      <p className="text-muted-foreground text-sm">
         {hasAnyResults
           ? 'Ничего не найдено по выбранным фильтрам'
           : 'Нет визитов за выбранный период'}
@@ -52,7 +48,7 @@ function EmptyState({
       {hasActiveFilters && (
         <button
           onClick={onReset}
-          className="mt-3 inline-block cursor-pointer text-sm font-medium text-primary hover:underline"
+          className="text-primary mt-3 inline-block cursor-pointer text-sm font-medium hover:underline"
         >
           Сбросить фильтры
         </button>
@@ -81,14 +77,16 @@ export default function ReportsPage() {
 
   const { data: activs, loading } = useReportsData({
     enabled: canView,
-    dateFrom, dateTo, statusFilter, usrId: usrIdParam,
+    dateFrom,
+    dateTo,
+    statusFilter,
+    usrId: usrIdParam,
   });
   const filtered = useMemo(() => activs ?? [], [activs]);
 
   const stats = useMemo(() => computeStats(filtered), [filtered]);
   const activePresetKey = useMemo(() => matchPreset(dateFrom, dateTo), [dateFrom, dateTo]);
-  const hasCustomFilter =
-    statusFilter.length > 0 || usrFilter !== '' || !activePresetKey;
+  const hasCustomFilter = statusFilter.length > 0 || usrFilter !== '' || !activePresetKey;
 
   function applyPreset(days: number) {
     const r = rangeForPreset(days);
@@ -97,9 +95,7 @@ export default function ReportsPage() {
   }
 
   function toggleStatus(id: number) {
-    setStatusFilter((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    setStatusFilter((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
   function handleExportCsv() {

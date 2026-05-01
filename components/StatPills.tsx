@@ -1,6 +1,4 @@
-import {
-  CalendarCheck, CheckCircle2, FileSpreadsheet, SlidersHorizontal,
-} from 'lucide-react';
+import { CalendarCheck, CheckCircle2, FileSpreadsheet, SlidersHorizontal } from 'lucide-react';
 import { StatPill } from './StatPill';
 
 const PREVIEW_LIMIT = 50;
@@ -15,21 +13,24 @@ export interface ReportStats {
 export function StatPills({ stats, filteredCount }: { stats: ReportStats; filteredCount: number }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <StatPill label="Всего" value={stats.total} icon={CalendarCheck} tone="primary" />
       <StatPill
-        label="Всего" value={stats.total}
-        icon={CalendarCheck} tone="primary"
+        label={`Закрыто · ${stats.closedPct}%`}
+        value={stats.closed}
+        icon={CheckCircle2}
+        tone="success"
       />
       <StatPill
-        label={`Закрыто · ${stats.closedPct}%`} value={stats.closed}
-        icon={CheckCircle2} tone="success"
+        label="Сотрудников"
+        value={stats.uniqueUsers}
+        icon={SlidersHorizontal}
+        tone="warning"
       />
       <StatPill
-        label="Сотрудников" value={stats.uniqueUsers}
-        icon={SlidersHorizontal} tone="warning"
-      />
-      <StatPill
-        label="В выгрузке" value={Math.min(filteredCount, PREVIEW_LIMIT)}
-        icon={FileSpreadsheet} tone="default"
+        label="В выгрузке"
+        value={Math.min(filteredCount, PREVIEW_LIMIT)}
+        icon={FileSpreadsheet}
+        tone="default"
       />
     </div>
   );

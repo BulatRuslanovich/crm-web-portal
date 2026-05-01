@@ -17,8 +17,8 @@ function VisitRow({ activ, withBorder }: { activ: ActivResponse; withBorder: boo
   return (
     <Link
       href={`/activs/${activ.activId}`}
-      className={`group relative flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/60 ${
-        withBorder ? 'border-t border-border' : ''
+      className={`group hover:bg-muted/60 relative flex items-center gap-4 px-5 py-3.5 transition-colors ${
+        withBorder ? 'border-border border-t' : ''
       }`}
     >
       <span
@@ -26,21 +26,21 @@ function VisitRow({ activ, withBorder }: { activ: ActivResponse; withBorder: boo
         style={{ background: color }}
       />
       <div className="flex w-14 shrink-0 flex-col items-center justify-center">
-        <span className="font-mono text-sm font-bold text-foreground tabular-nums">{time}</span>
+        <span className="text-foreground font-mono text-sm font-bold tabular-nums">{time}</span>
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-1.5">
-          <TargetIcon size={12} className="shrink-0 text-muted-foreground/70" />
-          <p className="truncate text-sm font-semibold text-foreground">
+          <TargetIcon size={12} className="text-muted-foreground/70 shrink-0" />
+          <p className="text-foreground truncate text-sm font-semibold">
             {activ.physName ?? activ.orgName ?? '—'}
           </p>
         </div>
-        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-0.5 flex items-center gap-1 text-xs">
           <User size={10} />
           {activ.usrLogin}
         </p>
         {activ.description && (
-          <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground/70">
+          <p className="text-muted-foreground/70 mt-0.5 line-clamp-1 text-xs">
             {activ.description}
           </p>
         )}
@@ -55,34 +55,34 @@ function PanelHeader({ date, count, onClose }: { date: Date; count: number; onCl
   const label = `${date.getDate()} ${MONTHS_GEN[date.getMonth()]} ${date.getFullYear()}`;
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3.5">
+    <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3.5">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
+        <div className="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
           <CalendarDays size={16} className="text-primary" />
         </div>
         <div>
-          <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+          <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
             {weekday}
           </p>
-          <h3 className="text-sm font-bold text-foreground">{label}</h3>
+          <h3 className="text-foreground text-sm font-bold">{label}</h3>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {count > 0 && (
-          <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+          <span className="bg-muted text-muted-foreground rounded-full px-2.5 py-1 text-xs font-medium">
             {count} визит(ов)
           </span>
         )}
         <Link
           href="/activs/create"
-          className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-all hover:border-primary/40 hover:bg-muted"
+          className="border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all"
         >
           <Plus size={12} />
           Визит
         </Link>
         <button
           onClick={onClose}
-          className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+          className="text-muted-foreground/70 hover:bg-muted hover:text-foreground flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg transition-colors"
           aria-label="Закрыть"
         >
           <X size={14} />
@@ -102,11 +102,11 @@ export function DayPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="animate-fade-in overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="animate-fade-in border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
       <PanelHeader date={date} count={activs.length} onClose={onClose} />
       {activs.length === 0 ? (
         <div className="px-5 py-12 text-center">
-          <p className="text-sm text-muted-foreground">Нет визитов на этот день</p>
+          <p className="text-muted-foreground text-sm">Нет визитов на этот день</p>
         </div>
       ) : (
         <div>

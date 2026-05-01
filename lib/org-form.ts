@@ -1,8 +1,4 @@
-import type {
-  CreateOrgRequest,
-  OrgResponse,
-  UpdateOrgRequest,
-} from '@/lib/api/types';
+import type { CreateOrgRequest, OrgResponse, UpdateOrgRequest } from '@/lib/api/types';
 
 export interface OrgFormValues {
   orgTypeId: string;

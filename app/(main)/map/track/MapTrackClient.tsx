@@ -99,7 +99,12 @@ export default function MapTrackClient({ points }: Props) {
     display.length > 0 ? [display[0].displayLat, display[0].displayLng] : [55.751244, 37.618423];
 
   return (
-    <MapContainer center={center} zoom={11} style={{ height: '100%', width: '100%' }} className="z-0">
+    <MapContainer
+      center={center}
+      zoom={11}
+      style={{ height: '100%', width: '100%' }}
+      className="z-0"
+    >
       <LayersControl position="topright">
         <LayersControl.BaseLayer name="Карта" checked={!isDark}>
           <TileLayer
@@ -115,7 +120,7 @@ export default function MapTrackClient({ points }: Props) {
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Спутник">
           <TileLayer
-            attribution='&copy; Esri'
+            attribution="&copy; Esri"
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           />
         </LayersControl.BaseLayer>
@@ -124,7 +129,10 @@ export default function MapTrackClient({ points }: Props) {
       <FitBounds positions={polyline} />
 
       {polyline.length > 1 && (
-        <Polyline positions={polyline} pathOptions={{ color: LINE_COLOR, weight: 3, opacity: 0.7 }} />
+        <Polyline
+          positions={polyline}
+          pathOptions={{ color: LINE_COLOR, weight: 3, opacity: 0.7 }}
+        />
       )}
 
       {display.map((p) => (
@@ -148,24 +156,24 @@ function PointPopup({ point }: { point: DisplayPoint }) {
   return (
     <div className="min-w-[220px] text-[13px] leading-snug">
       <div className="mb-1 flex items-center gap-1.5">
-        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+        <span className="bg-primary text-primary-foreground inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold">
           {point.index}
         </span>
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground">
+        <span className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
           {point.statusName}
         </span>
       </div>
-      <div className="mb-1 text-sm font-bold text-foreground">{target}</div>
-      <div className="mb-1 text-[11px] text-muted-foreground">{endLabel}</div>
-      <div className="mb-2 text-[11px] text-muted-foreground">Сотрудник: {point.usrLogin}</div>
+      <div className="text-foreground mb-1 text-sm font-bold">{target}</div>
+      <div className="text-muted-foreground mb-1 text-[11px]">{endLabel}</div>
+      <div className="text-muted-foreground mb-2 text-[11px]">Сотрудник: {point.usrLogin}</div>
       {point.description && (
-        <div className="mb-2 line-clamp-3 text-[11px] text-muted-foreground/80">
+        <div className="text-muted-foreground/80 mb-2 line-clamp-3 text-[11px]">
           {point.description}
         </div>
       )}
       <a
         href={`/activs/${point.activId}`}
-        className="inline-block text-xs font-semibold text-foreground hover:underline"
+        className="text-foreground inline-block text-xs font-semibold hover:underline"
       >
         Открыть визит →
       </a>

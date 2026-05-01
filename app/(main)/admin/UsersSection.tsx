@@ -121,8 +121,12 @@ export function UsersSection() {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-sm sm:flex-row sm:items-center">
-        <SearchInput value={search} onChange={setSearch} placeholder="Поиск по логину, имени, email…" />
+      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 shadow-sm sm:flex-row sm:items-center">
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Поиск по логину, имени, email…"
+        />
         <BtnSuccess onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? (
             <>
@@ -137,12 +141,12 @@ export function UsersSection() {
       </div>
 
       {showCreate && (
-        <div className="animate-fade-in overflow-hidden rounded-2xl border border-primary/30 bg-card shadow-sm">
-          <div className="flex items-center gap-3 border-b border-border bg-primary/5 px-5 py-3.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+        <div className="animate-fade-in border-primary/30 bg-card overflow-hidden rounded-2xl border shadow-sm">
+          <div className="border-border bg-primary/5 flex items-center gap-3 border-b px-5 py-3.5">
+            <div className="bg-primary/10 ring-primary/20 flex h-8 w-8 items-center justify-center rounded-lg ring-1">
               <UserPlus2 size={14} className="text-primary" />
             </div>
-            <p className="text-sm font-bold text-foreground">Новый пользователь</p>
+            <p className="text-foreground text-sm font-bold">Новый пользователь</p>
           </div>
           <form action={handleCreate}>
             <div className="space-y-3 p-5">
@@ -170,7 +174,7 @@ export function UsersSection() {
               </div>
               {error && <ErrorBox message={error} />}
             </div>
-            <div className="flex justify-end gap-2 border-t border-border bg-muted/40 px-5 py-3">
+            <div className="border-border bg-muted/40 flex justify-end gap-2 border-t px-5 py-3">
               <BtnSecondary type="button" onClick={() => setShowCreate(false)}>
                 Отмена
               </BtnSecondary>
@@ -182,32 +186,30 @@ export function UsersSection() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-5 py-3">
-          <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+        <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3">
+          <p className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
             Пользователей: {users.length}
           </p>
-          <p className="text-[10px] text-muted-foreground/70">
+          <p className="text-muted-foreground/70 text-[10px]">
             Нажмите на роль, чтобы назначить или снять
           </p>
         </div>
-        <div className="divide-y divide-border">
+        <div className="divide-border divide-y">
           {users.map((u) => {
-            const fullName = u.firstName
-              ? `${u.firstName} ${u.lastName ?? ''}`.trim()
-              : u.login;
+            const fullName = u.firstName ? `${u.firstName} ${u.lastName ?? ''}`.trim() : u.login;
             return (
               <div
                 key={u.usrId}
-                className="flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-muted/40 lg:flex-row lg:items-center"
+                className="hover:bg-muted/40 flex flex-col gap-3 px-5 py-4 transition-colors lg:flex-row lg:items-center"
               >
                 <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary ring-1 ring-primary/20">
+                  <div className="bg-primary/10 text-primary ring-primary/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold ring-1">
                     {initialsOf(u)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-foreground">{fullName}</p>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                    <p className="text-foreground truncate text-sm font-semibold">{fullName}</p>
+                    <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                       <span className="inline-flex items-center gap-1">
                         <AtSign size={11} />
                         {u.login}
@@ -236,7 +238,6 @@ export function UsersSection() {
                   </div>
                 </div>
 
-    
                 <div className="flex flex-wrap items-center gap-1.5">
                   {policies.map((pol) => {
                     const has = u.policies.includes(pol.policyName);
@@ -258,11 +259,10 @@ export function UsersSection() {
                   })}
                 </div>
 
-   
                 <div className="flex shrink-0 justify-end">
                   <button
                     onClick={() => handleDelete(u.usrId)}
-                    className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                    className="border-border bg-background text-muted-foreground hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border transition-all"
                     title="Удалить"
                     aria-label="Удалить"
                   >
@@ -273,7 +273,7 @@ export function UsersSection() {
             );
           })}
           {users.length === 0 && (
-            <p className="px-5 py-12 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground px-5 py-12 text-center text-sm">
               {search ? 'Ничего не найдено' : 'Пользователей пока нет'}
             </p>
           )}

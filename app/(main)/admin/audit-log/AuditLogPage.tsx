@@ -9,20 +9,10 @@ import { useIsAdmin } from '@/lib/hooks/use-is-admin';
 import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { auditLogsApi, type AuditLogQuery } from '@/lib/api/audit-logs';
 import { PageTransition } from '@/components/motion';
-import {
-  BtnPrimary,
-  BtnSecondary,
-  Input,
-  Skeleton,
-  Label,
-} from '@/components/ui';
+import { BtnPrimary, BtnSecondary, Input, Skeleton, Label } from '@/components/ui';
 import { Combobox } from '@/components/Combobox';
 import { DateTimePicker } from '@/components/DateTimePicker';
-import type {
-  AuditAction,
-  AuditEntityType,
-  AuditLogResponse,
-} from '@/lib/api/types';
+import type { AuditAction, AuditEntityType, AuditLogResponse } from '@/lib/api/types';
 import { ActionBadge, EntityLink, ValueCell } from '@/components/AuditLogItems';
 import { PageHero } from '@/components/PageHero';
 
@@ -62,23 +52,25 @@ export default function AuditLogPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
 
-  const query = useMemo<AuditLogQuery>(() => ({
-    entityType: applied.entityType || undefined,
-    entityId: applied.entityId ? Number(applied.entityId) : undefined,
-    action: applied.action || undefined,
-    changedBy: applied.changedBy ? Number(applied.changedBy) : undefined,
-    dateFrom: applied.dateFrom ? new Date(applied.dateFrom).toISOString() : undefined,
-    dateTo: applied.dateTo ? new Date(applied.dateTo).toISOString() : undefined,
-    page,
-    pageSize,
-    includeTotal: true,
-  }), [applied, page, pageSize]);
+  const query = useMemo<AuditLogQuery>(
+    () => ({
+      entityType: applied.entityType || undefined,
+      entityId: applied.entityId ? Number(applied.entityId) : undefined,
+      action: applied.action || undefined,
+      changedBy: applied.changedBy ? Number(applied.changedBy) : undefined,
+      dateFrom: applied.dateFrom ? new Date(applied.dateFrom).toISOString() : undefined,
+      dateTo: applied.dateTo ? new Date(applied.dateTo).toISOString() : undefined,
+      page,
+      pageSize,
+      includeTotal: true,
+    }),
+    [applied, page, pageSize],
+  );
 
   const { users } = usePickerUsers(isAdmin);
 
-  const { data, loading, reload, error } = useApi(
-    isAdmin ? ['audit-logs', query] : null,
-    () => auditLogsApi.search(query).then((r) => r.data),
+  const { data, loading, reload, error } = useApi(isAdmin ? ['audit-logs', query] : null, () =>
+    auditLogsApi.search(query).then((r) => r.data),
   );
 
   function applyFilters() {
@@ -142,7 +134,6 @@ export default function AuditLogPage() {
   );
 }
 
-
 function FiltersPanel({
   filters,
   onChange,
@@ -188,7 +179,7 @@ function FiltersPanel({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div className="border-border bg-card rounded-2xl border p-4 shadow-sm">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <Label>Тип сущности</Label>
@@ -281,29 +272,29 @@ function PaginationBar({
   onReload: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5 shadow-sm">
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+    <div className="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 shadow-sm">
+      <div className="text-muted-foreground flex items-center gap-3 text-xs">
         <span>
-          Всего записей: <span className="font-semibold tabular-nums text-foreground">{total}</span>
+          Всего записей: <span className="text-foreground font-semibold tabular-nums">{total}</span>
         </span>
         <span className="text-muted-foreground/50">·</span>
         <button
           type="button"
           onClick={onReload}
           disabled={loading}
-          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors disabled:opacity-50"
         >
           <RotateCw size={11} className={loading ? 'animate-spin' : ''} /> Обновить
         </button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <label className="flex items-center gap-2 text-muted-foreground">
+        <label className="text-muted-foreground flex items-center gap-2">
           На странице
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="h-8 rounded-md border border-input bg-transparent px-2 text-foreground"
+            className="border-input text-foreground h-8 rounded-md border bg-transparent px-2"
           >
             {PAGE_SIZE_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -317,18 +308,18 @@ function PaginationBar({
             type="button"
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+            className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex h-8 w-8 items-center justify-center rounded-md border transition-colors disabled:opacity-40"
           >
             <ChevronLeft size={14} />
           </button>
-          <span className="px-2 tabular-nums text-foreground">
+          <span className="text-foreground px-2 tabular-nums">
             {page} / {totalPages}
           </span>
           <button
             type="button"
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+            className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex h-8 w-8 items-center justify-center rounded-md border transition-colors disabled:opacity-40"
           >
             <ChevronRight size={14} />
           </button>
@@ -340,10 +331,10 @@ function PaginationBar({
 
 function AuditTable({ items }: { items: AuditLogResponse[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
-          <thead className="bg-muted/40 text-[10px] font-bold tracking-wider uppercase text-muted-foreground">
+          <thead className="bg-muted/40 text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
             <tr>
               <Th>Дата</Th>
               <Th>Пользователь</Th>
@@ -354,13 +345,13 @@ function AuditTable({ items }: { items: AuditLogResponse[] }) {
               <Th>Стало</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-border divide-y">
             {items.map((row) => (
               <tr key={row.auditId} className="hover:bg-muted/40">
-                <Td className="whitespace-nowrap tabular-nums text-foreground">
+                <Td className="text-foreground whitespace-nowrap tabular-nums">
                   {new Date(row.changedAt).toLocaleString('ru-RU')}
                 </Td>
-                <Td className="whitespace-nowrap text-foreground">
+                <Td className="text-foreground whitespace-nowrap">
                   {row.changedByLogin ?? (row.changedBy != null ? `#${row.changedBy}` : '—')}
                 </Td>
                 <Td>
@@ -369,7 +360,7 @@ function AuditTable({ items }: { items: AuditLogResponse[] }) {
                 <Td>
                   <ActionBadge action={row.action} />
                 </Td>
-                <Td className="font-mono text-foreground">{row.fieldName ?? '—'}</Td>
+                <Td className="text-foreground font-mono">{row.fieldName ?? '—'}</Td>
                 <Td>
                   <ValueCell value={row.oldValue} />
                 </Td>
@@ -389,19 +380,13 @@ function Th({ children }: { children: React.ReactNode }) {
   return <th className="px-3 py-2.5 text-left">{children}</th>;
 }
 
-function Td({
-  children,
-  className = '',
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return <td className={`px-3 py-2.5 align-top text-muted-foreground ${className}`}>{children}</td>;
+function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <td className={`text-muted-foreground px-3 py-2.5 align-top ${className}`}>{children}</td>;
 }
 
 function TableSkeleton() {
   return (
-    <div className="space-y-2 rounded-2xl border border-border bg-card p-3">
+    <div className="border-border bg-card space-y-2 rounded-2xl border p-3">
       {Array.from({ length: 8 }).map((_, i) => (
         <Skeleton key={i} className="h-9 w-full rounded-md" />
       ))}
@@ -411,22 +396,22 @@ function TableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card px-6 py-12 text-center shadow-sm">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted ring-1 ring-border">
+    <div className="border-border bg-card flex flex-col items-center gap-2 rounded-2xl border px-6 py-12 text-center shadow-sm">
+      <div className="bg-muted ring-border flex h-10 w-10 items-center justify-center rounded-xl ring-1">
         <History size={16} className="text-muted-foreground" />
       </div>
-      <p className="text-sm text-muted-foreground">Нет записей за выбранный период</p>
+      <p className="text-muted-foreground text-sm">Нет записей за выбранный период</p>
     </div>
   );
 }
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/5 px-6 py-8 text-center shadow-sm">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 ring-1 ring-destructive/20">
+    <div className="border-destructive/40 bg-destructive/5 flex flex-col items-center gap-3 rounded-2xl border px-6 py-8 text-center shadow-sm">
+      <div className="bg-destructive/10 ring-destructive/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
         <AlertCircle size={16} className="text-destructive" />
       </div>
-      <p className="text-sm text-foreground">Не удалось загрузить аудит-лог</p>
+      <p className="text-foreground text-sm">Не удалось загрузить аудит-лог</p>
       <BtnPrimary onClick={onRetry}>
         <RotateCw size={14} /> Повторить
       </BtnPrimary>

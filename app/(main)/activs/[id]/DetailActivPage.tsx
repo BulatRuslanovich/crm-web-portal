@@ -7,12 +7,7 @@ import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { useRoles } from '@/lib/hooks/use-roles';
-import {
-  FINAL_STATUSES,
-  STATUS_CANCELED,
-  STATUS_OPEN,
-  STATUS_SAVED,
-} from '@/lib/api/statuses';
+import { FINAL_STATUSES, STATUS_CANCELED, STATUS_OPEN, STATUS_SAVED } from '@/lib/api/statuses';
 import {
   AlertBanner,
   BackButton,
@@ -64,9 +59,9 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
 
   async function handleDelete() {
     const ok = await confirm({
-    title: 'Удалить визит?',
-    description: `Визит #${numId} будет удалён безвозвратно.`,
-    confirmLabel: 'Удалить',
+      title: 'Удалить визит?',
+      description: `Визит #${numId} будет удалён безвозвратно.`,
+      confirmLabel: 'Удалить',
     });
     if (!ok) return;
     await activsApi.delete(numId);
@@ -140,7 +135,6 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
   );
 }
 
-
 function InfoSection({ activ }: { activ: ActivResponse }) {
   return (
     <div>
@@ -165,13 +159,13 @@ function CoordsSection({ activ }: { activ: ActivResponse }) {
   return (
     <div>
       <SectionLabel icon={MapPin}>Координаты закрытия</SectionLabel>
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
-        <span className="font-mono text-foreground">{formatted}</span>
+      <div className="border-border bg-muted/40 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-sm">
+        <span className="text-foreground font-mono">{formatted}</span>
         <a
           href={osmHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-semibold text-primary hover:underline"
+          className="text-primary text-xs font-semibold hover:underline"
         >
           Открыть на карте →
         </a>
@@ -186,14 +180,13 @@ function DescriptionSection({ description }: { description: string }) {
       <hr className="border-border" />
       <div>
         <SectionLabel icon={FileText}>Описание</SectionLabel>
-        <p className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap text-foreground">
+        <p className="border-border bg-muted/40 text-foreground rounded-xl border px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
           {description}
         </p>
       </div>
     </>
   );
 }
-
 
 interface Permissions {
   canEdit: boolean;

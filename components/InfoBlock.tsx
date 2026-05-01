@@ -11,8 +11,7 @@ interface Props {
   href?: string;
 }
 
-const BASE_CLASS =
-  'flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3';
+const BASE_CLASS = 'flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3';
 
 export function InfoBlock({ label, icon: Icon, value, mono, href }: Props) {
   const inner = <InfoBlockInner label={label} icon={Icon} value={value} mono={mono} />;
@@ -21,7 +20,7 @@ export function InfoBlock({ label, icon: Icon, value, mono, href }: Props) {
     return (
       <a
         href={href}
-        className={`${BASE_CLASS} transition-colors hover:border-primary/30 hover:bg-muted/60`}
+        className={`${BASE_CLASS} hover:border-primary/30 hover:bg-muted/60 transition-colors`}
       >
         {inner}
       </a>
@@ -34,16 +33,16 @@ function InfoBlockInner({ label, icon: Icon, value, mono }: Props) {
   return (
     <>
       {Icon && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-card ring-1 ring-border">
+        <div className="bg-card ring-border flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1">
           <Icon size={14} className="text-muted-foreground" />
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+        <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           {label}
         </p>
         <p
-          className={`text-sm leading-relaxed break-words text-foreground ${
+          className={`text-foreground text-sm leading-relaxed break-words ${
             mono ? 'font-mono tabular-nums' : ''
           }`}
         >

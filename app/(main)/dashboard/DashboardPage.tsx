@@ -7,10 +7,7 @@ import { useUserFilter } from '@/lib/hooks/use-user-filter';
 import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
 import { UserFilter } from '@/components/UserFilter';
-import {
-  useDashboardActivs,
-  useDashboardSummary,
-} from '@/lib/use-dashboard-data';
+import { useDashboardActivs, useDashboardSummary } from '@/lib/use-dashboard-data';
 import { DashboardHero } from '@/components/DashboardHero';
 import { StatCard } from '@/components/StatCard';
 import { MyDay } from '@/components/MyDay';

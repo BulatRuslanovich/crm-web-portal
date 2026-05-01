@@ -12,11 +12,7 @@ import { FormCardFooter } from '@/components/FormCardFooter';
 import { useOrgTypeOptions } from '@/lib/dictionary-options';
 import { useSubmitAction } from '@/lib/use-submit-action';
 import { OrgInnField, OrgLocationFields, OrgMainFields } from '@/components/OrgFields';
-import {
-  ORG_DEFAULT_VALUES,
-  orgFormToCreateRequest,
-  type OrgFormValues,
-} from '@/lib/org-form';
+import { ORG_DEFAULT_VALUES, orgFormToCreateRequest, type OrgFormValues } from '@/lib/org-form';
 
 export default function CreateOrgPage() {
   const router = useRouter();

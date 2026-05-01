@@ -14,10 +14,8 @@ export function useOrgTypeOptions() {
 }
 
 export function useSpecOptions() {
-  const { data: specs = [] } = useApi(
-    'specs',
-    () => specsApi.getAll().then(({ data }) => data),
-    { dedupingInterval: 300_000 },
-  );
+  const { data: specs = [] } = useApi('specs', () => specsApi.getAll().then(({ data }) => data), {
+    dedupingInterval: 300_000,
+  });
   return specs.map((s) => ({ value: String(s.specId), label: s.specName }));
 }

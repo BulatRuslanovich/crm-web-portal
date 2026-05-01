@@ -24,23 +24,20 @@ export function useResendCode({
     };
   }, []);
 
-  const startCooldown = useCallback(
-    (seconds: number) => {
-      setCooldown(seconds);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setCooldown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current!);
-            timerRef.current = null;
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    },
-    [],
-  );
+  const startCooldown = useCallback((seconds: number) => {
+    setCooldown(seconds);
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
 
   const handleResend = useCallback(async () => {
     setLoading(true);

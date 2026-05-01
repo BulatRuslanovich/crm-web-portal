@@ -28,10 +28,10 @@ export function ListPageHeader({ icon: Icon, title, totalCount, iconTone, action
           <Icon size={20} />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">{title}</h2>
+          <h2 className="text-foreground text-xl font-bold">{title}</h2>
           {totalCount !== undefined && (
-            <p className="text-xs text-muted-foreground">
-              Всего: <span className="font-semibold text-foreground">{totalCount}</span>
+            <p className="text-muted-foreground text-xs">
+              Всего: <span className="text-foreground font-semibold">{totalCount}</span>
             </p>
           )}
         </div>

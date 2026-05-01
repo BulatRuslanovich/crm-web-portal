@@ -47,7 +47,7 @@ export default function OrgsPage() {
         }
       />
 
-      <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+      <div className="border-border bg-card rounded-2xl border p-3 shadow-sm">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -61,7 +61,7 @@ export default function OrgsPage() {
         <EmptyOrgs hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
             {orgs.map((org, i) => (
               <OrgRow key={org.orgId} org={org} first={i === 0} />
             ))}
@@ -77,24 +77,24 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
   return (
     <Link
       href={`/orgs/${org.orgId}`}
-      className={`group relative flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 hover:bg-muted/60 ${
-        first ? '' : 'border-t border-border'
+      className={`group hover:bg-muted/60 relative flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 ${
+        first ? '' : 'border-border border-t'
       }`}
     >
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-success/10 text-xs font-bold text-success ring-1 ring-success/20 transition-transform duration-200 group-hover:scale-105">
+      <div className="bg-success/10 text-success ring-success/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold ring-1 transition-transform duration-200 group-hover:scale-105">
         {orgInitials(org.orgName)}
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">{org.orgName}</p>
+        <p className="text-foreground truncate text-sm font-semibold">{org.orgName}</p>
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
           {org.orgTypeName && (
-            <span className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+            <span className="bg-muted text-muted-foreground inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium">
               {org.orgTypeName}
             </span>
           )}
           {org.address && (
-            <span className="flex min-w-0 items-center gap-1 truncate text-xs text-muted-foreground">
+            <span className="text-muted-foreground flex min-w-0 items-center gap-1 truncate text-xs">
               <MapPin size={11} className="shrink-0" />
               <span className="truncate">{org.address}</span>
             </span>
@@ -104,10 +104,10 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
 
       {org.inn && (
         <div className="hidden shrink-0 flex-col items-end sm:flex">
-          <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+          <span className="text-muted-foreground/70 flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase">
             <Hash size={10} /> ИНН
           </span>
-          <span className="font-mono text-xs text-foreground tabular-nums">{org.inn}</span>
+          <span className="text-foreground font-mono text-xs tabular-nums">{org.inn}</span>
         </div>
       )}
     </Link>
@@ -120,7 +120,7 @@ function EmptyOrgs({ hasFilter, canCreate }: { hasFilter: boolean; canCreate: bo
       message={hasFilter ? 'Ничего не найдено' : 'Организаций пока нет'}
       action={
         !hasFilter && canCreate ? (
-          <Link href="/orgs/create" className="text-sm font-medium text-foreground hover:underline">
+          <Link href="/orgs/create" className="text-foreground text-sm font-medium hover:underline">
             Добавить первую организацию
           </Link>
         ) : undefined

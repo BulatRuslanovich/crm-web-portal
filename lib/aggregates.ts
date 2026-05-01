@@ -53,9 +53,7 @@ export function buildByUsr(activs: ActivResponse[]): { name: string; count: numb
   for (const a of activs) {
     map.set(a.usrLogin, (map.get(a.usrLogin) ?? 0) + 1);
   }
-  return [...map.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, count]) => ({ name, count }));
+  return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
 }
 
 export function buildByStatus(activs: ActivResponse[]): { name: string; value: number }[] {

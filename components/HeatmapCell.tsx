@@ -1,12 +1,6 @@
 import { MONTHS_ABBR } from '@/lib/ru-dates';
 
-const LEVEL_BG = [
-  'bg-muted',
-  'bg-success/30',
-  'bg-success/55',
-  'bg-success/80',
-  'bg-success',
-];
+const LEVEL_BG = ['bg-muted', 'bg-success/30', 'bg-success/55', 'bg-success/80', 'bg-success'];
 
 function pluralizeClosed(count: number): string {
   if (count === 1) return 'закрыт визит';
@@ -36,7 +30,7 @@ export function HeatmapCell({
   return (
     <div
       title={title}
-      className={`aspect-square w-full rounded-[3px] ring-1 ring-border/40 transition-transform hover:scale-110 ${LEVEL_BG[level]}`}
+      className={`ring-border/40 aspect-square w-full rounded-[3px] ring-1 transition-transform hover:scale-110 ${LEVEL_BG[level]}`}
     />
   );
 }

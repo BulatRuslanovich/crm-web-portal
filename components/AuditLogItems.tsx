@@ -23,7 +23,7 @@ export function ActionBadge({ action }: { action: AuditAction }) {
   const Icon = styles.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${styles.cls}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase ${styles.cls}`}
     >
       <Icon size={10} />
       {action}
@@ -59,7 +59,7 @@ export function EntityLink({ type, id }: { type: string; id: number }) {
   return (
     <Link
       href={`${route}/${id}`}
-      className="inline-flex items-center gap-1 text-foreground hover:underline"
+      className="text-foreground inline-flex items-center gap-1 hover:underline"
     >
       <span>{label}</span>
       <span className="text-muted-foreground">#{id}</span>
@@ -70,14 +70,11 @@ export function EntityLink({ type, id }: { type: string; id: number }) {
 export function ValueCell({ value }: { value: string | null }) {
   if (value == null) return <span className="text-muted-foreground/60">—</span>;
   if (value.length <= VALUE_TRUNCATE) {
-    return <span className="font-mono break-all text-foreground">{value}</span>;
+    return <span className="text-foreground font-mono break-all">{value}</span>;
   }
   const truncated = value.slice(0, VALUE_TRUNCATE) + '…';
   return (
-    <span
-      className="font-mono break-all text-foreground"
-      title={value}
-    >
+    <span className="text-foreground font-mono break-all" title={value}>
       {truncated}
     </span>
   );

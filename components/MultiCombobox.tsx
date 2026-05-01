@@ -124,7 +124,7 @@ export function MultiCombobox({
         <button
           type="button"
           className={cn(
-            'flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-3 py-1.5 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
+            'border-input flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border bg-transparent px-3 py-1.5 text-left text-sm shadow-xs transition-[color,box-shadow] outline-none',
             'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
             'disabled:cursor-not-allowed disabled:opacity-50',
             'dark:bg-input/30',
@@ -134,26 +134,26 @@ export function MultiCombobox({
             selectedLabels.map((o) => (
               <span
                 key={o.value}
-                className="inline-flex items-center gap-1 rounded-sm bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-medium"
               >
                 {o.label}
                 <span
                   role="button"
                   tabIndex={-1}
                   onClick={(e) => remove(o.value, e)}
-                  className="rounded p-0.5 transition-colors hover:bg-accent"
+                  className="hover:bg-accent rounded p-0.5 transition-colors"
                 >
                   <X size={11} />
                 </span>
               </span>
             ))
           ) : (
-            <span className="flex-1 py-0.5 text-muted-foreground">{placeholder}</span>
+            <span className="text-muted-foreground flex-1 py-0.5">{placeholder}</span>
           )}
           <ChevronDown
             size={15}
             className={cn(
-              'ml-auto shrink-0 text-muted-foreground transition-transform',
+              'text-muted-foreground ml-auto shrink-0 transition-transform',
               open && 'rotate-180',
             )}
           />
@@ -164,23 +164,23 @@ export function MultiCombobox({
         <Popover.Content
           sideOffset={6}
           align="start"
-          className="animate-fade-in-scale z-50 w-(--radix-popover-trigger-width) rounded-md border bg-popover text-popover-foreground shadow-md"
+          className="animate-fade-in-scale bg-popover text-popover-foreground z-50 w-(--radix-popover-trigger-width) rounded-md border shadow-md"
         >
           <div className="flex items-center gap-2 border-b px-3 py-2">
-            <Search size={15} className="shrink-0 text-muted-foreground" />
+            <Search size={15} className="text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+              className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-sm focus:outline-none"
             />
             {isAsync && loading && (
-              <Loader2 size={14} className="shrink-0 animate-spin text-muted-foreground" />
+              <Loader2 size={14} className="text-muted-foreground shrink-0 animate-spin" />
             )}
             {value.length > 0 && (
-              <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-xs tabular-nums text-secondary-foreground">
+              <span className="bg-secondary text-secondary-foreground shrink-0 rounded-sm px-1.5 py-0.5 text-xs tabular-nums">
                 {value.length}
               </span>
             )}
@@ -188,7 +188,7 @@ export function MultiCombobox({
 
           <div className="max-h-56 overflow-y-auto p-1">
             {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground px-3 py-4 text-center text-sm">
                 {isAsync && loading ? 'Поиск...' : emptyMessage}
               </p>
             ) : (
@@ -200,7 +200,7 @@ export function MultiCombobox({
                     type="button"
                     onClick={() => toggle(opt)}
                     className={cn(
-                      'flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+                      'hover:bg-accent hover:text-accent-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-sm px-2.5 py-2 text-left text-sm transition-colors',
                       isSelected && 'bg-accent/50',
                     )}
                   >
@@ -215,9 +215,9 @@ export function MultiCombobox({
                       <Check size={11} strokeWidth={3} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <span className="block truncate text-foreground">{opt.label}</span>
+                      <span className="text-foreground block truncate">{opt.label}</span>
                       {opt.sublabel && (
-                        <span className="block truncate text-xs text-muted-foreground">
+                        <span className="text-muted-foreground block truncate text-xs">
                           {opt.sublabel}
                         </span>
                       )}
@@ -233,7 +233,7 @@ export function MultiCombobox({
               <button
                 type="button"
                 onClick={clearAll}
-                className="w-full cursor-pointer rounded-sm px-2.5 py-1.5 text-center text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-destructive"
+                className="text-muted-foreground hover:bg-accent hover:text-destructive w-full cursor-pointer rounded-sm px-2.5 py-1.5 text-center text-xs transition-colors"
               >
                 Очистить все
               </button>

@@ -17,7 +17,7 @@ function ViewSwitcher({
         : 'text-muted-foreground hover:text-foreground'
     }`;
   return (
-    <div className="inline-flex rounded-xl border border-border bg-card p-0.5 shadow-sm">
+    <div className="border-border bg-card inline-flex rounded-xl border p-0.5 shadow-sm">
       <button onClick={() => onChange('month')} className={btnClass(view === 'month')}>
         Месяц
       </button>
@@ -40,11 +40,11 @@ function RangeNav({
   const iconBtn =
     'flex h-9 w-9 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground';
   return (
-    <div className="inline-flex items-center overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="border-border bg-card inline-flex items-center overflow-hidden rounded-xl border shadow-sm">
       <button onClick={onPrev} className={iconBtn} aria-label="Назад">
         <ChevronLeft size={16} />
       </button>
-      <span className="min-w-48 border-x border-border px-3 py-1.5 text-center text-sm font-semibold text-foreground">
+      <span className="border-border text-foreground min-w-48 border-x px-3 py-1.5 text-center text-sm font-semibold">
         {label}
       </span>
       <button onClick={onNext} className={iconBtn} aria-label="Вперёд">
@@ -78,14 +78,14 @@ export function CalendarToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
+        <div className="bg-primary/10 ring-primary/15 flex h-11 w-11 items-center justify-center rounded-xl ring-1">
           <CalendarDays size={20} className="text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Календарь</h2>
+          <h2 className="text-foreground text-xl font-bold">Календарь</h2>
           {!loading && (
-            <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">{visibleCount}</span>{' '}
+            <p className="text-muted-foreground text-xs">
+              <span className="text-foreground font-semibold">{visibleCount}</span>{' '}
               {pluralizeVisits(visibleCount)}{' '}
               {view === 'month' ? 'в этом месяце' : 'на этой неделе'}
             </p>
@@ -99,7 +99,7 @@ export function CalendarToolbar({
         <button
           onClick={onToday}
           disabled={isOnToday}
-          className="cursor-pointer rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground shadow-sm transition-all hover:border-primary/40 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted cursor-pointer rounded-xl border px-3 py-2 text-xs font-semibold shadow-sm transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
           Сегодня
         </button>

@@ -1,5 +1,11 @@
 import {
-  Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { AXIS_TICK, CHART_TOOLTIP } from '@/lib/chart-style';
 import type { DailyPoint } from '@/lib/aggregates';
@@ -10,13 +16,7 @@ function intervalFor(periodDays: number): number {
   return 4;
 }
 
-export function DailyAreaChart({
-  data,
-  periodDays,
-}: {
-  data: DailyPoint[];
-  periodDays: number;
-}) {
+export function DailyAreaChart({ data, periodDays }: { data: DailyPoint[]; periodDays: number }) {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 16 }}>
@@ -44,12 +44,20 @@ export function DailyAreaChart({
         <YAxis tick={AXIS_TICK} tickLine={false} axisLine={false} allowDecimals={false} />
         <Tooltip {...CHART_TOOLTIP} />
         <Area
-          type="monotone" dataKey="count" name="Всего"
-          stroke="var(--primary)" strokeWidth={2} fill="url(#totalGrad)"
+          type="monotone"
+          dataKey="count"
+          name="Всего"
+          stroke="var(--primary)"
+          strokeWidth={2}
+          fill="url(#totalGrad)"
         />
         <Area
-          type="monotone" dataKey="closed" name="Закрыто"
-          stroke="var(--success)" strokeWidth={2} fill="url(#closedGrad)"
+          type="monotone"
+          dataKey="closed"
+          name="Закрыто"
+          stroke="var(--success)"
+          strokeWidth={2}
+          fill="url(#closedGrad)"
         />
       </AreaChart>
     </ResponsiveContainer>

@@ -48,7 +48,17 @@ export default function ActivsPage() {
     ['activs', page, search, statusFilter, usrIdParam],
     () =>
       activsApi
-        .getAll(page, PAGE_SIZE, search, SORT_FIELD, true, statusFilter, undefined, undefined, usrIdParam)
+        .getAll(
+          page,
+          PAGE_SIZE,
+          search,
+          SORT_FIELD,
+          true,
+          statusFilter,
+          undefined,
+          undefined,
+          usrIdParam,
+        )
         .then((res) => res.data),
     { keepPreviousData: true },
   );
@@ -73,7 +83,7 @@ export default function ActivsPage() {
         }
       />
 
-      <div className="space-y-3 rounded-2xl border border-border bg-card p-3 shadow-sm">
+      <div className="border-border bg-card space-y-3 rounded-2xl border p-3 shadow-sm">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -113,11 +123,13 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
   return (
     <section className="space-y-2">
       <div className="flex items-center gap-2 px-1">
-        <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">{label}</h3>
-        <div className="h-px flex-1 bg-border" />
-        <span className="text-xs text-muted-foreground/70">{items.length}</span>
+        <h3 className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+          {label}
+        </h3>
+        <div className="bg-border h-px flex-1" />
+        <span className="text-muted-foreground/70 text-xs">{items.length}</span>
       </div>
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
         {items.map((activ, i) => (
           <ActivRow key={activ.activId} activ={activ} first={i === 0} />
         ))}
@@ -133,7 +145,10 @@ function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
       action={
         hasFilter ? undefined : (
           <div className="flex flex-col items-center gap-3">
-            <Link href="/activs/create" className="text-sm font-medium text-foreground hover:underline">
+            <Link
+              href="/activs/create"
+              className="text-foreground text-sm font-medium hover:underline"
+            >
               Создать первый визит
             </Link>
           </div>

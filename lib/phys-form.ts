@@ -1,8 +1,4 @@
-import type {
-  CreatePhysRequest,
-  PhysResponse,
-  UpdatePhysRequest,
-} from '@/lib/api/types';
+import type { CreatePhysRequest, PhysResponse, UpdatePhysRequest } from '@/lib/api/types';
 
 export interface PhysFormValues {
   specId: string;

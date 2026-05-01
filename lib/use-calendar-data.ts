@@ -50,16 +50,24 @@ export function useCalendarData({
   weekStart: Date;
   usrId: number | undefined;
 }) {
-  const cacheKey =
-    view === 'month' ? `${year}-${month}` : toDateKey(weekStart);
+  const cacheKey = view === 'month' ? `${year}-${month}` : toDateKey(weekStart);
 
   const { data: activs, loading } = useApi(
     ['calendar-activs', view, cacheKey, usrId],
     () => {
       const { from, to } = rangeFor(view, year, month, weekStart);
       return activsApi
-        .getAll(1, PAGE_SIZE, undefined, 'start', false, undefined,
-          from.toISOString(), to.toISOString(), usrId)
+        .getAll(
+          1,
+          PAGE_SIZE,
+          undefined,
+          'start',
+          false,
+          undefined,
+          from.toISOString(),
+          to.toISOString(),
+          usrId,
+        )
         .then((r) => r.data.items);
     },
     { keepPreviousData: true },

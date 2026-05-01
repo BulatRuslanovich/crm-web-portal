@@ -25,21 +25,21 @@ export function StatCard({
     <HoverCard>
       <Link
         href={href}
-        className="group hover-glow block rounded-2xl border border-border bg-card p-5 transition-all duration-200"
+        className="group hover-glow border-border bg-card block rounded-2xl border p-5 transition-all duration-200"
       >
         <div className="mb-3 flex items-center justify-between">
           <ToneIcon icon={icon} tone={tone} />
           <ArrowRight
             size={15}
-            className="text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
+            className="text-muted-foreground/50 group-hover:text-foreground transition-transform group-hover:translate-x-0.5"
           />
         </div>
         {loading ? (
           <Skeleton className="mb-1 h-9 w-20" />
         ) : (
-          <p className="text-3xl font-bold tracking-tight text-foreground tabular-nums">{value}</p>
+          <p className="text-foreground text-3xl font-bold tracking-tight tabular-nums">{value}</p>
         )}
-        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className="text-muted-foreground text-sm">{label}</p>
       </Link>
     </HoverCard>
   );

@@ -8,12 +8,7 @@ import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
 import { useIsAdmin } from '@/lib/hooks/use-is-admin';
 import type { OrgResponse } from '@/lib/api/types';
-import {
-  BackButton,
-  Card,
-  CardSkeleton,
-  SectionLabel,
-} from '@/components/ui';
+import { BackButton, Card, CardSkeleton, SectionLabel } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
 import { DetailHero } from '@/components/DetailHero';
 import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
@@ -57,7 +52,7 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
     <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/orgs" />
-        <span className="ml-auto text-xs text-muted-foreground">#{org.orgId}</span>
+        <span className="text-muted-foreground ml-auto text-xs">#{org.orgId}</span>
       </div>
 
       <DetailHero accentGradient={HERO_ACCENT}>
@@ -91,17 +86,17 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
 function OrgHeroContent({ org }: { org: OrgResponse }) {
   return (
     <div className="flex flex-wrap items-start gap-4">
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-card text-sm font-bold text-success ring-1 ring-success/30">
+      <div className="bg-card text-success ring-success/30 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-sm font-bold ring-1">
         {orgInitials(org.orgName)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+        <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           Организация
         </p>
-        <h2 className="truncate text-xl font-bold text-foreground">{org.orgName}</h2>
+        <h2 className="text-foreground truncate text-xl font-bold">{org.orgName}</h2>
         {org.orgTypeName && (
           <div className="mt-2">
-            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+            <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
               <Building2 size={11} className="text-muted-foreground" />
               {org.orgTypeName}
             </span>

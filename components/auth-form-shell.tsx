@@ -36,19 +36,23 @@ export function AuthFormShell({
   return (
     <div>
       {/* accent header */}
-      <div className={cn(
-        'relative overflow-hidden rounded-t-xl border-b border-border px-6 pb-5 pt-6',
-        'bg-gradient-to-br to-transparent',
-        TONE_ACCENT[iconTone],
-      )}>
-        <div className={cn(
-          'mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ring-1',
-          TONE_ICON_BG[iconTone],
-        )}>
+      <div
+        className={cn(
+          'border-border relative overflow-hidden rounded-t-xl border-b px-6 pt-6 pb-5',
+          'bg-gradient-to-br to-transparent',
+          TONE_ACCENT[iconTone],
+        )}
+      >
+        <div
+          className={cn(
+            'mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ring-1',
+            TONE_ICON_BG[iconTone],
+          )}
+        >
           <Icon size={20} strokeWidth={1.75} />
         </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground">{title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+        <h2 className="text-foreground text-xl font-bold tracking-tight">{title}</h2>
+        <p className="text-muted-foreground mt-1 text-sm">{subtitle}</p>
       </div>
 
       {/* form body */}
@@ -56,8 +60,8 @@ export function AuthFormShell({
 
       {/* footer */}
       {footer && (
-        <div className="rounded-b-xl border-t border-border bg-muted/30 px-6 py-4">
-          <div className="flex flex-col gap-1.5 text-center text-sm text-muted-foreground">
+        <div className="border-border bg-muted/30 rounded-b-xl border-t px-6 py-4">
+          <div className="text-muted-foreground flex flex-col gap-1.5 text-center text-sm">
             {footer}
           </div>
         </div>

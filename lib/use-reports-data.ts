@@ -22,7 +22,11 @@ export function useReportsData({
     () =>
       activsApi
         .getAll(
-          1, PAGE_SIZE, undefined, 'start', false,
+          1,
+          PAGE_SIZE,
+          undefined,
+          'start',
+          false,
           statusFilter.length > 0 ? statusFilter : undefined,
           toIso(dateFrom, false),
           toIso(dateTo, true),

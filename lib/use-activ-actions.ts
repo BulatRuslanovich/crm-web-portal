@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { activsApi } from '@/lib/api/activs';
-import {
-  STATUS_CANCELED,
-  STATUS_CLOSED,
-  STATUS_OPEN,
-  STATUS_SAVED,
-} from '@/lib/api/statuses';
+import { STATUS_CANCELED, STATUS_CLOSED, STATUS_OPEN, STATUS_SAVED } from '@/lib/api/statuses';
 import {
   GeolocationError,
   describeGeoFailure,
@@ -19,10 +14,10 @@ import type { ActivResponse, UpdateActivRequest } from '@/lib/api/types';
 import { useGeoCloseDialog } from '@/components/GeoCloseDialog';
 
 const STATUS_TOAST: Record<number, { label: string; icon: string }> = {
-  [STATUS_OPEN]:     { label: 'Визит открыт',    icon: '🟡' },
-  [STATUS_SAVED]:    { label: 'Визит сохранён',   icon: '🔵' },
-  [STATUS_CLOSED]:   { label: 'Визит закрыт',     icon: '✅' },
-  [STATUS_CANCELED]: { label: 'Визит отменён',    icon: '🚫' },
+  [STATUS_OPEN]: { label: 'Визит открыт', icon: '🟡' },
+  [STATUS_SAVED]: { label: 'Визит сохранён', icon: '🔵' },
+  [STATUS_CLOSED]: { label: 'Визит закрыт', icon: '✅' },
+  [STATUS_CANCELED]: { label: 'Визит отменён', icon: '🚫' },
 };
 
 const ACCURACY_WARN_METERS = 200;
@@ -74,14 +69,11 @@ export function useActivActions({ activ, reload }: Params) {
           });
           notifyStatus(STATUS_CLOSED);
           if (point.accuracy > ACCURACY_WARN_METERS) {
-            toast.warning(
-              `Низкая точность геолокации: ±${Math.round(point.accuracy)} м`,
-            );
+            toast.warning(`Низкая точность геолокации: ±${Math.round(point.accuracy)} м`);
           }
           return;
         } catch (err) {
-          const reason: GeoFailureReason =
-            err instanceof GeolocationError ? err.reason : 'unknown';
+          const reason: GeoFailureReason = err instanceof GeolocationError ? err.reason : 'unknown';
           const choice = await geoDialog.ask(
             `${describeGeoFailure(reason)}. Завершить визит без координат или повторить попытку?`,
           );

@@ -1,9 +1,5 @@
-import {
-  Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis,
-} from 'recharts';
-import {
-  AXIS_TICK, AXIS_TICK_SMALL, CHART_TOOLTIP, truncateTick,
-} from '@/lib/chart-style';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { AXIS_TICK, AXIS_TICK_SMALL, CHART_TOOLTIP, truncateTick } from '@/lib/chart-style';
 
 interface BarDatum {
   name: string;
@@ -27,11 +23,7 @@ export function TopBarChart({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart
-        data={data}
-        layout="vertical"
-        margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
-      >
+      <BarChart data={data} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
         <XAxis
           type="number"

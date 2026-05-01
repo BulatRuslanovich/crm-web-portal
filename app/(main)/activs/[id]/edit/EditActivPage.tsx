@@ -10,13 +10,7 @@ import { activsApi } from '@/lib/api/activs';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { toast } from 'sonner';
 import type { ActivResponse } from '@/lib/api/types';
-import {
-  Card,
-  CardSkeleton,
-  ErrorBox,
-  SectionLabel,
-  StatusBadge,
-} from '@/components/ui';
+import { Card, CardSkeleton, ErrorBox, SectionLabel, StatusBadge } from '@/components/ui';
 import { FormPageHeader } from '@/components/FormPageHeader';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useSubmitAction } from '@/lib/use-submit-action';

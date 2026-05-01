@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useKonami } from '@/lib/hooks/use-konami';
 
-const CHAOS_EMOJIS = ['💀','💀','💀','💀','💀'];
+const CHAOS_EMOJIS = ['💀', '💀', '💀', '💀', '💀'];
 const CHAOS_DURATION_MS = 8000;
 
 export function ChaosOverlay() {
@@ -30,7 +30,7 @@ export function ChaosOverlay() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center">
-      <div className="animate-chaos-appear flex flex-col items-center gap-4 rounded-2xl border border-primary/30 bg-background/90 px-10 py-8 shadow-2xl backdrop-blur-sm">
+      <div className="animate-chaos-appear border-primary/30 bg-background/90 flex flex-col items-center gap-4 rounded-2xl border px-10 py-8 shadow-2xl backdrop-blur-sm">
         <div className="flex gap-2 text-4xl">
           {CHAOS_EMOJIS.map((e, i) => (
             <span key={i} className="animate-bounce" style={{ animationDelay: `${i * 80}ms` }}>
@@ -38,12 +38,10 @@ export function ChaosOverlay() {
             </span>
           ))}
         </div>
-        <p className="text-2xl font-black tracking-widest text-primary uppercase">
+        <p className="text-primary text-2xl font-black tracking-widest uppercase">
           Как ты это нашёл без исходников, хакер ты ебанный
         </p>
-        <p className="text-xs text-muted-foreground">
-          Cheats Activated
-        </p>
+        <p className="text-muted-foreground text-xs">Cheats Activated</p>
       </div>
     </div>
   );

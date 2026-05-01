@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  LayersControl,
-  useMap,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet.markercluster';
@@ -87,9 +80,7 @@ function FitBounds({ orgs }: { orgs: OrgResponse[] }) {
       map.setView([orgs[0].latitude, orgs[0].longitude], 13);
       return;
     }
-    const bounds = L.latLngBounds(
-      orgs.map((o) => [o.latitude, o.longitude] as [number, number]),
-    );
+    const bounds = L.latLngBounds(orgs.map((o) => [o.latitude, o.longitude] as [number, number]));
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
   }, [orgs, map]);
 
@@ -139,7 +130,7 @@ function LocateControl() {
           onClick={locate}
           disabled={busy}
           title="Моё местоположение"
-          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-border bg-card text-foreground shadow-md transition-all hover:bg-muted disabled:opacity-50"
+          className="border-border bg-card text-foreground hover:bg-muted flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border shadow-md transition-all disabled:opacity-50"
         >
           <Locate size={16} className={busy ? 'animate-pulse' : ''} />
         </button>
@@ -153,24 +144,17 @@ function OrgPopup({ org }: { org: OrgResponse }) {
   return (
     <div className="min-w-50 text-[13px] leading-snug">
       <div className="mb-1 flex items-center gap-1.5">
-        <span
-          className="inline-block h-2 w-2 rounded-full"
-          style={{ background: color }}
-        />
+        <span className="inline-block h-2 w-2 rounded-full" style={{ background: color }} />
         <span className="text-[10px] font-semibold tracking-wide uppercase" style={{ color }}>
           {org.orgTypeName}
         </span>
       </div>
-      <div className="mb-1 text-sm font-bold text-foreground">{org.orgName}</div>
-      {org.address && (
-        <div className="mb-1 text-xs text-muted-foreground">{org.address}</div>
-      )}
-      {org.inn && (
-        <div className="mb-2 text-[11px] text-muted-foreground/70">ИНН: {org.inn}</div>
-      )}
+      <div className="text-foreground mb-1 text-sm font-bold">{org.orgName}</div>
+      {org.address && <div className="text-muted-foreground mb-1 text-xs">{org.address}</div>}
+      {org.inn && <div className="text-muted-foreground/70 mb-2 text-[11px]">ИНН: {org.inn}</div>}
       <a
         href={`/orgs/${org.orgId}`}
-        className="inline-block text-xs font-semibold text-foreground hover:underline"
+        className="text-foreground inline-block text-xs font-semibold hover:underline"
       >
         Открыть →
       </a>
@@ -195,9 +179,7 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
   const markerRefs = useRef<Map<number, L.Marker>>(new Map());
 
   const defaultCenter: [number, number] =
-    validOrgs.length > 0
-      ? [validOrgs[0].latitude, validOrgs[0].longitude]
-      : [55.751244, 37.618423];
+    validOrgs.length > 0 ? [validOrgs[0].latitude, validOrgs[0].longitude] : [55.751244, 37.618423];
 
   return (
     <MapContainer
@@ -221,7 +203,7 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Спутник">
           <TileLayer
-            attribution='&copy; Esri'
+            attribution="&copy; Esri"
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           />
         </LayersControl.BaseLayer>

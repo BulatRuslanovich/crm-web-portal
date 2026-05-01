@@ -6,7 +6,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess, FieldError } from '@/components/ui';
+import {
+  CardSkeleton,
+  Input,
+  Label,
+  ErrorBox,
+  SuccessBox,
+  BtnSuccess,
+  FieldError,
+} from '@/components/ui';
 import { AuthFormShell } from '@/components/auth-form-shell';
 import { ResendButton } from '@/components/resend-button';
 import { useResendCode } from '@/lib/hooks/use-resend-code';
@@ -25,12 +33,22 @@ function ResetPasswordInner() {
 
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { register, handleSubmit, getValues, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
     defaultValues: { code: '', password: '', confirmPassword: '' },
   });
 
-  const { loading: resendLoading, message: resendMsg, error: resendError, cooldown, handleResend } =
-    useResendCode({ onResend: () => authApi.forgotPassword(email) });
+  const {
+    loading: resendLoading,
+    message: resendMsg,
+    error: resendError,
+    cooldown,
+    handleResend,
+  } = useResendCode({ onResend: () => authApi.forgotPassword(email) });
 
   async function onSubmit(values: FormValues) {
     setApiError(null);
@@ -72,7 +90,11 @@ function ResetPasswordInner() {
         </div>
         <div>
           <Label required>Новый пароль</Label>
-          <Input type="password" placeholder="••••••••" {...register('password', authRules.password)} />
+          <Input
+            type="password"
+            placeholder="••••••••"
+            {...register('password', authRules.password)}
+          />
           <FieldError message={errors.password?.message} />
         </div>
         <div>
@@ -101,7 +123,10 @@ function ResetPasswordInner() {
         onClick={handleResend}
         loading={resendLoading}
         cooldown={cooldown}
-        labels={{ cooldown: (s) => `Отправить код повторно через ${s} сек`, idle: 'Отправить код повторно' }}
+        labels={{
+          cooldown: (s) => `Отправить код повторно через ${s} сек`,
+          idle: 'Отправить код повторно',
+        }}
       />
     </AuthFormShell>
   );

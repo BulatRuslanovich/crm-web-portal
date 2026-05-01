@@ -41,12 +41,20 @@ export default function ForgotPasswordForm() {
       subtitle="Введите email для получения кода сброса"
       icon={Mail}
       iconTone="primary"
-      footer={<Link href="/login" className="text-foreground underline-offset-4 hover:underline">Вернуться ко входу</Link>}
+      footer={
+        <Link href="/login" className="text-foreground underline-offset-4 hover:underline">
+          Вернуться ко входу
+        </Link>
+      }
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label required>Email</Label>
-          <Input type="email" placeholder="ivan@example.com" {...register('email', authRules.email)} />
+          <Input
+            type="email"
+            placeholder="ivan@example.com"
+            {...register('email', authRules.email)}
+          />
           <FieldError message={errors.email?.message} />
         </div>
 

@@ -35,12 +35,12 @@ export function UserFilter({
   }, [users, currentUsrId, placeholder]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
+    <div className="border-border bg-card flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted ring-1 ring-border">
+        <div className="bg-muted ring-border flex h-8 w-8 items-center justify-center rounded-lg ring-1">
           <Users size={14} className="text-muted-foreground" />
         </div>
-        <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+        <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
           {label}
         </span>
       </div>

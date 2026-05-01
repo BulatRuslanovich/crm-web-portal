@@ -66,20 +66,20 @@ function ConfirmDialog({
       onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
       {/* backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-150" />
+      <div className="animate-in fade-in absolute inset-0 bg-black/40 backdrop-blur-sm duration-150" />
 
       {/* card */}
-      <div className="animate-in fade-in zoom-in-95 relative z-10 w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl duration-150">
+      <div className="animate-in fade-in zoom-in-95 border-border bg-card relative z-10 w-full max-w-sm overflow-hidden rounded-2xl border shadow-2xl duration-150">
         {/* top accent */}
-        <div className="border-b border-border bg-destructive/5 px-5 py-4">
+        <div className="border-border bg-destructive/5 border-b px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-destructive/10 ring-1 ring-destructive/20">
+            <div className="bg-destructive/10 ring-destructive/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1">
               <AlertTriangle size={16} className="text-destructive" />
             </div>
-            <h3 className="font-semibold text-foreground">{title}</h3>
+            <h3 className="text-foreground font-semibold">{title}</h3>
           </div>
           {description && (
-            <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground mt-2.5 text-sm leading-relaxed">{description}</p>
           )}
         </div>
 

@@ -7,11 +7,10 @@ export function useApi<T>(
   fetcher: () => Promise<T>,
   options?: SWRConfiguration<T>,
 ) {
-  const { data, error, isLoading, mutate } = useSWR<T>(
-    key,
-    () => fetcher(),
-    { revalidateOnFocus: false, ...options },
-  );
+  const { data, error, isLoading, mutate } = useSWR<T>(key, () => fetcher(), {
+    revalidateOnFocus: false,
+    ...options,
+  });
 
   return {
     data,

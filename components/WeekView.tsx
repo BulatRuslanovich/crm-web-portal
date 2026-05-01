@@ -15,7 +15,7 @@ function DayHeader({ date, today }: { date: Date; today: Date }) {
   const isWeekend = monBasedDow(date) >= 5;
   return (
     <div
-      className={`border-l border-border px-2 py-2.5 text-center ${
+      className={`border-border border-l px-2 py-2.5 text-center ${
         isWeekend && !isToday ? 'bg-muted/20' : ''
       }`}
     >
@@ -43,8 +43,8 @@ function NowMarker({ nowMinutes }: { nowMinutes: number }) {
       className="pointer-events-none absolute right-0 left-0 z-20"
       style={{ top: (nowMinutes / 60) * HOUR_HEIGHT }}
     >
-      <div className="relative h-0.5 bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.4)]">
-        <div className="absolute -top-[5px] -left-[5px] h-3 w-3 rounded-full bg-destructive ring-2 ring-card" />
+      <div className="bg-destructive relative h-0.5 shadow-[0_0_8px_rgba(239,68,68,0.4)]">
+        <div className="bg-destructive ring-card absolute -top-[5px] -left-[5px] h-3 w-3 rounded-full ring-2" />
       </div>
     </div>
   );
@@ -66,7 +66,7 @@ function DayColumn({
   const isWeekend = monBasedDow(date) >= 5;
   return (
     <div
-      className={`relative border-l border-border ${isWeekend ? 'bg-muted/20' : ''} ${
+      className={`border-border relative border-l ${isWeekend ? 'bg-muted/20' : ''} ${
         isToday ? 'bg-primary/[0.03]' : ''
       }`}
       style={{ height: TOTAL_HEIGHT }}
@@ -75,7 +75,7 @@ function DayColumn({
         <div
           key={h}
           className={`pointer-events-none absolute right-0 left-0 ${
-            h % 6 === 0 && h !== 0 ? 'border-t border-border/60' : 'border-t border-border/30'
+            h % 6 === 0 && h !== 0 ? 'border-border/60 border-t' : 'border-border/30 border-t'
           }`}
           style={{ top: h * HOUR_HEIGHT }}
         />
@@ -111,9 +111,9 @@ export function WeekView({
   }, []);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
       <div
-        className="sticky top-0 z-20 grid border-b border-border bg-card/95 backdrop-blur"
+        className="border-border bg-card/95 sticky top-0 z-20 grid border-b backdrop-blur"
         style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}
       >
         <div className="flex items-center justify-center">
@@ -126,11 +126,11 @@ export function WeekView({
 
       <div ref={scrollRef} className="relative max-h-[640px] overflow-y-auto">
         <div className="relative grid" style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}>
-          <div className="relative border-r border-border bg-card" style={{ height: TOTAL_HEIGHT }}>
+          <div className="border-border bg-card relative border-r" style={{ height: TOTAL_HEIGHT }}>
             {HOURS.map((h) => (
               <div
                 key={h}
-                className="absolute right-2 -translate-y-1/2 font-mono text-[10px] text-muted-foreground/80 tabular-nums"
+                className="text-muted-foreground/80 absolute right-2 -translate-y-1/2 font-mono text-[10px] tabular-nums"
                 style={{ top: h * HOUR_HEIGHT }}
               >
                 {h > 0 ? `${h.toString().padStart(2, '0')}:00` : ''}

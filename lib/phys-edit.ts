@@ -40,10 +40,7 @@ export async function updatePhys(numId: number, values: PhysFormValues) {
   await physesApi.update(numId, physFormToUpdateRequest(values));
 }
 
-export async function syncOrgs(
-  numId: number,
-  diff: { toAdd: number[]; toRemove: number[] },
-) {
+export async function syncOrgs(numId: number, diff: { toAdd: number[]; toRemove: number[] }) {
   await Promise.all([
     ...diff.toAdd.map((oid) => physesApi.linkOrg(numId, oid)),
     ...diff.toRemove.map((oid) => physesApi.unlinkOrg(numId, oid)),

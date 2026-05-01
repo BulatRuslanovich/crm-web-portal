@@ -30,7 +30,7 @@ export function WeekEvent({ ev }: { ev: PositionedEvent }) {
       }}
       title={`${title} · ${timeRange}`}
     >
-      <div className="truncate font-semibold text-foreground">{title}</div>
+      <div className="text-foreground truncate font-semibold">{title}</div>
       {height >= TIMESTAMP_MIN_HEIGHT && (
         <div className="truncate font-mono text-[9px] tabular-nums opacity-85" style={{ color }}>
           {timeRange}

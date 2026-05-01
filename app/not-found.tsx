@@ -12,19 +12,19 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+    <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden px-4">
       <div className="animate-fade-in relative z-10 flex max-w-md flex-col items-center text-center">
         <div className="mb-6 flex items-baseline gap-1">
-          <span className="text-8xl font-extrabold tracking-tight text-foreground">4</span>
+          <span className="text-foreground text-8xl font-extrabold tracking-tight">4</span>
           <span className="relative flex h-20 w-20 items-center justify-center">
-            <span className="animate-spin-slow absolute inset-0 rounded-full border-4 border-dashed border-border opacity-60" />
-            <span className="text-8xl font-extrabold tracking-tight text-foreground">0</span>
+            <span className="animate-spin-slow border-border absolute inset-0 rounded-full border-4 border-dashed opacity-60" />
+            <span className="text-foreground text-8xl font-extrabold tracking-tight">0</span>
           </span>
-          <span className="text-8xl font-extrabold tracking-tight text-foreground">4</span>
+          <span className="text-foreground text-8xl font-extrabold tracking-tight">4</span>
         </div>
 
-        <h1 className="mb-2 text-2xl font-bold text-foreground">Страница не найдена</h1>
-        <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
+        <h1 className="text-foreground mb-2 text-2xl font-bold">Страница не найдена</h1>
+        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
           Запрашиваемая страница не существует или была перемещена.
           <br />
           Проверьте адрес или вернитесь на главную.

@@ -14,10 +14,10 @@ function TargetCell({ activ }: { activ: ActivResponse }) {
   return (
     <Link
       href={`/activs/${activ.activId}`}
-      className="flex items-center gap-2 font-medium text-foreground hover:underline"
+      className="text-foreground flex items-center gap-2 font-medium hover:underline"
     >
-      {kind === 'phys' && <Stethoscope size={11} className="shrink-0 text-warning" />}
-      {kind === 'org' && <Building2 size={11} className="shrink-0 text-success" />}
+      {kind === 'phys' && <Stethoscope size={11} className="text-warning shrink-0" />}
+      {kind === 'org' && <Building2 size={11} className="text-success shrink-0" />}
       <span className="truncate">{targetLabel(activ) || '—'}</span>
     </Link>
   );
@@ -26,7 +26,7 @@ function TargetCell({ activ }: { activ: ActivResponse }) {
 function Row({ activ }: { activ: ActivResponse }) {
   const stripeColor = STATUS_HEX[activ.statusName.toLowerCase()] ?? DEFAULT_COLOR;
   return (
-    <tr className="relative border-t border-border/60 transition-colors hover:bg-muted/50">
+    <tr className="border-border/60 hover:bg-muted/50 relative border-t transition-colors">
       <td className="relative px-4 py-2.5">
         <span
           className="absolute top-2 bottom-2 left-0 w-0.5 rounded-r-full"
@@ -37,11 +37,9 @@ function Row({ activ }: { activ: ActivResponse }) {
       <td className="px-4 py-2.5">
         <StatusBadge name={activ.statusName} />
       </td>
-      <td className="px-4 py-2.5 text-muted-foreground tabular-nums">
-        {formatShort(activ.start)}
-      </td>
-      <td className="px-4 py-2.5 text-muted-foreground">{activ.usrLogin}</td>
-      <td className="px-4 py-2.5 text-muted-foreground">
+      <td className="text-muted-foreground px-4 py-2.5 tabular-nums">{formatShort(activ.start)}</td>
+      <td className="text-muted-foreground px-4 py-2.5">{activ.usrLogin}</td>
+      <td className="text-muted-foreground px-4 py-2.5">
         {activ.drugs.length > 0 ? (
           <span className="truncate">{activ.drugs.map((d) => d.drugName).join(', ')}</span>
         ) : (
@@ -58,13 +56,13 @@ export function PreviewTable({ activs }: { activs: ActivResponse[] }) {
   const shown = activs.slice(0, PREVIEW_LIMIT);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="flex items-center gap-2 border-b border-border px-5 py-3.5">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border flex items-center gap-2 border-b px-5 py-3.5">
         <FileSpreadsheet size={14} className="text-muted-foreground" />
-        <p className="text-sm font-bold text-foreground">
+        <p className="text-foreground text-sm font-bold">
           Предпросмотр
           {activs.length > PREVIEW_LIMIT && (
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
+            <span className="text-muted-foreground ml-2 text-xs font-normal">
               · первые {PREVIEW_LIMIT} из {activs.length}
             </span>
           )}
@@ -73,9 +71,9 @@ export function PreviewTable({ activs }: { activs: ActivResponse[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-border bg-muted/40">
+            <tr className="border-border bg-muted/40 border-b">
               {COLUMNS.map((c) => (
-                <th key={c} className="px-4 py-2.5 text-left font-semibold text-muted-foreground">
+                <th key={c} className="text-muted-foreground px-4 py-2.5 text-left font-semibold">
                   {c}
                 </th>
               ))}

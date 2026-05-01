@@ -14,11 +14,11 @@ export function StatPill({
   tone: Tone;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
+    <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
       <ToneIcon icon={icon} tone={tone} size="sm" />
       <div className="min-w-0">
-        <p className="text-lg font-bold tracking-tight text-foreground tabular-nums">{value}</p>
-        <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+        <p className="text-foreground text-lg font-bold tracking-tight tabular-nums">{value}</p>
+        <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
           {label}
         </p>
       </div>

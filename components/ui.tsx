@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { forwardRef } from 'react';
 import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -57,11 +57,11 @@ export function Field({
 }) {
   return (
     <div className="group">
-      <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+      <p className="text-muted-foreground mb-1 flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
         {Icon && <Icon size={12} strokeWidth={2} className="text-muted-foreground/70" />}
         {label}
       </p>
-      <p className="text-sm leading-relaxed text-foreground">
+      <p className="text-foreground text-sm leading-relaxed">
         {value || <span className="text-muted-foreground/70">--</span>}
       </p>
     </div>
@@ -78,7 +78,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-shadow duration-200 hover:shadow-md',
+        'bg-card text-card-foreground overflow-hidden rounded-xl border shadow-sm transition-shadow duration-200 hover:shadow-md',
         className,
       )}
     >
@@ -87,10 +87,9 @@ export function Card({
   );
 }
 
-
 export function CardFooter({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex justify-end gap-2 rounded-b-xl border-t bg-muted/40 px-5 py-4">
+    <div className="bg-muted/40 flex justify-end gap-2 rounded-b-xl border-t px-5 py-4">
       {children}
     </div>
   );
@@ -106,13 +105,11 @@ export function SectionLabel({
   return (
     <div className="mb-3 flex items-center gap-2">
       {Icon && (
-        <div className="flex size-6 items-center justify-center rounded-md bg-accent text-accent-foreground">
+        <div className="bg-accent text-accent-foreground flex size-6 items-center justify-center rounded-md">
           <Icon size={12} strokeWidth={2} />
         </div>
       )}
-      <p className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
-        {children}
-      </p>
+      <p className="text-muted-foreground text-xs font-bold tracking-wider uppercase">{children}</p>
     </div>
   );
 }
@@ -142,16 +139,16 @@ Textarea.displayName = 'Textarea';
 
 export function Label({ required, children }: { required?: boolean; children: React.ReactNode }) {
   return (
-    <label className="mb-1.5 block text-sm font-medium text-foreground">
+    <label className="text-foreground mb-1.5 block text-sm font-medium">
       {children}
-      {required && <span className="ml-0.5 text-destructive">*</span>}
+      {required && <span className="text-destructive ml-0.5">*</span>}
     </label>
   );
 }
 
 export function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="mt-1 text-xs font-medium text-destructive">{message}</p>;
+  return <p className="text-destructive mt-1 text-xs font-medium">{message}</p>;
 }
 
 export function ErrorBox({ message }: { message: string }) {
@@ -180,7 +177,7 @@ export function AlertBanner({
   children: React.ReactNode;
 }) {
   return (
-    <div className="animate-fade-in flex items-center gap-2.5 rounded-xl border border-warning/50 bg-warning/15 px-4 py-3 text-sm text-warning">
+    <div className="animate-fade-in border-warning/50 bg-warning/15 text-warning flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm">
       <Icon size={15} />
       <span>{children}</span>
     </div>
@@ -218,7 +215,7 @@ export function BtnDanger({ children, className = '', ...props }: BtnProps) {
     <Button
       variant="outline"
       className={cn(
-        'h-10 px-4 text-destructive hover:bg-destructive/10 hover:text-destructive',
+        'text-destructive hover:bg-destructive/10 hover:text-destructive h-10 px-4',
         className,
       )}
       {...props}
@@ -260,11 +257,7 @@ export function BackButton({ href, onClick }: { href?: string; onClick?: () => v
     );
   }
   return (
-    <Button
-      variant="outline"
-      className="h-10 px-4"
-      onClick={onClick ?? (() => router.back())}
-    >
+    <Button variant="outline" className="h-10 px-4" onClick={onClick ?? (() => router.back())}>
       {content}
     </Button>
   );
@@ -276,7 +269,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function CardSkeleton() {
   return (
-    <div className="animate-fade-in space-y-3 rounded-xl border bg-card p-5 shadow-sm">
+    <div className="animate-fade-in bg-card space-y-3 rounded-xl border p-5 shadow-sm">
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-4 w-2/3" />
       <Skeleton className="h-4 w-1/2" />
@@ -287,7 +280,7 @@ export function CardSkeleton() {
 
 export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="animate-fade-in divide-y rounded-xl border bg-card shadow-sm">
+    <div className="animate-fade-in bg-card divide-y rounded-xl border shadow-sm">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center justify-between gap-4 px-5 py-4">
           <div className="flex flex-1 items-center gap-3">
@@ -306,8 +299,8 @@ export function ListSkeleton({ rows = 4 }: { rows?: number }) {
 
 export function EmptyState({ message, action }: { message: string; action?: React.ReactNode }) {
   return (
-    <div className="animate-fade-in rounded-xl border bg-card px-4 py-20 text-center shadow-sm">
-      <p className="text-sm text-muted-foreground">{message}</p>
+    <div className="animate-fade-in bg-card rounded-xl border px-4 py-20 text-center shadow-sm">
+      <p className="text-muted-foreground text-sm">{message}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
@@ -325,12 +318,7 @@ export function Pagination({
   if (totalPages <= 1) return null;
   return (
     <div className="mt-5 flex items-center justify-center gap-1.5">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPage(page - 1)}
-        disabled={page === 1}
-      >
+      <Button variant="outline" size="icon" onClick={() => onPage(page - 1)} disabled={page === 1}>
         <ChevronLeft />
       </Button>
       {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {

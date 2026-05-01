@@ -7,7 +7,7 @@ function Avatar({ initials, size = 'md' }: { initials: string; size?: 'sm' | 'md
   return (
     <span
       className={cn(
-        'flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 font-semibold text-primary-foreground shadow-sm ring-2 ring-sidebar',
+        'from-primary to-primary/70 text-primary-foreground ring-sidebar flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-semibold shadow-sm ring-2',
         box,
         text,
       )}
@@ -34,7 +34,7 @@ function CompactUser({
         type="button"
         onClick={onProfile}
         title={displayName}
-        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent/60"
+        className="hover:bg-sidebar-accent/60 flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors"
       >
         <Avatar initials={initials} size="sm" />
       </button>
@@ -42,7 +42,7 @@ function CompactUser({
         type="button"
         onClick={onLogout}
         title="Выйти"
-        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-destructive transition-colors hover:bg-destructive/10"
+        className="text-destructive hover:bg-destructive/10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-colors"
       >
         <LogOut size={18} strokeWidth={1.75} />
       </button>
@@ -64,16 +64,16 @@ function ExpandedUser({
   onLogout: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/30 p-2">
+    <div className="border-sidebar-border bg-sidebar-accent/30 rounded-xl border p-2">
       <button
         type="button"
         onClick={onProfile}
-        className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left transition-colors hover:bg-sidebar-accent/60"
+        className="hover:bg-sidebar-accent/60 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left transition-colors"
       >
         <Avatar initials={initials} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-sidebar-foreground">{displayName}</p>
-          <p className="truncate text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
+          <p className="text-sidebar-foreground truncate text-sm font-semibold">{displayName}</p>
+          <p className="text-muted-foreground truncate text-[10px] font-medium tracking-wider uppercase">
             {role}
           </p>
         </div>
@@ -81,7 +81,7 @@ function ExpandedUser({
       <button
         type="button"
         onClick={onLogout}
-        className="mt-1 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10"
+        className="text-destructive hover:bg-destructive/10 mt-1 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
       >
         <LogOut size={14} strokeWidth={2} />
         Выйти

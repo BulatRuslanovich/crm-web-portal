@@ -40,9 +40,7 @@ export default function MapPage() {
     orgsApi.getAll(1, 1000).then((r) => r.data),
   );
 
-  const { data: orgTypes } = useApi('org-types', () =>
-    orgsApi.getTypes().then((r) => r.data),
-  );
+  const { data: orgTypes } = useApi('org-types', () => orgsApi.getTypes().then((r) => r.data));
 
   const filtered = useMemo(() => {
     const items = orgsData?.items ?? [];
@@ -75,31 +73,29 @@ export default function MapPage() {
   return (
     <PageTransition className="flex h-[calc(100vh-6rem)] flex-col gap-4">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-success/5 via-muted to-card shadow-sm">
+      <div className="border-border from-success/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/10 ring-1 ring-success/20">
+            <div className="bg-success/10 ring-success/20 flex h-11 w-11 items-center justify-center rounded-xl ring-1">
               <MapPin size={18} className="text-success" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+              <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
                 География
               </p>
-              <h2 className="text-xl font-bold text-foreground">Карта организаций</h2>
+              <h2 className="text-foreground text-xl font-bold">Карта организаций</h2>
               {!loading && (
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mt-0.5 text-xs">
                   {withCoords.length} на карте
                   {missingCoords.length > 0 && (
                     <>
-                      <span className="mx-1.5 text-muted-foreground/50">·</span>
-                      <span className="text-warning">
-                        {missingCoords.length} без координат
-                      </span>
+                      <span className="text-muted-foreground/50 mx-1.5">·</span>
+                      <span className="text-warning">{missingCoords.length} без координат</span>
                     </>
                   )}
                   {hasFilter && totalAll > 0 && (
                     <>
-                      <span className="mx-1.5 text-muted-foreground/50">·</span>
+                      <span className="text-muted-foreground/50 mx-1.5">·</span>
                       из {totalAll}
                     </>
                   )}
@@ -112,19 +108,19 @@ export default function MapPage() {
             <div className="relative">
               <Search
                 size={14}
-                className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground/70"
+                className="text-muted-foreground/70 pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
               />
               <input
                 type="text"
                 placeholder="Поиск по имени или адресу..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9 w-64 rounded-xl border border-border bg-card pr-8 pl-9 text-sm text-foreground placeholder:text-muted-foreground/70 transition-all focus:border-ring focus:ring-2 focus:ring-ring/40 focus:outline-none"
+                className="border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus:border-ring focus:ring-ring/40 h-9 w-64 rounded-xl border pr-8 pl-9 text-sm transition-all focus:ring-2 focus:outline-none"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute top-1/2 right-2 flex h-5 w-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground absolute top-1/2 right-2 flex h-5 w-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full"
                   aria-label="Очистить"
                 >
                   <X size={12} />
@@ -137,7 +133,7 @@ export default function MapPage() {
                   setSearch('');
                   setTypeFilter(null);
                 }}
-                className="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-destructive"
+                className="text-muted-foreground hover:text-destructive inline-flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors"
               >
                 <X size={12} />
                 Сбросить
@@ -150,7 +146,7 @@ export default function MapPage() {
       {/* Type filter chips */}
       {orgTypes && orgTypes.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <div className="flex items-center gap-1.5 pr-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5 pr-2 text-xs">
             <SlidersHorizontal size={12} />
             <span className="font-semibold tracking-wider uppercase">Тип</span>
           </div>
@@ -192,7 +188,7 @@ export default function MapPage() {
       {/* Map + sidebar */}
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[1fr_340px]">
         {/* Map */}
-        <div className="relative min-h-[400px] overflow-hidden rounded-2xl border border-border shadow-sm">
+        <div className="border-border relative min-h-[400px] overflow-hidden rounded-2xl border shadow-sm">
           {loading ? (
             <Skeleton className="h-full w-full rounded-2xl" />
           ) : (
@@ -201,8 +197,8 @@ export default function MapPage() {
         </div>
 
         {/* Sidebar */}
-        <aside className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <div className="flex shrink-0 border-b border-border">
+        <aside className="border-border bg-card flex min-h-0 flex-col overflow-hidden rounded-2xl border shadow-sm">
+          <div className="border-border flex shrink-0 border-b">
             <button
               onClick={() => setTab('located')}
               className={`group relative flex-1 cursor-pointer px-3 py-3 text-xs font-semibold transition-colors ${
@@ -225,7 +221,7 @@ export default function MapPage() {
                 </span>
               </span>
               {tab === 'located' && (
-                <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-t-full bg-primary" />
+                <span className="bg-primary absolute inset-x-3 bottom-0 h-0.5 rounded-t-full" />
               )}
             </button>
             <button
@@ -250,7 +246,7 @@ export default function MapPage() {
                 </span>
               </span>
               {tab === 'missing' && (
-                <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-t-full bg-warning" />
+                <span className="bg-warning absolute inset-x-3 bottom-0 h-0.5 rounded-t-full" />
               )}
             </button>
           </div>
@@ -269,23 +265,23 @@ export default function MapPage() {
                   text={hasFilter ? 'Ничего не найдено' : 'Нет организаций на карте'}
                 />
               ) : (
-                <ul className="divide-y divide-border">
+                <ul className="divide-border divide-y">
                   {withCoords.map((o) => {
                     const color = colorForType(o.orgTypeId);
                     return (
                       <li key={o.orgId}>
                         <button
                           onClick={() => handleFlyTo(o)}
-                          className="group flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/60"
+                          className="group hover:bg-muted/60 flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors"
                         >
                           <span
-                            className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-2 ring-border transition-transform group-hover:scale-110"
+                            className="ring-border mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-2 transition-transform group-hover:scale-110"
                             style={{ background: color }}
                           >
                             <Building2 size={11} className="text-white" />
                           </span>
                           <div className="min-w-0 flex-1">
-                            <div className="truncate text-xs font-semibold text-foreground">
+                            <div className="text-foreground truncate text-xs font-semibold">
                               {o.orgName}
                             </div>
                             <div
@@ -295,10 +291,10 @@ export default function MapPage() {
                               {o.orgTypeName}
                             </div>
                             {o.address && (
-                              <div className="mt-0.5 flex items-start gap-1 text-[10px] text-muted-foreground">
+                              <div className="text-muted-foreground mt-0.5 flex items-start gap-1 text-[10px]">
                                 <MapPin
                                   size={9}
-                                  className="mt-0.5 shrink-0 text-muted-foreground/60"
+                                  className="text-muted-foreground/60 mt-0.5 shrink-0"
                                 />
                                 <span className="truncate">{o.address}</span>
                               </div>
@@ -306,7 +302,7 @@ export default function MapPage() {
                           </div>
                           <Crosshair
                             size={14}
-                            className="mt-1 shrink-0 text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+                            className="text-muted-foreground/40 mt-1 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                           />
                         </button>
                       </li>
@@ -315,27 +311,23 @@ export default function MapPage() {
                 </ul>
               )
             ) : missingCoords.length === 0 ? (
-              <EmptyState
-                icon={MapPin}
-                text="Все организации с координатами"
-                tone="success"
-              />
+              <EmptyState icon={MapPin} text="Все организации с координатами" tone="success" />
             ) : (
-              <ul className="divide-y divide-border">
+              <ul className="divide-border divide-y">
                 {missingCoords.map((o) => (
                   <li key={o.orgId}>
                     <Link
                       href={`/orgs/${o.orgId}`}
-                      className="group flex items-start gap-3 px-4 py-3 transition-colors hover:bg-muted/60"
+                      className="group hover:bg-muted/60 flex items-start gap-3 px-4 py-3 transition-colors"
                     >
-                      <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-warning/20 ring-2 ring-warning/30">
+                      <span className="bg-warning/20 ring-warning/30 mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-2">
                         <MapPinOff size={11} className="text-warning" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-xs font-semibold text-foreground">
+                        <div className="text-foreground truncate text-xs font-semibold">
                           {o.orgName}
                         </div>
-                        <div className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                        <div className="text-muted-foreground mt-0.5 truncate text-[10px]">
                           {o.orgTypeName}
                           {o.address && ` · ${o.address}`}
                         </div>
@@ -367,12 +359,10 @@ function EmptyState({
       : 'bg-muted text-muted-foreground ring-border';
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
-      <div
-        className={`flex h-10 w-10 items-center justify-center rounded-xl ring-1 ${toneCls}`}
-      >
+      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
         <Icon size={16} />
       </div>
-      <p className="text-xs text-muted-foreground">{text}</p>
+      <p className="text-muted-foreground text-xs">{text}</p>
     </div>
   );
 }

@@ -38,9 +38,7 @@ const MANAGER_NAV: NavItem[] = [
   { href: '/reports', label: 'Отчёты', icon: FileDown },
 ];
 
-const ADMIN_NAV: NavItem[] = [
-  { href: '/admin', label: 'Администрирование', icon: ShieldCheck },
-];
+const ADMIN_NAV: NavItem[] = [{ href: '/admin', label: 'Администрирование', icon: ShieldCheck }];
 
 export function buildNavGroups({
   canSeeReports,

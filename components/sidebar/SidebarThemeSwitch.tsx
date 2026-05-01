@@ -30,7 +30,7 @@ function CompactCycleButton({
       type="button"
       onClick={() => onChange(nextTheme(theme))}
       title={`Тема: ${active.label}`}
-      className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+      className="text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground flex h-10 w-10 items-center justify-center rounded-lg transition-colors"
     >
       <Icon size={18} strokeWidth={1.75} />
     </button>
@@ -45,7 +45,7 @@ function SegmentedSwitch({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex rounded-lg border border-sidebar-border bg-sidebar-accent/30 p-0.5">
+    <div className="border-sidebar-border bg-sidebar-accent/30 flex rounded-lg border p-0.5">
       {OPTIONS.map((opt) => {
         const active = theme === opt.value;
         const Icon = opt.icon;

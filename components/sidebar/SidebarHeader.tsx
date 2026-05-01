@@ -43,7 +43,7 @@ export function SidebarHeader({
   return (
     <div
       className={cn(
-        'flex h-14 shrink-0 items-center border-b border-sidebar-border',
+        'border-sidebar-border flex h-14 shrink-0 items-center border-b',
         compact ? 'justify-center' : 'px-4',
       )}
     >
@@ -57,7 +57,7 @@ export function SidebarHeader({
       >
         <div
           className={cn(
-            'relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br from-primary/10 to-primary/5 ring-1 ring-primary/20',
+            'from-primary/10 to-primary/5 ring-primary/20 relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br ring-1',
             party && 'animate-logo-party',
           )}
         >
@@ -65,7 +65,7 @@ export function SidebarHeader({
         </div>
         {!compact && (
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold tracking-tight text-sidebar-foreground">
+            <p className="text-sidebar-foreground truncate text-sm font-bold tracking-tight">
               Pharmo CRM
             </p>
           </div>

@@ -4,7 +4,6 @@ import { LucideIcon } from 'lucide-react';
 import { SectionLabel } from '@/components/ui';
 import React from 'react';
 
-
 interface FormSectionProps {
   icon: LucideIcon;
   title: string;
@@ -19,4 +18,3 @@ export function FormSection({ icon, title, children }: FormSectionProps) {
     </div>
   );
 }
-

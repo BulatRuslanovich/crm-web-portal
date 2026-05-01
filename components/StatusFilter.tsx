@@ -15,7 +15,7 @@ export function StatusFilter({ value, onChange }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
         <SlidersHorizontal size={13} />
         <span>Статус:</span>
       </div>
@@ -31,7 +31,7 @@ export function StatusFilter({ value, onChange }: Props) {
         <button
           type="button"
           onClick={() => onChange([])}
-          className="ml-auto flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-2 py-1 text-xs text-muted-foreground transition-all hover:border-destructive/30 hover:text-destructive"
+          className="text-muted-foreground hover:border-destructive/30 hover:text-destructive ml-auto flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-2 py-1 text-xs transition-all"
         >
           <X size={12} /> Сбросить
         </button>

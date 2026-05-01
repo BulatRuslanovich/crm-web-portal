@@ -13,7 +13,7 @@ function WeekdayLabels() {
       {WEEKDAYS_SHORT.map((d, i) => (
         <div
           key={d}
-          className={`flex items-center text-[10px] text-muted-foreground ${
+          className={`text-muted-foreground flex items-center text-[10px] ${
             i % 2 === 1 ? '' : 'invisible'
           }`}
         >
@@ -50,7 +50,7 @@ function MonthLabels({ weekCount }: { weekCount: number }) {
       {Array.from({ length: weekCount }).map((_, wIdx) => {
         const label = monthLabels.find((m) => m.weekIdx === wIdx);
         return (
-          <div key={wIdx} className="h-3 text-[10px] font-medium text-muted-foreground">
+          <div key={wIdx} className="text-muted-foreground h-3 text-[10px] font-medium">
             {label?.label ?? ''}
           </div>
         );
@@ -94,13 +94,13 @@ function WeeksGrid({ stats }: { stats: HeatmapStats }) {
 
 function Legend() {
   return (
-    <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
+    <div className="text-muted-foreground mt-2 flex items-center justify-end gap-1.5 text-[10px]">
       <span>меньше</span>
-      <div className="h-2.5 w-2.5 rounded-sm bg-muted ring-1 ring-border/50" />
-      <div className="h-2.5 w-2.5 rounded-sm bg-success/30 ring-1 ring-border/50" />
-      <div className="h-2.5 w-2.5 rounded-sm bg-success/55 ring-1 ring-border/50" />
-      <div className="h-2.5 w-2.5 rounded-sm bg-success/80 ring-1 ring-border/50" />
-      <div className="h-2.5 w-2.5 rounded-sm bg-success ring-1 ring-border/50" />
+      <div className="bg-muted ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
+      <div className="bg-success/30 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
+      <div className="bg-success/55 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
+      <div className="bg-success/80 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
+      <div className="bg-success ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
       <span>больше</span>
     </div>
   );

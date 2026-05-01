@@ -5,7 +5,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { PageTransition } from '@/components/motion';
-import { ShieldCheck, Users, Pill, GraduationCap, Building, History, ArrowRight } from 'lucide-react';
+import {
+  ShieldCheck,
+  Users,
+  Pill,
+  GraduationCap,
+  Building,
+  History,
+  ArrowRight,
+} from 'lucide-react';
 import { UsersSection } from './UsersSection';
 import { DepartmentsSection } from './DepartmentsSection';
 import { DrugsSection } from './DrugsSection';
@@ -21,10 +29,34 @@ const TABS: {
   icon: React.ElementType;
   tone: 'primary' | 'success' | 'warning' | 'default';
 }[] = [
-  { key: 'users', label: 'Пользователи', subtitle: 'Учётные записи и роли', icon: Users, tone: 'primary' },
-  { key: 'departments', label: 'Департаменты', subtitle: 'Состав и видимость', icon: Building, tone: 'success' },
-  { key: 'drugs', label: 'Препараты', subtitle: 'Справочник препаратов', icon: Pill, tone: 'warning' },
-  { key: 'specs', label: 'Специальности', subtitle: 'Справочник специальностей', icon: GraduationCap, tone: 'default' },
+  {
+    key: 'users',
+    label: 'Пользователи',
+    subtitle: 'Учётные записи и роли',
+    icon: Users,
+    tone: 'primary',
+  },
+  {
+    key: 'departments',
+    label: 'Департаменты',
+    subtitle: 'Состав и видимость',
+    icon: Building,
+    tone: 'success',
+  },
+  {
+    key: 'drugs',
+    label: 'Препараты',
+    subtitle: 'Справочник препаратов',
+    icon: Pill,
+    tone: 'warning',
+  },
+  {
+    key: 'specs',
+    label: 'Специальности',
+    subtitle: 'Справочник специальностей',
+    icon: GraduationCap,
+    tone: 'default',
+  },
 ];
 
 function toneRing(tone: 'primary' | 'success' | 'warning' | 'default', active: boolean) {
@@ -75,7 +107,7 @@ export default function AdminPage() {
               onClick={() => setTab(t.key)}
               className={`group relative flex cursor-pointer items-center gap-2.5 rounded-2xl border p-3 text-left transition-all duration-200 ${
                 active
-                  ? 'border-primary/40 bg-card shadow-sm ring-1 ring-primary/20'
+                  ? 'border-primary/40 bg-card ring-primary/20 shadow-sm ring-1'
                   : 'border-border bg-card/50 hover:border-border hover:bg-card'
               }`}
             >
@@ -95,7 +127,7 @@ export default function AdminPage() {
                 >
                   {t.label}
                 </p>
-                <p className="hidden truncate text-[10px] text-muted-foreground/80 sm:block">
+                <p className="text-muted-foreground/80 hidden truncate text-[10px] sm:block">
                   {t.subtitle}
                 </p>
               </div>
@@ -106,16 +138,14 @@ export default function AdminPage() {
 
       <Link
         href="/admin/audit-log"
-        className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm transition-colors hover:border-warning/40 hover:bg-warning/5"
+        className="group border-border bg-card hover:border-warning/40 hover:bg-warning/5 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm transition-colors"
       >
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
+        <div className="bg-warning/15 ring-warning/25 flex h-9 w-9 items-center justify-center rounded-xl ring-1">
           <History size={15} className="text-warning" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-foreground">Аудит-лог</p>
-          <p className="text-[10px] text-muted-foreground/80">
-            Кто, когда и какое поле изменил
-          </p>
+          <p className="text-foreground text-sm font-semibold">Аудит-лог</p>
+          <p className="text-muted-foreground/80 text-[10px]">Кто, когда и какое поле изменил</p>
         </div>
         <ArrowRight
           size={14}

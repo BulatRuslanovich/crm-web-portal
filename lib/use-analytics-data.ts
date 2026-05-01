@@ -19,7 +19,15 @@ export function useAnalyticsData({
       const to = new Date().toISOString();
       const from = subDays(startOfDay(new Date()), periodDays - 1).toISOString();
       const r = await activsApi.getAll(
-        1, PAGE_SIZE, undefined, 'start', true, undefined, from, to, usrId,
+        1,
+        PAGE_SIZE,
+        undefined,
+        'start',
+        true,
+        undefined,
+        from,
+        to,
+        usrId,
       );
       return r.data.items;
     },

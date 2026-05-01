@@ -9,19 +9,11 @@ import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition } from '@/components/motion';
 import { Skeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
-import {
-  addDays,
-  isSameDay,
-  startOfWeek,
-  toDateKey,
-} from '@/lib/date';
+import { addDays, isSameDay, startOfWeek, toDateKey } from '@/lib/date';
 import { MONTHS_NOM } from '@/lib/ru-dates';
 import { buildGrid } from '@/lib/grid';
 import { useCalendarData } from '@/lib/use-calendar-data';
-import {
-  CalendarToolbar,
-  type CalendarView,
-} from '@/components/CalendarToolbar';
+import { CalendarToolbar, type CalendarView } from '@/components/CalendarToolbar';
 import { MonthGrid } from '@/components/MonthGrid';
 import { WeekView } from '@/components/WeekView';
 import { DayPanel } from '@/components/DayPanel';

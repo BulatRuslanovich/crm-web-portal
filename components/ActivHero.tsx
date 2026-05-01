@@ -19,14 +19,14 @@ export function ActivHero({ activ }: Props) {
     <DetailHero accentGradient={statusAccentGradient(activ.statusName)}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-card ring-1 ring-border">
+          <div className="bg-card ring-border flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1">
             <target.Icon size={22} className="text-foreground" />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               {target.kindLabel}
             </p>
-            <h2 className="truncate text-xl font-bold text-foreground">{target.name ?? '—'}</h2>
+            <h2 className="text-foreground truncate text-xl font-bold">{target.name ?? '—'}</h2>
           </div>
         </div>
         <StatusBadge name={activ.statusName} />

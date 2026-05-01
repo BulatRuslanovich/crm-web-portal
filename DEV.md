@@ -153,11 +153,11 @@ npm run format        # Prettier — автоформат
 npm run format:check  # Prettier — проверка
 ```
 
-| Инструмент | Конфиг |
-|---|---|
-| ESLint | [eslint.config.mjs](eslint.config.mjs) (flat config, `eslint-config-next`) |
-| Prettier | [prettier.config.mjs](prettier.config.mjs) + `prettier-plugin-tailwindcss` |
-| EditorConfig | [.editorconfig](.editorconfig) |
+| Инструмент   | Конфиг                                                                     |
+| ------------ | -------------------------------------------------------------------------- |
+| ESLint       | [eslint.config.mjs](eslint.config.mjs) (flat config, `eslint-config-next`) |
+| Prettier     | [prettier.config.mjs](prettier.config.mjs) + `prettier-plugin-tailwindcss` |
+| EditorConfig | [.editorconfig](.editorconfig)                                             |
 
 В IDE стоит включить: формат по сохранению (Prettier), ESLint-on-the-fly, Tailwind CSS IntelliSense.
 

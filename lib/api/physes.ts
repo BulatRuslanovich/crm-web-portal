@@ -3,7 +3,9 @@ import type { PhysResponse, CreatePhysRequest, UpdatePhysRequest, PagedResponse 
 
 export const physesApi = {
   getAll: (page = 1, pageSize = 20, search?: string) =>
-    apiClient.get<PagedResponse<PhysResponse>>('/api/physes', { params: { page, pageSize, search } }),
+    apiClient.get<PagedResponse<PhysResponse>>('/api/physes', {
+      params: { page, pageSize, search },
+    }),
 
   getById: (id: number) => apiClient.get<PhysResponse>(`/api/physes/${id}`),
 

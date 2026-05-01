@@ -23,8 +23,8 @@ export function MonthGrid({
   loading: boolean;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="grid grid-cols-7 border-b border-border bg-muted/30">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border bg-muted/30 grid grid-cols-7 border-b">
         {WEEKDAYS_SHORT.map((d, i) => (
           <div
             key={d}

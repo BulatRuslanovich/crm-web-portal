@@ -31,14 +31,14 @@ export function SidebarContent({
   onLogout,
 }: SidebarContentProps) {
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground">
+    <div className="bg-sidebar text-sidebar-foreground flex h-full flex-col overflow-hidden">
       <SidebarHeader compact={compact} onNavigate={onNavigate} />
 
       <SidebarNav groups={groups} compact={compact} onNavigate={onNavigate} />
 
       <div
         className={cn(
-          'shrink-0 space-y-2 border-t border-sidebar-border',
+          'border-sidebar-border shrink-0 space-y-2 border-t',
           compact ? 'px-2 py-3' : 'px-3 py-3',
         )}
       >

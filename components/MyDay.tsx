@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { CalendarDays, Clock, Play, User } from 'lucide-react';
 import type { ActivResponse } from '@/lib/api/types';
-import {
-  STATUS_CLOSED, STATUS_HEX, STATUS_OPEN, STATUS_PLANNED,
-} from '@/lib/api/statuses';
+import { STATUS_CLOSED, STATUS_HEX, STATUS_OPEN, STATUS_PLANNED } from '@/lib/api/statuses';
 import { Skeleton, StatusBadge } from '@/components/ui';
 import { isSameDay, fmtTimeIso } from '@/lib/date';
 import { MONTHS_GEN } from '@/lib/ru-dates';
@@ -33,17 +31,17 @@ function StatBadges({ stats }: { stats: DayStats }) {
   return (
     <div className="flex items-center gap-1.5 text-xs">
       {stats.closed > 0 && (
-        <span className="rounded-full bg-success/15 px-2 py-0.5 font-semibold text-success">
+        <span className="bg-success/15 text-success rounded-full px-2 py-0.5 font-semibold">
           {stats.closed} закрыт{stats.closed === 1 ? '' : 'о'}
         </span>
       )}
       {stats.open > 0 && (
-        <span className="rounded-full bg-warning/20 px-2 py-0.5 font-semibold text-warning">
+        <span className="bg-warning/20 text-warning rounded-full px-2 py-0.5 font-semibold">
           {stats.open} в работе
         </span>
       )}
       {stats.planned > 0 && (
-        <span className="rounded-full bg-primary/10 px-2 py-0.5 font-semibold text-primary">
+        <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 font-semibold">
           {stats.planned} план
         </span>
       )}
@@ -53,22 +51,22 @@ function StatBadges({ stats }: { stats: DayStats }) {
 
 function NextUpBanner({ visit }: { visit: ActivResponse }) {
   return (
-    <div className="border-b border-border bg-primary/5 px-5 py-3">
+    <div className="border-border bg-primary/5 border-b px-5 py-3">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-primary uppercase">
+        <div className="text-primary flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase">
           <Clock size={11} /> Следующий
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-foreground">
+          <p className="text-foreground truncate text-sm font-semibold">
             {visit.physName ?? visit.orgName ?? '—'}
           </p>
-          <p className="font-mono text-xs text-muted-foreground tabular-nums">
+          <p className="text-muted-foreground font-mono text-xs tabular-nums">
             в {fmtTimeIso(visit.start)}
           </p>
         </div>
         <Link
           href={`/activs/${visit.activId}`}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90"
+          className="bg-primary text-primary-foreground inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm transition-all hover:opacity-90"
         >
           <Play size={12} /> Открыть
         </Link>
@@ -85,7 +83,7 @@ function VisitRow({ activ }: { activ: ActivResponse }) {
   return (
     <Link
       href={`/activs/${activ.activId}`}
-      className={`relative flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/60 ${
+      className={`hover:bg-muted/60 relative flex items-center gap-4 px-5 py-3 transition-colors ${
         isNow ? 'bg-warning/5' : ''
       }`}
     >
@@ -94,19 +92,19 @@ function VisitRow({ activ }: { activ: ActivResponse }) {
         style={{ background: color }}
       />
       <div className="flex w-14 shrink-0 flex-col items-center">
-        <span className="font-mono text-sm font-bold text-foreground tabular-nums">
+        <span className="text-foreground font-mono text-sm font-bold tabular-nums">
           {fmtTimeIso(activ.start)}
         </span>
         {isNow && (
-          <span className="mt-0.5 flex items-center gap-1 text-[9px] font-bold tracking-wider text-warning uppercase">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-warning" />
+          <span className="text-warning mt-0.5 flex items-center gap-1 text-[9px] font-bold tracking-wider uppercase">
+            <span className="bg-warning h-1.5 w-1.5 animate-pulse rounded-full" />
             идёт
           </span>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">{target}</p>
-        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+        <p className="text-foreground truncate text-sm font-semibold">{target}</p>
+        <p className="text-muted-foreground mt-0.5 flex items-center gap-1 text-xs">
           <User size={10} />
           {activ.usrLogin}
         </p>
@@ -122,12 +120,12 @@ function MyDayHeader({ stats }: { stats: DayStats }) {
   const dateLabel = `${today.getDate()} ${MONTHS_GEN[today.getMonth()]}`;
 
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+    <div className="border-border flex items-center justify-between gap-3 border-b px-5 py-4">
       <div className="flex items-center gap-3">
         <ToneIcon icon={CalendarDays} tone="primary" />
         <div>
-          <h3 className="text-sm font-bold text-foreground">Мой день</h3>
-          <p className="text-xs text-muted-foreground capitalize">
+          <h3 className="text-foreground text-sm font-bold">Мой день</h3>
+          <p className="text-muted-foreground text-xs capitalize">
             {weekday}, {dateLabel}
           </p>
         </div>
@@ -137,13 +135,7 @@ function MyDayHeader({ stats }: { stats: DayStats }) {
   );
 }
 
-export function MyDay({
-  activs,
-  loading,
-}: {
-  activs: ActivResponse[];
-  loading?: boolean;
-}) {
+export function MyDay({ activs, loading }: { activs: ActivResponse[]; loading?: boolean }) {
   const today = useMemo(() => new Date(), []);
 
   const todaysVisits = useMemo(
@@ -164,16 +156,13 @@ export function MyDay({
   const nextVisit = useMemo(
     () =>
       todaysVisits.find(
-        (a) =>
-          a.statusId === STATUS_PLANNED &&
-          a.start &&
-          new Date(a.start).getTime() >= nowMs,
+        (a) => a.statusId === STATUS_PLANNED && a.start && new Date(a.start).getTime() >= nowMs,
       ),
     [todaysVisits, nowMs],
   );
 
   return (
-    <section className="rounded-2xl border border-border bg-card shadow-sm">
+    <section className="border-border bg-card rounded-2xl border shadow-sm">
       <MyDayHeader stats={stats} />
       {nextVisit && <NextUpBanner visit={nextVisit} />}
 
@@ -185,16 +174,16 @@ export function MyDay({
         </div>
       ) : todaysVisits.length === 0 ? (
         <div className="px-5 py-10 text-center">
-          <p className="text-sm text-muted-foreground">На сегодня визитов нет</p>
+          <p className="text-muted-foreground text-sm">На сегодня визитов нет</p>
           <Link
             href="/activs/create"
-            className="mt-2 inline-block text-sm font-medium text-foreground hover:underline"
+            className="text-foreground mt-2 inline-block text-sm font-medium hover:underline"
           >
             Запланировать визит
           </Link>
         </div>
       ) : (
-        <div className="divide-y divide-border">
+        <div className="divide-border divide-y">
           {todaysVisits.map((a) => (
             <VisitRow key={a.activId} activ={a} />
           ))}

@@ -43,22 +43,27 @@ export default function LoginForm() {
       subtitle="Войдите в свой аккаунт"
       icon={LogIn}
       iconTone="success"
-  footer={
-    <>
-        <Link href="/forgot-password" className="text-foreground underline-offset-4 hover:underline">
-          Забыли пароль?
-        </Link>
-
-        <span className="text-muted-foreground">
-          Нет аккаунта?{' '}
-          <Link href="/register" className="font-medium text-foreground underline-offset-4 hover:underline">
-            Зарегистрироваться
+      footer={
+        <>
+          <Link
+            href="/forgot-password"
+            className="text-foreground underline-offset-4 hover:underline"
+          >
+            Забыли пароль?
           </Link>
-        </span>
-    </>
-  }
->
 
+          <span className="text-muted-foreground">
+            Нет аккаунта?{' '}
+            <Link
+              href="/register"
+              className="text-foreground font-medium underline-offset-4 hover:underline"
+            >
+              Зарегистрироваться
+            </Link>
+          </span>
+        </>
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label required>Логин</Label>
@@ -68,7 +73,11 @@ export default function LoginForm() {
 
         <div>
           <Label required>Пароль</Label>
-          <Input type="password" placeholder="Введите пароль" {...register('password', { required: authRules.password.required })} />
+          <Input
+            type="password"
+            placeholder="Введите пароль"
+            {...register('password', { required: authRules.password.required })}
+          />
           <FieldError message={errors.password?.message} />
         </div>
 
@@ -79,7 +88,6 @@ export default function LoginForm() {
           {isSubmitting ? 'Вход...' : 'Войти'}
         </BtnSuccess>
       </form>
-
-      </AuthFormShell>
+    </AuthFormShell>
   );
 }

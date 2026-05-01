@@ -23,7 +23,7 @@ export function TimeSection({ start, end }: Props) {
         <TimeBlock label="Окончание" icon={CalendarDays} value={endFmt} />
       </div>
       {duration && (
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+        <div className="bg-muted text-muted-foreground mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
           <Clock size={11} />
           Длительность: {duration}
         </div>
@@ -42,21 +42,21 @@ function TimeBlock({
   value: DateTimeParts | null;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-card ring-1 ring-border">
+    <div className="border-border bg-muted/30 flex items-center gap-3 rounded-xl border px-4 py-3">
+      <div className="bg-card ring-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1">
         <Icon size={15} className="text-muted-foreground" />
       </div>
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+        <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           {label}
         </p>
         {value ? (
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-foreground text-sm font-semibold">
             {value.date}
-            <span className="ml-1.5 font-mono text-muted-foreground">{value.time}</span>
+            <span className="text-muted-foreground ml-1.5 font-mono">{value.time}</span>
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground/70">—</p>
+          <p className="text-muted-foreground/70 text-sm">—</p>
         )}
       </div>
     </div>

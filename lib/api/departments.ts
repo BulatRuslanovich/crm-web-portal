@@ -1,9 +1,5 @@
 import { apiClient } from './client';
-import type {
-  DepartmentResponse,
-  CreateDepartmentRequest,
-  PagedResponse,
-} from './types';
+import type { DepartmentResponse, CreateDepartmentRequest, PagedResponse } from './types';
 
 export const departmentsApi = {
   getAll: (page = 1, pageSize = 50) =>

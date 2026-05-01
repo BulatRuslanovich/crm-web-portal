@@ -6,7 +6,15 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '@/lib/auth-context';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
-import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess, FieldError } from '@/components/ui';
+import {
+  CardSkeleton,
+  Input,
+  Label,
+  ErrorBox,
+  SuccessBox,
+  BtnSuccess,
+  FieldError,
+} from '@/components/ui';
 import { AuthFormShell } from '@/components/auth-form-shell';
 import { ResendButton } from '@/components/resend-button';
 import { useResendCode } from '@/lib/hooks/use-resend-code';
@@ -25,12 +33,21 @@ function VerifyEmailInner() {
 
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
     defaultValues: { code: '' },
   });
 
-  const { loading: resendLoading, message: resendMsg, error: resendError, cooldown, handleResend } =
-    useResendCode({ onResend: () => authApi.resendConfirmation(email) });
+  const {
+    loading: resendLoading,
+    message: resendMsg,
+    error: resendError,
+    cooldown,
+    handleResend,
+  } = useResendCode({ onResend: () => authApi.resendConfirmation(email) });
 
   async function onSubmit(values: FormValues) {
     setApiError(null);
@@ -45,7 +62,11 @@ function VerifyEmailInner() {
   return (
     <AuthFormShell
       title="Подтверждение email"
-      subtitle={<>Код отправлен на <span className="font-medium text-foreground">{email}</span></>}
+      subtitle={
+        <>
+          Код отправлен на <span className="text-foreground font-medium">{email}</span>
+        </>
+      }
       icon={ShieldCheck}
       iconTone="success"
     >

@@ -9,7 +9,7 @@ interface Props {
 
 export function DetailHero({ accentGradient, children }: Props) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="border-border bg-card relative overflow-hidden rounded-2xl border shadow-sm">
       <div
         className={`pointer-events-none absolute inset-0 bg-linear-to-br ${accentGradient}`}
         aria-hidden

@@ -32,10 +32,7 @@ export function heatmapGridStart(todayStart: Date): Date {
   return gridStart;
 }
 
-function buildWeeks(
-  todayStart: Date,
-  counts: Map<string, number>,
-): { days: (number | null)[] }[] {
+function buildWeeks(todayStart: Date, counts: Map<string, number>): { days: (number | null)[] }[] {
   const trailing = monBasedDow(todayStart);
   const gridStart = heatmapGridStart(todayStart);
   const totalCells = HEATMAP_DAYS + (6 - trailing);
@@ -47,9 +44,7 @@ function buildWeeks(
       const d = new Date(gridStart);
       d.setDate(d.getDate() + i + j);
       const diffDays = Math.round((todayStart.getTime() - d.getTime()) / MS_PER_DAY);
-      days.push(
-        diffDays < 0 || diffDays >= HEATMAP_DAYS ? null : (counts.get(toDateKey(d)) ?? 0),
-      );
+      days.push(diffDays < 0 || diffDays >= HEATMAP_DAYS ? null : (counts.get(toDateKey(d)) ?? 0));
     }
     weeks.push({ days });
   }

@@ -12,7 +12,7 @@ interface Props {
 
 export function TargetSwitcher({ value, onChange }: Props) {
   return (
-    <div className="mb-3 grid grid-cols-2 gap-2 rounded-xl border border-border bg-muted/50 p-1">
+    <div className="border-border bg-muted/50 mb-3 grid grid-cols-2 gap-2 rounded-xl border p-1">
       <SwitchButton
         icon={Building2}
         label="Организация"

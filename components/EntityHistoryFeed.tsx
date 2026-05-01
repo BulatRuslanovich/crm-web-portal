@@ -6,10 +6,7 @@ import { useIsAdmin } from '@/lib/hooks/use-is-admin';
 import { auditLogsApi } from '@/lib/api/audit-logs';
 import { Skeleton, SectionLabel } from '@/components/ui';
 import type { AuditEntityType, AuditLogResponse } from '@/lib/api/types';
-import {
-  ActionBadge,
-  ValueCell,
-} from '@/components/AuditLogItems';
+import { ActionBadge, ValueCell } from '@/components/AuditLogItems';
 
 interface Props {
   entityType: AuditEntityType;
@@ -36,9 +33,9 @@ export function EntityHistoryFeed({ entityType, entityId }: Props) {
           ))}
         </div>
       ) : error ? (
-        <p className="text-sm text-muted-foreground">Не удалось загрузить историю</p>
+        <p className="text-muted-foreground text-sm">Не удалось загрузить историю</p>
       ) : !data || data.length === 0 ? (
-        <p className="text-sm text-muted-foreground">История пуста</p>
+        <p className="text-muted-foreground text-sm">История пуста</p>
       ) : (
         <ul className="space-y-2">
           {data.map((row) => (
@@ -54,15 +51,13 @@ function HistoryRow({ row }: { row: AuditLogResponse }) {
   const who = row.changedByLogin ?? (row.changedBy != null ? `#${row.changedBy}` : '—');
   const when = new Date(row.changedAt).toLocaleString('ru-RU');
   return (
-    <li className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs">
+    <li className="border-border bg-muted/30 rounded-lg border px-3 py-2 text-xs">
       <div className="flex flex-wrap items-center gap-2">
         <ActionBadge action={row.action} />
-        {row.fieldName && (
-          <span className="font-mono text-foreground">{row.fieldName}</span>
-        )}
-        <span className="ml-auto tabular-nums text-muted-foreground">{when}</span>
+        {row.fieldName && <span className="text-foreground font-mono">{row.fieldName}</span>}
+        <span className="text-muted-foreground ml-auto tabular-nums">{when}</span>
       </div>
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+      <div className="text-muted-foreground mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[11px]">
         <span>{who}</span>
         {row.action === 'UPDATE' && (
           <span className="flex items-center gap-1.5">

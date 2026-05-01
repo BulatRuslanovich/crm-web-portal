@@ -9,25 +9,17 @@ interface StatusSlice {
   value: number;
 }
 
-function LegendRow({
-  slice,
-  color,
-  total,
-}: {
-  slice: StatusSlice;
-  color: string;
-  total: number;
-}) {
+function LegendRow({ slice, color, total }: { slice: StatusSlice; color: string; total: number }) {
   const pct = total > 0 ? Math.round((slice.value / total) * 100) : 0;
   return (
     <div className="flex items-center justify-between gap-2 text-sm">
       <div className="flex min-w-0 items-center gap-2.5">
         <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} />
-        <span className="truncate text-muted-foreground">{slice.name}</span>
+        <span className="text-muted-foreground truncate">{slice.name}</span>
       </div>
       <div className="flex shrink-0 items-center gap-2 tabular-nums">
-        <span className="text-[10px] text-muted-foreground/70">{pct}%</span>
-        <span className="font-bold text-foreground">{slice.value}</span>
+        <span className="text-muted-foreground/70 text-[10px]">{pct}%</span>
+        <span className="text-foreground font-bold">{slice.value}</span>
       </div>
     </div>
   );
@@ -43,8 +35,10 @@ export function StatusPieChart({ data, total }: { data: StatusSlice[]; total: nu
           <PieChart>
             <Pie
               data={data}
-              cx="50%" cy="50%"
-              innerRadius={70} outerRadius={92}
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={92}
               paddingAngle={3}
               dataKey="value"
               stroke="none"

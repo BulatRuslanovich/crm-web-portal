@@ -20,20 +20,20 @@ export function ReportsHero({
   onExportCsv: () => void;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-muted to-card shadow-sm">
+    <div className="border-border from-primary/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
       <div className="relative flex flex-wrap items-start justify-between gap-4 p-5">
         <div className="flex items-center gap-3">
           <ToneIcon icon={FileDown} tone="primary" size="lg" />
           <div>
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               Отчёты
             </p>
-            <h2 className="text-xl font-bold text-foreground">Экспорт визитов</h2>
+            <h2 className="text-foreground text-xl font-bold">Экспорт визитов</h2>
             {!loading && totalCount !== null && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-0.5 text-xs">
                 {filteredCount}
-                {filteredCount !== totalCount && ` из ${totalCount}`} визитов ·{' '}
-                {dateFrom} → {dateTo}
+                {filteredCount !== totalCount && ` из ${totalCount}`} визитов · {dateFrom} →{' '}
+                {dateTo}
               </p>
             )}
           </div>
@@ -42,7 +42,7 @@ export function ReportsHero({
           <BtnSuccess onClick={onExportXlsx} disabled={loading || filteredCount === 0}>
             <FileSpreadsheet size={15} />
             Excel
-            <span className="ml-1 rounded-full bg-success-foreground/20 px-2 py-0.5 text-[11px] font-bold tabular-nums">
+            <span className="bg-success-foreground/20 ml-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums">
               {filteredCount}
             </span>
           </BtnSuccess>

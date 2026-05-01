@@ -59,17 +59,17 @@ function Dialog({
       className="fixed inset-0 z-[9998] flex items-center justify-center p-4"
       onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-150" />
+      <div className="animate-in fade-in absolute inset-0 bg-black/40 backdrop-blur-sm duration-150" />
 
-      <div className="animate-in fade-in zoom-in-95 relative z-10 w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card shadow-2xl duration-150">
-        <div className="border-b border-border bg-warning/5 px-5 py-4">
+      <div className="animate-in fade-in zoom-in-95 border-border bg-card relative z-10 w-full max-w-sm overflow-hidden rounded-2xl border shadow-2xl duration-150">
+        <div className="border-border bg-warning/5 border-b px-5 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/30">
+            <div className="bg-warning/15 ring-warning/30 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1">
               <MapPinOff size={16} className="text-warning" />
             </div>
-            <h3 className="font-semibold text-foreground">Координаты не записаны</h3>
+            <h3 className="text-foreground font-semibold">Координаты не записаны</h3>
           </div>
-          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{message}</p>
+          <p className="text-muted-foreground mt-2.5 text-sm leading-relaxed">{message}</p>
         </div>
 
         <div className="flex flex-wrap justify-end gap-2 px-5 py-3.5">

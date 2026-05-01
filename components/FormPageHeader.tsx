@@ -36,17 +36,19 @@ export function FormPageHeader({
     <div className="flex flex-wrap items-center gap-2">
       <BackButton href={backHref} />
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
-        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${toneCls}`}
+        >
           <Icon size={kicker ? 15 : 16} />
         </div>
         <div className="min-w-0">
           {kicker && (
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               {kicker}
             </p>
           )}
-          <h2 className="flex min-w-0 items-center gap-1.5 truncate text-lg font-bold text-foreground md:text-xl">
-            {SubIcon && <SubIcon size={15} className="shrink-0 text-muted-foreground" />}
+          <h2 className="text-foreground flex min-w-0 items-center gap-1.5 truncate text-lg font-bold md:text-xl">
+            {SubIcon && <SubIcon size={15} className="text-muted-foreground shrink-0" />}
             <span className="truncate">{title}</span>
           </h2>
         </div>

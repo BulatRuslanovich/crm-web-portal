@@ -71,7 +71,6 @@ export default function RegisterForm() {
   }
 
   return (
-
     <AuthFormShell
       title="Регистрация"
       subtitle="Создайте аккаунт для работы с системой"
@@ -79,12 +78,15 @@ export default function RegisterForm() {
       iconTone="primary"
       footer={
         <>
-            <span className="text-muted-foreground">
-              Есть аккаунт?{' '}
-              <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
-                Войти
-              </Link>
-            </span>
+          <span className="text-muted-foreground">
+            Есть аккаунт?{' '}
+            <Link
+              href="/login"
+              className="text-foreground font-medium underline-offset-4 hover:underline"
+            >
+              Войти
+            </Link>
+          </span>
         </>
       }
     >
@@ -108,12 +110,20 @@ export default function RegisterForm() {
         </div>
         <div>
           <Label required>Email</Label>
-          <Input type="email" placeholder="ivan@example.com" {...register('email', authRules.email)} />
+          <Input
+            type="email"
+            placeholder="ivan@example.com"
+            {...register('email', authRules.email)}
+          />
           <FieldError message={errors.email?.message} />
         </div>
         <div>
           <Label required>Пароль</Label>
-          <Input type="password" placeholder="Минимум 8 символов" {...register('password', authRules.password)} />
+          <Input
+            type="password"
+            placeholder="Минимум 8 символов"
+            {...register('password', authRules.password)}
+          />
           <FieldError message={errors.password?.message} />
         </div>
         <div>

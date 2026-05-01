@@ -1,8 +1,4 @@
-import type {
-  ActivResponse,
-  CreateActivRequest,
-  UpdateActivRequest,
-} from '@/lib/api/types';
+import type { ActivResponse, CreateActivRequest, UpdateActivRequest } from '@/lib/api/types';
 import { STATUS_PLANNED } from '@/lib/api/statuses';
 import type { TargetKind } from '@/components/TargetSwitcher';
 
@@ -17,7 +13,7 @@ export const CREATE_ACTIV_DEFAULT_VALUES: CreateActivFormValues = {
   orgId: '',
   physId: '',
   start: '',
-  description: ''
+  description: '',
 };
 
 export interface EditActivFormValues {
@@ -64,7 +60,7 @@ export function activFormToCreateRequest(
     statusId: STATUS_PLANNED,
     start: values.start,
     end: null,
-    description: values.description
+    description: values.description,
   };
 }
 

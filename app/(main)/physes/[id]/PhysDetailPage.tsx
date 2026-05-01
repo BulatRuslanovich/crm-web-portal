@@ -2,24 +2,13 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  BriefcaseMedical,
-  Building2,
-  Mail,
-  Phone,
-  Stethoscope,
-} from 'lucide-react';
+import { BriefcaseMedical, Building2, Mail, Phone, Stethoscope } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
 import { useIsAdmin } from '@/lib/hooks/use-is-admin';
 import type { PhysResponse } from '@/lib/api/types';
-import {
-  BackButton,
-  Card,
-  CardSkeleton,
-  SectionLabel,
-} from '@/components/ui';
+import { BackButton, Card, CardSkeleton, SectionLabel } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
 import { ChipListSection } from '@/components/ChipListSection';
 import { DetailHero } from '@/components/DetailHero';
@@ -63,7 +52,9 @@ function PhysDetailContent({ id }: { id: string }) {
     if (!ok) return;
 
     await physesApi.delete(numId);
-    toast('Врач удалён', { description: phys ? physFullName(phys.lastName, phys.firstName, phys.middleName) : undefined });
+    toast('Врач удалён', {
+      description: phys ? physFullName(phys.lastName, phys.firstName, phys.middleName) : undefined,
+    });
     router.push('/physes');
   }
 
@@ -71,7 +62,7 @@ function PhysDetailContent({ id }: { id: string }) {
     <PageTransition className="mx-auto w-full space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <BackButton href="/physes" />
-        <span className="ml-auto text-xs text-muted-foreground">#{phys.physId}</span>
+        <span className="text-muted-foreground ml-auto text-xs">#{phys.physId}</span>
       </div>
 
       <DetailHero accentGradient={HERO_ACCENT}>
@@ -113,17 +104,17 @@ function PhysHeroContent({ phys }: { phys: PhysResponse }) {
 
   return (
     <div className="flex flex-wrap items-start gap-4">
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-card text-base font-bold text-warning ring-1 ring-warning/30">
+      <div className="bg-card text-warning ring-warning/30 flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-base font-bold ring-1">
         {initials || <Stethoscope size={20} />}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+        <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           Врач
         </p>
-        <h2 className="truncate text-xl font-bold text-foreground">{fullName}</h2>
+        <h2 className="text-foreground truncate text-xl font-bold">{fullName}</h2>
         {phys.specName && (
           <div className="mt-2">
-            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+            <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
               <BriefcaseMedical size={11} className="text-muted-foreground" />
               {phys.specName}
             </span>
@@ -157,16 +148,16 @@ function GetnamePage() {
       </div>
       <DetailHero accentGradient="from-primary/20 via-primary/5 to-transparent">
         <div className="flex flex-wrap items-start gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-card text-2xl ring-1 ring-primary/30">
+          <div className="bg-card ring-primary/30 flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-2xl ring-1">
             👾
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               Разработчик
             </p>
-            <h2 className="text-xl font-bold text-foreground">getname</h2>
+            <h2 className="text-foreground text-xl font-bold">getname</h2>
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground">
+              <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
                 <BriefcaseMedical size={11} className="text-muted-foreground" />
                 Разработка ПО
               </span>
@@ -176,11 +167,12 @@ function GetnamePage() {
       </DetailHero>
       <Card>
         <div className="space-y-4 p-5">
-          <p className="font-mono text-sm italic text-muted-foreground">
-            «Че ты тут забыл, ты либо автор этой х@йни, либо хакер, который получил исходники, а мб этот разраб открыл репу»
+          <p className="text-muted-foreground font-mono text-sm italic">
+            «Че ты тут забыл, ты либо автор этой х@йни, либо хакер, который получил исходники, а мб
+            этот разраб открыл репу»
           </p>
         </div>
       </Card>
-   </PageTransition>
+    </PageTransition>
   );
 }

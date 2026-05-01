@@ -20,8 +20,8 @@ export function ActivRow({ activ, first }: Props) {
   return (
     <Link
       href={`/activs/${activ.activId}`}
-      className={`group relative flex items-stretch gap-4 px-4 py-3.5 transition-colors duration-150 hover:bg-muted/60 ${
-        first ? '' : 'border-t border-border'
+      className={`group hover:bg-muted/60 relative flex items-stretch gap-4 px-4 py-3.5 transition-colors duration-150 ${
+        first ? '' : 'border-border border-t'
       }`}
     >
       <span
@@ -38,12 +38,12 @@ export function ActivRow({ activ, first }: Props) {
 
 function DateBlock({ day, month, weekday }: DateParts) {
   return (
-    <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-muted/60 py-1.5">
-      <span className="text-[10px] font-semibold tracking-wide text-muted-foreground/80 uppercase">
+    <div className="bg-muted/60 flex w-14 shrink-0 flex-col items-center justify-center rounded-lg py-1.5">
+      <span className="text-muted-foreground/80 text-[10px] font-semibold tracking-wide uppercase">
         {weekday}
       </span>
-      <span className="text-lg leading-none font-bold text-foreground">{day}</span>
-      <span className="text-[10px] text-muted-foreground/80">{month}</span>
+      <span className="text-foreground text-lg leading-none font-bold">{day}</span>
+      <span className="text-muted-foreground/80 text-[10px]">{month}</span>
     </div>
   );
 }
