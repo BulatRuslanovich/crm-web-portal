@@ -40,7 +40,7 @@ export function formatDuration(start: string | null, end: string | null): string
   return rest === 0 ? `${hours} ч` : `${hours} ч ${rest} мин`;
 }
 
-export function dayGroupLabel(iso: string | null): string {
+function dayGroupLabel(iso: string | null): string {
   if (!iso) return 'Без даты';
   const target = startOfDay(new Date(iso)).getTime();
   const today = startOfDay(new Date()).getTime();
@@ -63,7 +63,7 @@ const GROUP_ORDER: Record<string, number> = {
   'Без даты': 99,
 };
 
-export function dayGroupOrder(label: string): number {
+function dayGroupOrder(label: string): number {
   return GROUP_ORDER[label] ?? 50;
 }
 
