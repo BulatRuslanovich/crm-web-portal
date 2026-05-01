@@ -6,31 +6,24 @@ import { useForm } from 'react-hook-form';
 import { CalendarCheck } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
 import { toast } from 'sonner';
-import {
-  BtnSecondary,
-  BtnSuccess,
-  Card,
-  CardFooter,
-  ErrorBox,
-} from '@/components/ui';
+import { Card, ErrorBox } from '@/components/ui';
 import type { ComboboxOption } from '@/components/Combobox';
-import { FormPageHeader } from '../../_components/FormPageHeader';
-import { useSubmitAction } from '../../_lib/use-submit-action';
-import { type TargetKind } from '../_components/TargetSwitcher';
-import { TargetField } from '../_components/TargetField';
-
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { type TargetKind } from '@/components/TargetSwitcher';
+import { TargetField } from '@/components/TargetField';
+import { DrugsField } from '@/components/DrugsField';
+import { DescriptionField } from '@/components/DescriptionField';
+import { DateTimeField } from '@/components/DateTimeField';
+import { useDrugPicker } from '@/lib/use-drug-picker';
+import { syncDrugs } from '@/lib/activ-helper';
 import {
   CREATE_ACTIV_DEFAULT_VALUES,
   activFormToCreateRequest,
   buildTargetIds,
   type CreateActivFormValues,
-} from '../_lib/activ-form';
-
-import { useDrugPicker } from '@/app/(main)/activs/_lib/usr-drug-picker';
-import { DrugsField } from '@/app/(main)/activs/_components/DrugsField';
-import { DescriptionField } from '@/app/(main)/activs/_components/DescriptionField';
-import { syncDrugs } from '@/app/(main)/activs/_lib/helper';
-import { DateTimeField } from '@/app/(main)/activs/_components/DateTimeField';
+} from '@/lib/activ-form';
 
 export default function CreateActivPage() {
   const router = useRouter();
@@ -108,14 +101,12 @@ export default function CreateActivPage() {
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.back()}>
-              Отмена
-            </BtnSecondary>
-            <BtnSuccess type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Создание...' : 'Создать визит'}
-            </BtnSuccess>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.back()}
+            isSubmitting={form.formState.isSubmitting}
+            label="Создать визит"
+            variant="create"
+          />
         </Card>
       </form>
     </div>

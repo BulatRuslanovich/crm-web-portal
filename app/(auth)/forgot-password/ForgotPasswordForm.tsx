@@ -8,8 +8,8 @@ import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { Input, Label, ErrorBox, BtnSuccess, FieldError } from '@/components/ui';
 import { Mail } from 'lucide-react';
-import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
-import { authRules } from '@/app/(auth)/_lib/validation';
+import { AuthFormShell } from '@/components/auth-form-shell';
+import { authRules } from '@/lib/validation';
 
 interface FormValues {
   email: string;

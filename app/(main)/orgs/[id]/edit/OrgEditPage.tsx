@@ -7,25 +7,19 @@ import { Building2, FileText, MapPin, Pencil } from 'lucide-react';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
 import { toast } from 'sonner';
-import {
-  BtnPrimary,
-  BtnSecondary,
-  Card,
-  CardFooter,
-  CardSkeleton,
-  ErrorBox,
-} from '@/components/ui';
-import { FormPageHeader } from '../../../_components/FormPageHeader';
-import { FormSection } from '../../../_components/FormSection';
-import { useOrgTypeOptions } from '../../../_lib/dictionary-options';
-import { useSubmitAction } from '../../../_lib/use-submit-action';
-import { OrgInnField, OrgLocationFields, OrgMainFields } from '../../_components/OrgFields';
+import { Card, CardSkeleton, ErrorBox } from '@/components/ui';
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormSection } from '@/components/FormSection';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { useOrgTypeOptions } from '@/lib/dictionary-options';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { OrgInnField, OrgLocationFields, OrgMainFields } from '@/components/OrgFields';
 import {
   ORG_DEFAULT_VALUES,
   orgFormToUpdateRequest,
   orgToFormValues,
   type OrgFormValues,
-} from '../../_lib/org-form';
+} from '@/lib/org-form';
 
 export default function OrgEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -97,14 +91,11 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.push(`/orgs/${id}`)}>
-              Отмена
-            </BtnSecondary>
-            <BtnPrimary type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
-            </BtnPrimary>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.push(`/orgs/${id}`)}
+            isSubmitting={form.formState.isSubmitting}
+            label="Сохранить"
+          />
         </Card>
       </form>
     </div>

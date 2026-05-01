@@ -19,6 +19,8 @@ export interface ActivResponse {
   start: string | null;
   end: string | null;
   description: string;
+  latitude: number | null;
+  longitude: number | null;
   drugs: DrugResponse[];
 }
 
@@ -32,10 +34,12 @@ export interface CreateActivRequest {
 }
 
 export interface UpdateActivRequest {
-  statusId: number | null;
-  start: string | null;
-  end: string | null;
-  description: string | null;
+  statusId?: number | null;
+  start?: string | null;
+  end?: string | null;
+  description?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface DrugResponse {
@@ -172,4 +176,27 @@ export interface DepartmentResponse {
 
 export interface CreateDepartmentRequest {
   departmentName: string;
+}
+
+export type AuditAction = 'INSERT' | 'UPDATE' | 'DELETE';
+export type AuditEntityType = 'activ' | 'org' | 'phys';
+
+export interface AuditLogResponse {
+  auditId: number;
+  entityType: string;
+  entityId: number;
+  action: AuditAction;
+  fieldName: string | null;
+  oldValue: string | null;
+  newValue: string | null;
+  changedBy: number | null;
+  changedByLogin: string | null;
+  changedAt: string;
+}
+
+export interface AuditLogPagedResponse {
+  items: AuditLogResponse[];
+  page: number;
+  pageSize: number;
+  total: number;
 }

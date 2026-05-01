@@ -3,8 +3,15 @@ import { cn } from '@/lib/utils';
 import type { NavGroup } from './nav-config';
 import { SidebarItem } from './SidebarItem';
 
-function isActive(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(href + '/');
+function isActive(pathname: string, href: string, allHrefs: string[]): boolean {
+  if (pathname === href) return true;
+  if (!pathname.startsWith(href + '/')) return false;
+  return !allHrefs.some(
+    (h) =>
+      h !== href &&
+      h.startsWith(href + '/') &&
+      (pathname === h || pathname.startsWith(h + '/')),
+  );
 }
 
 function GroupLabel({ label }: { label: string }) {
@@ -25,6 +32,7 @@ export function SidebarNav({
   onNavigate: () => void;
 }) {
   const pathname = usePathname();
+  const allHrefs = groups.flatMap((g) => g.items.map((i) => i.href));
 
   return (
     <nav
@@ -44,7 +52,7 @@ export function SidebarNav({
               <SidebarItem
                 key={item.href}
                 item={item}
-                active={isActive(pathname, item.href)}
+                active={isActive(pathname, item.href, allHrefs)}
                 compact={compact}
                 onClick={onNavigate}
               />

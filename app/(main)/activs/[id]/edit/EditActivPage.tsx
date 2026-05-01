@@ -11,30 +11,27 @@ import { useRoles } from '@/lib/hooks/use-roles';
 import { toast } from 'sonner';
 import type { ActivResponse } from '@/lib/api/types';
 import {
-  BtnPrimary,
-  BtnSecondary,
   Card,
-  CardFooter,
   CardSkeleton,
   ErrorBox,
   SectionLabel,
   StatusBadge,
 } from '@/components/ui';
-import { FormPageHeader } from '../../../_components/FormPageHeader';
-import { useSubmitAction } from '../../../_lib/use-submit-action';
-
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { DescriptionField } from '@/components/DescriptionField';
+import { DrugsField } from '@/components/DrugsField';
+import { DateTimeField } from '@/components/DateTimeField';
+import { StatusField } from '@/components/StatusField';
+import { useDrugPicker } from '@/lib/use-drug-picker';
+import { syncDrugs } from '@/lib/activ-helper';
 import {
   EDIT_ACTIV_DEFAULT_VALUES,
   activFormToUpdateRequest,
   activToFormValues,
   type EditActivFormValues,
-} from '../../_lib/activ-form';
-import { DescriptionField } from '@/app/(main)/activs/_components/DescriptionField';
-import { useDrugPicker } from '@/app/(main)/activs/_lib/usr-drug-picker';
-import { DrugsField } from '@/app/(main)/activs/_components/DrugsField';
-import { syncDrugs } from '@/app/(main)/activs/_lib/helper';
-import { DateTimeField } from '@/app/(main)/activs/_components/DateTimeField';
-import { StatusField } from '@/app/(main)/activs/_components/StatusField';
+} from '@/lib/activ-form';
 
 export default function EditActivPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -108,14 +105,11 @@ export default function EditActivPage({ params }: { params: Promise<{ id: string
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.push(`/activs/${id}`)}>
-              Отмена
-            </BtnSecondary>
-            <BtnPrimary type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
-            </BtnPrimary>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.push(`/activs/${id}`)}
+            isSubmitting={form.formState.isSubmitting}
+            label="Сохранить"
+          />
         </Card>
       </form>
     </div>

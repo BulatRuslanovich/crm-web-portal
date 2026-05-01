@@ -7,11 +7,11 @@ import { useForm } from 'react-hook-form';
 import { authApi } from '@/lib/api/auth';
 import { extractApiError } from '@/lib/api/errors';
 import { CardSkeleton, Input, Label, ErrorBox, SuccessBox, BtnSuccess, FieldError } from '@/components/ui';
-import { AuthFormShell } from '@/app/(auth)/_components/auth-form-shell';
-import { ResendButton } from '@/app/(auth)/_components/resend-button';
+import { AuthFormShell } from '@/components/auth-form-shell';
+import { ResendButton } from '@/components/resend-button';
 import { useResendCode } from '@/lib/hooks/use-resend-code';
 import { KeyRound } from 'lucide-react';
-import { authRules } from '@/app/(auth)/_lib/validation';
+import { authRules } from '@/lib/validation';
 
 interface FormValues {
   code: string;

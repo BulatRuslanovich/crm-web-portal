@@ -23,7 +23,9 @@ export function StatusBadge({ name }: { name: string }) {
           ? 'secondary'
           : n === 'закрыт'
             ? 'success'
-            : 'outline';
+            : n === 'отменен'
+              ? 'destructive'
+              : 'outline';
   const dotColor =
     n === 'запланирован'
       ? 'bg-primary-foreground'
@@ -33,7 +35,9 @@ export function StatusBadge({ name }: { name: string }) {
           ? 'bg-muted-foreground'
           : n === 'закрыт'
             ? 'bg-success-foreground'
-            : 'bg-muted-foreground';
+            : n === 'отменен'
+              ? 'bg-white'
+              : 'bg-muted-foreground';
   return (
     <Badge variant={variant} className="rounded-full">
       <span className={cn('mr-1 size-1.5 rounded-full', dotColor)} />
@@ -165,6 +169,21 @@ export function SuccessBox({ message }: { message: string }) {
       <CheckCircle2 />
       <AlertDescription>{message}</AlertDescription>
     </Alert>
+  );
+}
+
+export function AlertBanner({
+  icon: Icon,
+  children,
+}: {
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="animate-fade-in flex items-center gap-2.5 rounded-xl border border-warning/50 bg-warning/15 px-4 py-3 text-sm text-warning">
+      <Icon size={15} />
+      <span>{children}</span>
+    </div>
   );
 }
 

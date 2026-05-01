@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, FileText, Hash, MapPin, Navigation, Pencil, Trash2 } from 'lucide-react';
+import { Building2, FileText, Hash, MapPin, Navigation } from 'lucide-react';
 import { orgsApi } from '@/lib/api/orgs';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
@@ -10,17 +10,16 @@ import { useIsAdmin } from '@/lib/hooks/use-is-admin';
 import type { OrgResponse } from '@/lib/api/types';
 import {
   BackButton,
-  BtnDanger,
-  BtnSecondary,
   Card,
-  CardFooter,
   CardSkeleton,
   SectionLabel,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { DetailHero } from '../../_components/DetailHero';
-import { InfoBlock } from '../../_components/InfoBlock';
-import { orgInitials } from '../../_lib/initials';
+import { DetailHero } from '@/components/DetailHero';
+import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
+import { InfoBlock } from '@/components/InfoBlock';
+import { AdminDetailFooter } from '@/components/AdminDetailFooter';
+import { orgInitials } from '@/lib/initials';
 import { useConfirm } from '@/components/ConfirmDialog';
 
 const HERO_ACCENT = 'from-success/15 via-success/5 to-transparent';
@@ -30,7 +29,7 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
   const router = useRouter();
   const isAdmin = useIsAdmin();
   const { confirm, dialog } = useConfirm();
-  
+
   const numId = Number(id);
   const { data: org } = useEntity(['org', numId], () => orgsApi.getById(numId), '/orgs');
 
@@ -43,17 +42,15 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
   }
 
   async function handleDelete() {
-      const ok = await confirm({
-        title: 'Удалить организацию?',
-        description: `Организация #${numId} будет удалена безвозвратно.`,
-        confirmLabel: 'Удалить',
-      });
-
-      if (!ok) return;
-
-      await orgsApi.delete(numId);
-      toast('Организация удалена', { description: org?.orgName });
-      router.push('/orgs');
+    const ok = await confirm({
+      title: 'Удалить организацию?',
+      description: `Организация #${numId} будет удалена безвозвратно.`,
+      confirmLabel: 'Удалить',
+    });
+    if (!ok) return;
+    await orgsApi.delete(numId);
+    toast('Организация удалена', { description: org?.orgName });
+    router.push('/orgs');
   }
 
   return (
@@ -72,20 +69,19 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
           <RequisitesSection org={org} />
           <hr className="border-border" />
           <LocationSection org={org} />
+          {isAdmin && (
+            <>
+              <hr className="border-border" />
+              <EntityHistoryFeed entityType="org" entityId={numId} />
+            </>
+          )}
         </div>
 
-        {isAdmin && (
-          <CardFooter>
-            <div className="flex-1">
-              <BtnDanger onClick={handleDelete}>
-                <Trash2 size={14} /> Удалить
-              </BtnDanger>
-            </div>
-            <BtnSecondary onClick={() => router.push(`/orgs/${id}/edit`)}>
-              <Pencil size={14} /> Редактировать
-            </BtnSecondary>
-          </CardFooter>
-        )}
+        <AdminDetailFooter
+          show={isAdmin}
+          onDelete={handleDelete}
+          onEdit={() => router.push(`/orgs/${id}/edit`)}
+        />
       </Card>
       {dialog}
     </PageTransition>

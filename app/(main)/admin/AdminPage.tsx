@@ -1,20 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { PageTransition } from '@/components/motion';
-import {
-  ShieldCheck,
-  Users,
-  Pill,
-  GraduationCap,
-  Building,
-} from 'lucide-react';
+import { ShieldCheck, Users, Pill, GraduationCap, Building, History, ArrowRight } from 'lucide-react';
 import { UsersSection } from './UsersSection';
 import { DepartmentsSection } from './DepartmentsSection';
 import { DrugsSection } from './DrugsSection';
 import { SpecsSection } from './SpecsSection';
+import { PageHero } from '@/components/PageHero';
 
 type Tab = 'users' | 'drugs' | 'specs' | 'departments';
 
@@ -61,22 +57,13 @@ export default function AdminPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-warning/10 via-muted to-card shadow-sm">
-        <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
-              <ShieldCheck size={20} className="text-warning" />
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-                Панель администратора
-              </p>
-              <h2 className="text-xl font-bold text-foreground">Администрирование</h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">{activeTab.subtitle}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        icon={ShieldCheck}
+        kicker="Панель администратора"
+        title="Администрирование"
+        subtitle={activeTab.subtitle}
+        tone="warning"
+      />
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {TABS.map((t) => {
@@ -116,6 +103,25 @@ export default function AdminPage() {
           );
         })}
       </div>
+
+      <Link
+        href="/admin/audit-log"
+        className="group flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-sm transition-colors hover:border-warning/40 hover:bg-warning/5"
+      >
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/15 ring-1 ring-warning/25">
+          <History size={15} className="text-warning" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-foreground">Аудит-лог</p>
+          <p className="text-[10px] text-muted-foreground/80">
+            Кто, когда и какое поле изменил
+          </p>
+        </div>
+        <ArrowRight
+          size={14}
+          className="text-muted-foreground transition-transform group-hover:translate-x-0.5"
+        />
+      </Link>
 
       <div>
         {tab === 'users' && <UsersSection />}

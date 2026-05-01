@@ -5,23 +5,18 @@ import { useForm } from 'react-hook-form';
 import { BriefcaseMedical, Phone, Plus, User } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { toast } from 'sonner';
-import {
-  BtnSecondary,
-  BtnSuccess,
-  Card,
-  CardFooter,
-  ErrorBox,
-} from '@/components/ui';
-import { FormPageHeader } from '../../_components/FormPageHeader';
-import { FormSection } from '../../_components/FormSection';
-import { useSpecOptions } from '../../_lib/dictionary-options';
-import { useSubmitAction } from '../../_lib/use-submit-action';
-import { PhysContactFields, PhysNameFields, PhysSpecField } from '../_components/PhysFields';
+import { Card, ErrorBox } from '@/components/ui';
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormSection } from '@/components/FormSection';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { useSpecOptions } from '@/lib/dictionary-options';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { PhysContactFields, PhysNameFields, PhysSpecField } from '@/components/PhysFields';
 import {
   PHYS_DEFAULT_VALUES,
   physFormToCreateRequest,
   type PhysFormValues,
-} from '../_lib/phys-form';
+} from '@/lib/phys-form';
 
 export default function CreatePhysPage() {
   const router = useRouter();
@@ -69,14 +64,12 @@ export default function CreatePhysPage() {
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.back()}>
-              Отмена
-            </BtnSecondary>
-            <BtnSuccess type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Создание...' : 'Создать'}
-            </BtnSuccess>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.back()}
+            isSubmitting={isSubmitting}
+            label="Создать"
+            variant="create"
+          />
         </Card>
       </form>
     </div>

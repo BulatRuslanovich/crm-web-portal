@@ -6,29 +6,27 @@ import {
   BriefcaseMedical,
   Building2,
   Mail,
-  Pencil,
   Phone,
   Stethoscope,
-  Trash2,
 } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
 import { useIsAdmin } from '@/lib/hooks/use-is-admin';
-import type { OrgResponse, PhysResponse } from '@/lib/api/types';
+import type { PhysResponse } from '@/lib/api/types';
 import {
   BackButton,
-  BtnDanger,
-  BtnSecondary,
   Card,
-  CardFooter,
   CardSkeleton,
   SectionLabel,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { DetailHero } from '../../_components/DetailHero';
-import { InfoBlock } from '../../_components/InfoBlock';
-import { physFullName, physInitials } from '../../_lib/initials';
+import { ChipListSection } from '@/components/ChipListSection';
+import { DetailHero } from '@/components/DetailHero';
+import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
+import { InfoBlock } from '@/components/InfoBlock';
+import { AdminDetailFooter } from '@/components/AdminDetailFooter';
+import { physFullName, physInitials } from '@/lib/initials';
 import { useConfirm } from '@/components/ConfirmDialog';
 
 const HERO_ACCENT = 'from-warning/20 via-warning/5 to-transparent';
@@ -83,21 +81,26 @@ function PhysDetailContent({ id }: { id: string }) {
       <Card>
         <div className="space-y-6 p-5">
           <ContactsSection phys={phys} />
-          {phys.orgs.length > 0 && <OrgsSection orgs={phys.orgs} />}
+          {phys.orgs.length > 0 && (
+            <ChipListSection
+              icon={Building2}
+              title="Организации"
+              items={phys.orgs.map((o) => ({ key: o.orgId, label: o.orgName }))}
+            />
+          )}
+          {isAdmin && (
+            <>
+              <hr className="border-border" />
+              <EntityHistoryFeed entityType="phys" entityId={numId} />
+            </>
+          )}
         </div>
 
-        {isAdmin && (
-          <CardFooter>
-            <div className="flex-1">
-              <BtnDanger onClick={handleDelete}>
-                <Trash2 size={14} /> Удалить
-              </BtnDanger>
-            </div>
-            <BtnSecondary onClick={() => router.push(`/physes/${id}/edit`)}>
-              <Pencil size={14} /> Редактировать
-            </BtnSecondary>
-          </CardFooter>
-        )}
+        <AdminDetailFooter
+          show={isAdmin}
+          onDelete={handleDelete}
+          onEdit={() => router.push(`/physes/${id}/edit`)}
+        />
       </Card>
       {dialog}
     </PageTransition>
@@ -179,29 +182,5 @@ function GetnamePage() {
         </div>
       </Card>
    </PageTransition>
-  );
-}
-
-function OrgsSection({ orgs }: { orgs: OrgResponse[] }) {
-  return (
-    <>
-      <hr className="border-border" />
-      <div>
-        <SectionLabel icon={Building2}>
-          Организации <span className="ml-1 text-muted-foreground/60">· {orgs.length}</span>
-        </SectionLabel>
-        <div className="flex flex-wrap gap-2">
-          {orgs.map((o) => (
-            <span
-              key={o.orgId}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-medium text-foreground"
-            >
-              <Building2 size={11} className="text-muted-foreground" />
-              {o.orgName}
-            </span>
-          ))}
-        </div>
-      </div>
-    </>
   );
 }

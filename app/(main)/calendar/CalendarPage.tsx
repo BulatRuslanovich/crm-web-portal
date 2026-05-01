@@ -14,17 +14,17 @@ import {
   isSameDay,
   startOfWeek,
   toDateKey,
-} from '../_lib/date';
-import { MONTHS_NOM } from '../_lib/ru-dates';
-import { buildGrid } from './_lib/grid';
-import { useCalendarData } from './_lib/use-calendar-data';
+} from '@/lib/date';
+import { MONTHS_NOM } from '@/lib/ru-dates';
+import { buildGrid } from '@/lib/grid';
+import { useCalendarData } from '@/lib/use-calendar-data';
 import {
   CalendarToolbar,
   type CalendarView,
-} from './_components/CalendarToolbar';
-import { MonthGrid } from './_components/MonthGrid';
-import { WeekView } from './_components/WeekView';
-import { DayPanel } from './_components/DayPanel';
+} from '@/components/CalendarToolbar';
+import { MonthGrid } from '@/components/MonthGrid';
+import { WeekView } from '@/components/WeekView';
+import { DayPanel } from '@/components/DayPanel';
 
 function buildRangeLabel(view: CalendarView, year: number, month: number, weekStart: Date): string {
   if (view === 'month') return `${MONTHS_NOM[month]} ${year}`;

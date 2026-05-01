@@ -13,12 +13,12 @@ import type { ActivResponse } from '@/lib/api/types';
 import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
 import { PageTransition } from '@/components/motion';
-import { ListPageHeader } from '../_components/ListPageHeader';
-import { SearchBar } from '../_components/SearchBar';
-import { useDebouncedSearch } from '../_lib/use-debounced-search';
-import { ActivRow } from './_components/ActivRow';
-import { StatusFilter } from '../_components/StatusFilter';
-import { groupActivsByDay } from '@/app/(main)/activs/_lib/helper';
+import { ListPageHeader } from '@/components/ListPageHeader';
+import { SearchBar } from '@/components/SearchBar';
+import { useDebouncedSearch } from '@/lib/use-debounced-search';
+import { ActivRow } from '@/components/ActivRow';
+import { StatusFilter } from '@/components/StatusFilter';
+import { groupActivsByDay } from '@/lib/activ-helper';
 
 const PAGE_SIZE = 25;
 const SORT_FIELD = 'start';
@@ -127,7 +127,6 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
 }
 
 function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
-
   return (
     <EmptyState
       message={hasFilter ? 'Ничего не найдено' : 'Визитов пока нет'}
@@ -143,5 +142,3 @@ function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
     />
   );
 }
-
-

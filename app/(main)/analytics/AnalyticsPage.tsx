@@ -10,9 +10,9 @@ import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
 import { CardSkeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
-import { useAnalyticsData } from './_lib/use-analytics-data';
-import { AnalyticsHero } from './_components/AnalyticsHero';
-import { AnalyticsSections } from './_components/AnalyticsSections';
+import { useAnalyticsData } from '@/lib/use-analytics-data';
+import { AnalyticsHero } from '@/components/AnalyticsHero';
+import { AnalyticsSections } from '@/components/AnalyticsSections';
 
 const DEFAULT_PERIOD_DAYS = 30;
 

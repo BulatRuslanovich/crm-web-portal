@@ -5,23 +5,18 @@ import { useForm } from 'react-hook-form';
 import { Building2, FileText, MapPin, Plus } from 'lucide-react';
 import { orgsApi } from '@/lib/api/orgs';
 import { toast } from 'sonner';
-import {
-  BtnSecondary,
-  BtnSuccess,
-  Card,
-  CardFooter,
-  ErrorBox,
-} from '@/components/ui';
-import { FormPageHeader } from '../../_components/FormPageHeader';
-import { FormSection } from '../../_components/FormSection';
-import { useOrgTypeOptions } from '../../_lib/dictionary-options';
-import { useSubmitAction } from '../../_lib/use-submit-action';
-import { OrgInnField, OrgLocationFields, OrgMainFields } from '../_components/OrgFields';
+import { Card, ErrorBox } from '@/components/ui';
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormSection } from '@/components/FormSection';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { useOrgTypeOptions } from '@/lib/dictionary-options';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { OrgInnField, OrgLocationFields, OrgMainFields } from '@/components/OrgFields';
 import {
   ORG_DEFAULT_VALUES,
   orgFormToCreateRequest,
   type OrgFormValues,
-} from '../_lib/org-form';
+} from '@/lib/org-form';
 
 export default function CreateOrgPage() {
   const router = useRouter();
@@ -76,14 +71,12 @@ export default function CreateOrgPage() {
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.back()}>
-              Отмена
-            </BtnSecondary>
-            <BtnSuccess type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Создание...' : 'Создать'}
-            </BtnSuccess>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.back()}
+            isSubmitting={isSubmitting}
+            label="Создать"
+            variant="create"
+          />
         </Card>
       </form>
     </div>

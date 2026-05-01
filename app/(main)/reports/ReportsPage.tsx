@@ -15,13 +15,13 @@ import {
   defaultRange,
   matchPreset,
   rangeForPreset,
-} from './_lib/date-range';
-import { exportCsv, exportXlsx } from './_lib/export';
-import { useReportsData } from './_lib/use-reports-data';
-import { ReportsHero } from './_components/ReportsHero';
-import { StatPills, type ReportStats } from './_components/StatPills';
-import { FiltersCard } from './_components/FiltersCard';
-import { PreviewTable } from './_components/PreviewTable';
+} from '@/lib/date-range';
+import { exportCsv, exportXlsx } from '@/lib/export';
+import { useReportsData } from '@/lib/use-reports-data';
+import { ReportsHero } from '@/components/ReportsHero';
+import { StatPills, type ReportStats } from '@/components/StatPills';
+import { FiltersCard } from '@/components/FiltersCard';
+import { PreviewTable } from '@/components/PreviewTable';
 import type { ActivResponse } from '@/lib/api/types';
 
 function computeStats(activs: ActivResponse[]): ReportStats {

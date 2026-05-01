@@ -9,10 +9,10 @@ import { orgsApi } from '@/lib/api/orgs';
 import type { OrgResponse } from '@/lib/api/types';
 import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { ListPageHeader } from '../_components/ListPageHeader';
-import { SearchBar } from '../_components/SearchBar';
-import { useDebouncedSearch } from '../_lib/use-debounced-search';
-import { orgInitials } from '../_lib/initials';
+import { ListPageHeader } from '@/components/ListPageHeader';
+import { SearchBar } from '@/components/SearchBar';
+import { useDebouncedSearch } from '@/lib/use-debounced-search';
+import { orgInitials } from '@/lib/initials';
 
 const PAGE_SIZE = 20;
 

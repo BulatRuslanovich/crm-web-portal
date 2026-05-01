@@ -10,11 +10,11 @@ import { UserFilter } from '@/components/UserFilter';
 import {
   useDashboardActivs,
   useDashboardSummary,
-} from './_lib/use-dashboard-data';
-import { DashboardHero } from './_components/DashboardHero';
-import { StatCard } from './_components/StatCard';
-import { MyDay } from './_components/MyDay';
-import { HeatmapSection } from './_components/HeatmapSection';
+} from '@/lib/use-dashboard-data';
+import { DashboardHero } from '@/components/DashboardHero';
+import { StatCard } from '@/components/StatCard';
+import { MyDay } from '@/components/MyDay';
+import { HeatmapSection } from '@/components/HeatmapSection';
 
 export default function DashboardPage() {
   const { user } = useAuth();

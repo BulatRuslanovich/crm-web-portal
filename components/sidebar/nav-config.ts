@@ -5,6 +5,7 @@ import {
   FileDown,
   LayoutDashboard,
   MapPin,
+  Route,
   ShieldCheck,
   Stethoscope,
   TrendingUp,
@@ -28,6 +29,7 @@ const MAIN_NAV: NavItem[] = [
   { href: '/calendar', label: 'Календарь', icon: CalendarDays },
   { href: '/orgs', label: 'Организации', icon: Building2 },
   { href: '/map', label: 'Карта', icon: MapPin },
+  { href: '/map/track', label: 'Трекинг', icon: Route },
   { href: '/physes', label: 'Врачи', icon: Stethoscope },
 ];
 

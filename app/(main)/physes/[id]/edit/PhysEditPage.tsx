@@ -14,38 +14,26 @@ import {
 } from 'lucide-react';
 import { searchOrgOptions } from '@/lib/api/orgs';
 import { toast } from 'sonner';
-import {
-  BtnPrimary,
-  BtnSecondary,
-  Card,
-  CardFooter,
-  CardSkeleton,
-  ErrorBox,
-  Input,
-  Label,
-} from '@/components/ui';
+import { Card, CardSkeleton, ErrorBox, Input, Label } from '@/components/ui';
 import { MultiCombobox } from '@/components/MultiCombobox';
-import { FormPageHeader } from '../../../_components/FormPageHeader';
-import { FormSection } from '../../../_components/FormSection';
-import { physFullName } from '../../../_lib/initials';
-import { useSubmitAction } from '../../../_lib/use-submit-action';
-import {
-  PhysContactFields,
-  PhysNameFields,
-  PhysSpecField,
-} from '../../_components/PhysFields';
+import { FormPageHeader } from '@/components/FormPageHeader';
+import { FormSection } from '@/components/FormSection';
+import { FormCardFooter } from '@/components/FormCardFooter';
+import { physFullName } from '@/lib/initials';
+import { useSubmitAction } from '@/lib/use-submit-action';
+import { useSpecOptions } from '@/lib/dictionary-options';
+import { PhysContactFields, PhysNameFields, PhysSpecField } from '@/components/PhysFields';
 import {
   PHYS_DEFAULT_VALUES,
   type PhysFormValues,
   physToFormValues,
-} from '../../_lib/phys-form';
-import { useSpecOptions } from '../../../_lib/dictionary-options';
+} from '@/lib/phys-form';
 import {
   syncOrgs,
   updatePhys,
   useLoadedPhys,
   usePhysOrgPicker,
-} from './_lib/phys-edit';
+} from '@/lib/phys-edit';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -131,14 +119,11 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
             {submitAction.error && <ErrorBox message={submitAction.error} />}
           </div>
 
-          <CardFooter>
-            <BtnSecondary type="button" onClick={() => router.push(`/physes/${id}`)}>
-              Отмена
-            </BtnSecondary>
-            <BtnPrimary type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Сохранение...' : 'Сохранить'}
-            </BtnPrimary>
-          </CardFooter>
+          <FormCardFooter
+            onCancel={() => router.push(`/physes/${id}`)}
+            isSubmitting={form.formState.isSubmitting}
+            label="Сохранить"
+          />
         </Card>
       </form>
     </div>

@@ -2,13 +2,19 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Lock, Pill, User } from 'lucide-react';
+import { FileText, Lock, MapPin, Pill, User } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { useRoles } from '@/lib/hooks/use-roles';
-import { STATUS_CLOSED, STATUS_OPEN, STATUS_SAVED } from '@/lib/api/statuses';
 import {
+  FINAL_STATUSES,
+  STATUS_CANCELED,
+  STATUS_OPEN,
+  STATUS_SAVED,
+} from '@/lib/api/statuses';
+import {
+  AlertBanner,
   BackButton,
   Card,
   CardFooter,
@@ -16,13 +22,15 @@ import {
   SectionLabel,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import type { ActivResponse, DrugResponse } from '@/lib/api/types';
-import { InfoBlock } from '../../_components/InfoBlock';
-import { ActivHero } from '../_components/ActivHero';
-import { TimeSection } from '../_components/TimeSection';
-import { ActivQuickActions } from '../_components/ActivQuickActions';
+import type { ActivResponse } from '@/lib/api/types';
+import { ChipListSection } from '@/components/ChipListSection';
+import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
+import { InfoBlock } from '@/components/InfoBlock';
+import { ActivHero } from '@/components/ActivHero';
+import { TimeSection } from '@/components/TimeSection';
+import { ActivQuickActions } from '@/components/ActivQuickActions';
 import { toast } from 'sonner';
-import { useActivActions } from '../_lib/use-activ-actions';
+import { useActivActions } from '@/lib/use-activ-actions';
 import { useConfirm } from '@/components/ConfirmDialog';
 
 export default function DetailActivPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,7 +47,7 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
     '/activs',
   );
 
-  const { acting, setStatus } = useActivActions({
+  const { acting, setStatus, closeWithGeo, geoDialog } = useActivActions({
     activ: activ ?? ({} as ActivResponse),
     reload,
   });
@@ -75,15 +83,39 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
 
       <ActivHero activ={activ} />
 
-      {perms.isLocked && <LockWarning />}
+      {perms.isLocked && (
+        <AlertBanner icon={Lock}>
+          {activ.statusId === STATUS_CANCELED
+            ? 'Визит отменён — редактирование недоступно'
+            : 'Визит закрыт — редактирование недоступно'}
+        </AlertBanner>
+      )}
 
       <Card>
         <div className="space-y-6 p-5">
           <TimeSection start={activ.start} end={activ.end} />
           <hr className="border-border" />
           <InfoSection activ={activ} />
+          {hasCoords(activ) && (
+            <>
+              <hr className="border-border" />
+              <CoordsSection activ={activ} />
+            </>
+          )}
           {activ.description && <DescriptionSection description={activ.description} />}
-          {activ.drugs.length > 0 && <DrugsSection drugs={activ.drugs} />}
+          {activ.drugs.length > 0 && (
+            <ChipListSection
+              icon={Pill}
+              title="Препараты"
+              items={activ.drugs.map((d) => ({ key: d.drugId, label: d.drugName }))}
+            />
+          )}
+          {isAdmin && (
+            <>
+              <hr className="border-border" />
+              <EntityHistoryFeed entityType="activ" entityId={numId} />
+            </>
+          )}
         </div>
 
         <CardFooter>
@@ -95,25 +127,19 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
             isLocked={perms.isLocked}
             onOpen={() => setStatus(STATUS_OPEN, { start: new Date().toISOString() })}
             onSave={() => setStatus(STATUS_SAVED)}
-            onClose={() => setStatus(STATUS_CLOSED, { end: new Date().toISOString() })}
+            onClose={closeWithGeo}
+            onCancel={() => setStatus(STATUS_CANCELED, { end: new Date().toISOString() })}
             onEdit={() => router.push(`/activs/${id}/edit`)}
             onDelete={handleDelete}
           />
         </CardFooter>
       </Card>
       {dialog}
+      {geoDialog}
     </PageTransition>
   );
 }
 
-function LockWarning() {
-  return (
-    <div className="animate-fade-in flex items-center gap-2.5 rounded-xl border border-warning/50 bg-warning/15 px-4 py-3 text-sm text-warning">
-      <Lock size={15} />
-      <span>Визит закрыт — редактирование недоступно</span>
-    </div>
-  );
-}
 
 function InfoSection({ activ }: { activ: ActivResponse }) {
   return (
@@ -122,6 +148,33 @@ function InfoSection({ activ }: { activ: ActivResponse }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <InfoBlock label="Сотрудник" icon={User} value={activ.usrLogin} />
         <InfoBlock label="Статус" value={activ.statusName} />
+      </div>
+    </div>
+  );
+}
+
+function hasCoords(a: ActivResponse): boolean {
+  return a.latitude != null && a.longitude != null;
+}
+
+function CoordsSection({ activ }: { activ: ActivResponse }) {
+  const lat = activ.latitude!;
+  const lng = activ.longitude!;
+  const formatted = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  const osmHref = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+  return (
+    <div>
+      <SectionLabel icon={MapPin}>Координаты закрытия</SectionLabel>
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
+        <span className="font-mono text-foreground">{formatted}</span>
+        <a
+          href={osmHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-semibold text-primary hover:underline"
+        >
+          Открыть на карте →
+        </a>
       </div>
     </div>
   );
@@ -141,29 +194,6 @@ function DescriptionSection({ description }: { description: string }) {
   );
 }
 
-function DrugsSection({ drugs }: { drugs: DrugResponse[] }) {
-  return (
-    <>
-      <hr className="border-border" />
-      <div>
-        <SectionLabel icon={Pill}>
-          Препараты <span className="ml-1 text-muted-foreground/60">· {drugs.length}</span>
-        </SectionLabel>
-        <div className="flex flex-wrap gap-2">
-          {drugs.map((d) => (
-            <span
-              key={d.drugId}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1.5 text-xs font-medium text-foreground"
-            >
-              <Pill size={11} className="text-muted-foreground" />
-              {d.drugName}
-            </span>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
 
 interface Permissions {
   canEdit: boolean;
@@ -178,11 +208,10 @@ function resolvePermissions(
   canManageActivs: boolean,
 ): Permissions {
   const isOwn = activ.usrId === currentUsrId;
-  const isLocked = activ.statusId === STATUS_CLOSED && !isAdmin;
+  const isLocked = FINAL_STATUSES.has(activ.statusId) && !isAdmin;
   return {
     canEdit: (canManageActivs || isOwn) && !isLocked,
     canDelete: canManageActivs || isOwn,
     isLocked,
   };
 }
-
