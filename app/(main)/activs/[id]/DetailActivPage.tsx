@@ -2,7 +2,8 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Lock, MapPin, Pill, User } from 'lucide-react';
+import { Building2, FileText, Lock, MapPin, Pill, Stethoscope, User } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/hooks/use-entity';
@@ -15,13 +16,16 @@ import {
   CardFooter,
   CardSkeleton,
   SectionLabel,
+  StatusBadge,
 } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
 import type { ActivResponse } from '@/lib/api/types';
 import { ChipListSection } from '@/components/ChipListSection';
 import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
 import { InfoBlock } from '@/components/InfoBlock';
-import { ActivHero } from '@/components/ActivHero';
+import { Hero } from '@/components/Hero';
+import { StatusStepper } from '@/components/StatusStepper';
+import { statusAccentGradient } from '@/lib/activ-helper';
 import { TimeSection } from '@/components/TimeSection';
 import { ActivQuickActions } from '@/components/ActivQuickActions';
 import { toast } from 'sonner';
@@ -76,7 +80,9 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
         <span className="text-muted-foreground ml-auto text-xs">#{activ.activId}</span>
       </div>
 
-      <ActivHero activ={activ} />
+      <Hero accentGradient={statusAccentGradient(activ.statusName)}>
+        <ActivHeroContent activ={activ} />
+      </Hero>
 
       {perms.isLocked && (
         <AlertBanner icon={Lock}>
@@ -132,6 +138,37 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
       {dialog}
       {geoDialog}
     </PageTransition>
+  );
+}
+
+function ActivHeroContent({ activ }: { activ: ActivResponse }) {
+  const isPhys = activ.physId != null;
+  const targetIcon: LucideIcon = isPhys ? Stethoscope : Building2;
+  const targetName = (isPhys ? activ.physName : activ.orgName) ?? '—';
+  const kindLabel = isPhys ? 'Врач' : 'Организация';
+  const Icon = targetIcon;
+
+  return (
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="bg-card ring-border flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1">
+            <Icon size={22} className="text-foreground" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
+              {kindLabel}
+            </p>
+            <h2 className="text-foreground truncate text-xl font-bold">{targetName}</h2>
+          </div>
+        </div>
+        <StatusBadge name={activ.statusName} />
+      </div>
+
+      <div className="mt-5">
+        <StatusStepper currentStatusId={activ.statusId} />
+      </div>
+    </>
   );
 }
 

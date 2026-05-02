@@ -5,8 +5,6 @@ import type { ActivResponse } from '@/lib/api/types';
 import { addDays, toDateKey } from '@/lib/date';
 import type { CalendarView } from '@/components/CalendarToolbar';
 
-const PAGE_SIZE = 500;
-
 function rangeFor(view: CalendarView, year: number, month: number, weekStart: Date) {
   const [from, to] =
     view === 'month'
@@ -57,17 +55,13 @@ export function useCalendarData({
     () => {
       const { from, to } = rangeFor(view, year, month, weekStart);
       return activsApi
-        .getAll(
-          1,
-          PAGE_SIZE,
-          undefined,
-          'start',
-          false,
-          undefined,
-          from.toISOString(),
-          to.toISOString(),
+        .getAll({
+          pageSize: 500,
+          sortBy: 'start',
+          dateFrom: from.toISOString(),
+          dateTo: to.toISOString(),
           usrId,
-        )
+        })
         .then((r) => r.data.items);
     },
     { keepPreviousData: true },

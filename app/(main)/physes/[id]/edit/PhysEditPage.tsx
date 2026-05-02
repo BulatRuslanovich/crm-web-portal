@@ -1,23 +1,30 @@
 'use client';
 
-import { useEffect, use } from 'react';
+import { useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister } from 'react-hook-form';
 import { BriefcaseMedical, Building2, Pencil, Phone, Stethoscope, User } from 'lucide-react';
+import { physesApi } from '@/lib/api/physes';
 import { searchOrgOptions } from '@/lib/api/orgs';
 import { toast } from 'sonner';
 import { Card, CardSkeleton, ErrorBox, Input, Label } from '@/components/ui';
 import { MultiCombobox } from '@/components/MultiCombobox';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormSection } from '@/components/FormSection';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { physFullName } from '@/lib/initials';
 import { useSubmitAction } from '@/lib/use-submit-action';
+import { useApi } from '@/lib/hooks/use-api';
+import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 import { useSpecOptions } from '@/lib/dictionary-options';
 import { PhysContactFields, PhysNameFields, PhysSpecField } from '@/components/PhysFields';
-import { PHYS_DEFAULT_VALUES, type PhysFormValues, physToFormValues } from '@/lib/phys-form';
-import { syncOrgs, updatePhys, useLoadedPhys, usePhysOrgPicker } from '@/lib/phys-edit';
+import {
+  PHYS_DEFAULT_VALUES,
+  physFormToUpdateRequest,
+  physToFormValues,
+  type PhysFormValues,
+} from '@/lib/phys-form';
 
 export default function PhysEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -25,9 +32,27 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
   const numId = Number(id);
   const submitAction = useSubmitAction();
 
-  const phys = useLoadedPhys(numId);
+  const { data: phys, error } = useApi(['phys', numId], () =>
+    physesApi.getById(numId).then((r) => r.data),
+  );
+
+  useEffect(() => {
+    if (error) router.push('/physes');
+  }, [error, router]);
+
   const specOptions = useSpecOptions();
-  const orgPicker = usePhysOrgPicker(phys);
+  const orgPicker = useMultiPicker(
+    useMemo(
+      () =>
+        phys
+          ? phys.orgs.map((o) => ({
+              id: o.orgId,
+              option: { value: String(o.orgId), label: o.orgName },
+            }))
+          : [],
+      [phys],
+    ),
+  );
   const form = useForm<PhysFormValues>({ defaultValues: PHYS_DEFAULT_VALUES });
 
   useEffect(() => {
@@ -45,8 +70,12 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
 
   async function onSubmit(values: PhysFormValues) {
     await submitAction.submit(async () => {
-      await updatePhys(numId, values);
-      await syncOrgs(numId, orgPicker.diff());
+      await physesApi.update(numId, physFormToUpdateRequest(values));
+      const diff = orgPicker.diff();
+      await Promise.all([
+        ...diff.toAdd.map((oid) => physesApi.linkOrg(numId, oid)),
+        ...diff.toRemove.map((oid) => physesApi.unlinkOrg(numId, oid)),
+      ]);
       toast.success('Изменения сохранены', {
         description: `${values.lastName} ${values.firstName}`.trim(),
       });
@@ -56,7 +85,7 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <FormPageHeader
+      <PageHeader
         backHref={`/physes/${id}`}
         icon={Pencil}
         iconTone="warning"

@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileSpreadsheet } from 'lucide-react';
+import { FileDown, FileSpreadsheet } from 'lucide-react';
+import { BtnPrimary, BtnSuccess } from '@/components/ui';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { useUserFilter } from '@/lib/hooks/use-user-filter';
@@ -11,10 +12,10 @@ import { STATUS_CLOSED } from '@/lib/api/statuses';
 import { PageTransition } from '@/components/motion';
 import { ListSkeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
-import { defaultRange, matchPreset, rangeForPreset } from '@/lib/date-range';
+import { defaultRange, matchPreset, rangeForPreset } from '@/lib/date';
 import { exportCsv, exportXlsx } from '@/lib/export';
 import { useReportsData } from '@/lib/use-reports-data';
-import { ReportsHero } from '@/components/ReportsHero';
+import { Hero } from '@/components/Hero';
 import { StatPills, type ReportStats } from '@/components/StatPills';
 import { FiltersCard } from '@/components/FiltersCard';
 import { PreviewTable } from '@/components/PreviewTable';
@@ -118,14 +119,35 @@ export default function ReportsPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-4">
-      <ReportsHero
-        loading={loading}
-        totalCount={activs ? activs.length : null}
-        filteredCount={filtered.length}
-        dateFrom={dateFrom}
-        dateTo={dateTo}
-        onExportXlsx={handleExportXlsx}
-        onExportCsv={handleExportCsv}
+      <Hero
+        icon={FileDown}
+        kicker="Отчёты"
+        title="Экспорт визитов"
+        subtitle={
+          !loading &&
+          activs && (
+            <>
+              {filtered.length}
+              {filtered.length !== activs.length && ` из ${activs.length}`} визитов · {dateFrom} →{' '}
+              {dateTo}
+            </>
+          )
+        }
+        action={
+          <div className="flex shrink-0 items-center gap-2">
+            <BtnSuccess onClick={handleExportXlsx} disabled={loading || filtered.length === 0}>
+              <FileSpreadsheet size={15} />
+              Excel
+              <span className="bg-success-foreground/20 ml-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums">
+                {filtered.length}
+              </span>
+            </BtnSuccess>
+            <BtnPrimary onClick={handleExportCsv} disabled={loading || filtered.length === 0}>
+              <FileDown size={15} />
+              CSV
+            </BtnPrimary>
+          </div>
+        }
       />
 
       {!loading && filtered.length > 0 && (

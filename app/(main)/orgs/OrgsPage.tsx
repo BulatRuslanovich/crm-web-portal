@@ -4,12 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Building2, Hash, MapPin, Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
-import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import { useRoles } from '@/lib/hooks/use-roles';
 import { orgsApi } from '@/lib/api/orgs';
 import type { OrgResponse } from '@/lib/api/types';
 import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { ListPageHeader } from '@/components/ListPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { SearchBar } from '@/components/SearchBar';
 import { useDebouncedSearch } from '@/lib/use-debounced-search';
 import { orgInitials } from '@/lib/initials';
@@ -17,7 +17,7 @@ import { orgInitials } from '@/lib/initials';
 const PAGE_SIZE = 20;
 
 export default function OrgsPage() {
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useRoles();
   const [page, setPage] = useState(1);
   const { input, setInput, debounced: search } = useDebouncedSearch(() => setPage(1));
 
@@ -33,7 +33,7 @@ export default function OrgsPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <ListPageHeader
+      <PageHeader
         icon={Building2}
         title="Организации"
         totalCount={data?.totalCount}

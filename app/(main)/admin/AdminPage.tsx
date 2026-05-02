@@ -18,7 +18,7 @@ import { UsersSection } from './UsersSection';
 import { DepartmentsSection } from './DepartmentsSection';
 import { DrugsSection } from './DrugsSection';
 import { SpecsSection } from './SpecsSection';
-import { PageHero } from '@/components/PageHero';
+import { Hero } from '@/components/Hero';
 
 type Tab = 'users' | 'drugs' | 'specs' | 'departments';
 
@@ -89,7 +89,7 @@ export default function AdminPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <PageHero
+      <Hero
         icon={ShieldCheck}
         kicker="Панель администратора"
         title="Администрирование"

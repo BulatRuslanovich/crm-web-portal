@@ -6,12 +6,12 @@ import { BriefcaseMedical, Building2, Mail, Phone, Stethoscope } from 'lucide-re
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
-import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import { useRoles } from '@/lib/hooks/use-roles';
 import type { PhysResponse } from '@/lib/api/types';
 import { BackButton, Card, CardSkeleton, SectionLabel } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
 import { ChipListSection } from '@/components/ChipListSection';
-import { DetailHero } from '@/components/DetailHero';
+import { Hero } from '@/components/Hero';
 import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
 import { InfoBlock } from '@/components/InfoBlock';
 import { AdminDetailFooter } from '@/components/AdminDetailFooter';
@@ -31,7 +31,7 @@ export default function PhysDetailPage({ params }: { params: Promise<{ id: strin
 function PhysDetailContent({ id }: { id: string }) {
   const { confirm, dialog } = useConfirm();
   const router = useRouter();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useRoles();
   const numId = Number(id);
   const { data: phys } = useEntity(['phys', numId], () => physesApi.getById(numId), '/physes');
 
@@ -65,9 +65,9 @@ function PhysDetailContent({ id }: { id: string }) {
         <span className="text-muted-foreground ml-auto text-xs">#{phys.physId}</span>
       </div>
 
-      <DetailHero accentGradient={HERO_ACCENT}>
+      <Hero accentGradient={HERO_ACCENT}>
         <PhysHeroContent phys={phys} />
-      </DetailHero>
+      </Hero>
 
       <Card>
         <div className="space-y-6 p-5">
@@ -146,7 +146,7 @@ function GetnamePage() {
       <div className="flex items-center gap-2">
         <BackButton href="/physes" />
       </div>
-      <DetailHero accentGradient="from-primary/20 via-primary/5 to-transparent">
+      <Hero accentGradient="from-primary/20 via-primary/5 to-transparent">
         <div className="flex flex-wrap items-start gap-4">
           <div className="bg-card ring-primary/30 flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-2xl ring-1">
             👾
@@ -164,7 +164,7 @@ function GetnamePage() {
             </div>
           </div>
         </div>
-      </DetailHero>
+      </Hero>
       <Card>
         <div className="space-y-4 p-5">
           <p className="text-muted-foreground font-mono text-sm italic">

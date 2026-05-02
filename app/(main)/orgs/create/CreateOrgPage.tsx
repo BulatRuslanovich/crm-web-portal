@@ -6,7 +6,7 @@ import { Building2, FileText, MapPin, Plus } from 'lucide-react';
 import { orgsApi } from '@/lib/api/orgs';
 import { toast } from 'sonner';
 import { Card, ErrorBox } from '@/components/ui';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormSection } from '@/components/FormSection';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useOrgTypeOptions } from '@/lib/dictionary-options';
@@ -38,7 +38,7 @@ export default function CreateOrgPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <FormPageHeader icon={Plus} iconTone="success" title="Новая организация" />
+      <PageHeader icon={Plus} iconTone="success" title="Новая организация" />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>

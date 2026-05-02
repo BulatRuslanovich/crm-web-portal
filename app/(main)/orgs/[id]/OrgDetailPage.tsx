@@ -6,11 +6,11 @@ import { Building2, FileText, Hash, MapPin, Navigation } from 'lucide-react';
 import { orgsApi } from '@/lib/api/orgs';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
-import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import { useRoles } from '@/lib/hooks/use-roles';
 import type { OrgResponse } from '@/lib/api/types';
 import { BackButton, Card, CardSkeleton, SectionLabel } from '@/components/ui';
 import { PageTransition } from '@/components/motion';
-import { DetailHero } from '@/components/DetailHero';
+import { Hero } from '@/components/Hero';
 import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
 import { InfoBlock } from '@/components/InfoBlock';
 import { AdminDetailFooter } from '@/components/AdminDetailFooter';
@@ -22,7 +22,7 @@ const HERO_ACCENT = 'from-success/15 via-success/5 to-transparent';
 export default function OrgDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useRoles();
   const { confirm, dialog } = useConfirm();
 
   const numId = Number(id);
@@ -55,9 +55,9 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
         <span className="text-muted-foreground ml-auto text-xs">#{org.orgId}</span>
       </div>
 
-      <DetailHero accentGradient={HERO_ACCENT}>
+      <Hero accentGradient={HERO_ACCENT}>
         <OrgHeroContent org={org} />
-      </DetailHero>
+      </Hero>
 
       <Card>
         <div className="space-y-6 p-5">

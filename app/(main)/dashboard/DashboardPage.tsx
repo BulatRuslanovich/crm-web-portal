@@ -8,7 +8,6 @@ import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
 import { UserFilter } from '@/components/UserFilter';
 import { useDashboardActivs, useDashboardSummary } from '@/lib/use-dashboard-data';
-import { DashboardHero } from '@/components/DashboardHero';
 import { StatCard } from '@/components/StatCard';
 import { MyDay } from '@/components/MyDay';
 import { HeatmapSection } from '@/components/HeatmapSection';
@@ -29,7 +28,7 @@ export default function DashboardPage() {
 
   return (
     <PageTransition className="space-y-6">
-      <DashboardHero name={name} />
+      <DashboardGreeting name={name} />
 
       <StaggerList className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StaggerItem>
@@ -76,5 +75,29 @@ export default function DashboardPage() {
       <HeatmapSection activs={filteredActivs} loading={activsLoading} />
       <MyDay activs={filteredActivs} loading={activsLoading} />
     </PageTransition>
+  );
+}
+
+function getGreeting(hour: number): string {
+  if (hour < 6) return 'Доброй ночи';
+  if (hour < 12) return 'Доброе утро';
+  if (hour < 18) return 'Добрый день';
+  return 'Добрый вечер';
+}
+
+function DashboardGreeting({ name }: { name: string }) {
+  const greeting = getGreeting(new Date().getHours());
+  return (
+    <div className="border-border from-primary/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br px-6 py-8 shadow-sm">
+      <div className="relative z-10">
+        <h2 className="text-foreground text-2xl font-bold">
+          {greeting}
+          {name ? `, ${name}` : ''}
+        </h2>
+        <p className="text-muted-foreground mt-1.5 text-sm">
+          Вот что происходит в вашей CRM сегодня
+        </p>
+      </div>
+    </div>
   );
 }

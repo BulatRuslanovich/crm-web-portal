@@ -12,35 +12,24 @@ import { Input as ShadInput } from '@/components/ui/input';
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+type BadgeVariant = NonNullable<React.ComponentProps<typeof Badge>['variant']>;
+
+const STATUS_STYLE: Record<string, { variant: BadgeVariant; dot: string }> = {
+  запланирован: { variant: 'default', dot: 'bg-primary-foreground' },
+  открыт: { variant: 'warning', dot: 'bg-warning-foreground' },
+  сохранен: { variant: 'secondary', dot: 'bg-muted-foreground' },
+  закрыт: { variant: 'success', dot: 'bg-success-foreground' },
+  отменен: { variant: 'destructive', dot: 'bg-white' },
+};
+
 export function StatusBadge({ name }: { name: string }) {
-  const n = name.toLowerCase();
-  const variant: React.ComponentProps<typeof Badge>['variant'] =
-    n === 'запланирован'
-      ? 'default'
-      : n === 'открыт'
-        ? 'warning'
-        : n === 'сохранен'
-          ? 'secondary'
-          : n === 'закрыт'
-            ? 'success'
-            : n === 'отменен'
-              ? 'destructive'
-              : 'outline';
-  const dotColor =
-    n === 'запланирован'
-      ? 'bg-primary-foreground'
-      : n === 'открыт'
-        ? 'bg-warning-foreground'
-        : n === 'сохранен'
-          ? 'bg-muted-foreground'
-          : n === 'закрыт'
-            ? 'bg-success-foreground'
-            : n === 'отменен'
-              ? 'bg-white'
-              : 'bg-muted-foreground';
+  const style = STATUS_STYLE[name.toLowerCase()] ?? {
+    variant: 'outline' as BadgeVariant,
+    dot: 'bg-muted-foreground',
+  };
   return (
-    <Badge variant={variant} className="rounded-full">
-      <span className={cn('mr-1 size-1.5 rounded-full', dotColor)} />
+    <Badge variant={style.variant} className="rounded-full">
+      <span className={cn('mr-1 size-1.5 rounded-full', style.dot)} />
       {name}
     </Badge>
   );

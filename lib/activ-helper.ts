@@ -1,4 +1,7 @@
 import { activsApi } from '@/lib/api/activs';
+import { MONTHS_ABBR } from '@/lib/ru-dates';
+import { startOfDay } from '@/lib/date';
+import { ActivResponse } from '@/lib/api/types';
 
 export async function syncDrugs(numId: number, diff: { toAdd: number[]; toRemove: number[] }) {
   await Promise.all([
@@ -7,9 +10,23 @@ export async function syncDrugs(numId: number, diff: { toAdd: number[]; toRemove
   ]);
 }
 
-import { MONTHS_ABBR } from '@/lib/ru-dates';
-import { startOfDay } from '@/lib/date';
-import { ActivResponse } from '@/lib/api/types';
+export type TargetKind = 'phys' | 'org' | 'none';
+
+export function targetKind(a: ActivResponse): TargetKind {
+  if (a.physId != null) return 'phys';
+  if (a.orgId != null) return 'org';
+  return 'none';
+}
+
+export function targetLabel(a: ActivResponse): string {
+  return a.physName ?? a.orgName ?? '';
+}
+
+export function targetKindLabel(kind: TargetKind): string {
+  if (kind === 'phys') return 'Врач';
+  if (kind === 'org') return 'Организация';
+  return '';
+}
 
 const MS_PER_DAY = 86_400_000;
 const MS_PER_MIN = 60_000;

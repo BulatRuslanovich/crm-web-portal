@@ -6,7 +6,7 @@ import { BriefcaseMedical, Phone, Plus, User } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { toast } from 'sonner';
 import { Card, ErrorBox } from '@/components/ui';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormSection } from '@/components/FormSection';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useSpecOptions } from '@/lib/dictionary-options';
@@ -38,7 +38,7 @@ export default function CreatePhysPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <FormPageHeader icon={Plus} iconTone="warning" title="Новый врач" />
+      <PageHeader icon={Plus} iconTone="warning" title="Новый врач" />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>

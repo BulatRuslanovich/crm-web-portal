@@ -13,7 +13,7 @@ import type { ActivResponse } from '@/lib/api/types';
 import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
 import { PageTransition } from '@/components/motion';
-import { ListPageHeader } from '@/components/ListPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { SearchBar } from '@/components/SearchBar';
 import { useDebouncedSearch } from '@/lib/use-debounced-search';
 import { ActivRow } from '@/components/ActivRow';
@@ -48,17 +48,15 @@ export default function ActivsPage() {
     ['activs', page, search, statusFilter, usrIdParam],
     () =>
       activsApi
-        .getAll(
+        .getAll({
           page,
-          PAGE_SIZE,
+          pageSize: PAGE_SIZE,
           search,
-          SORT_FIELD,
-          true,
-          statusFilter,
-          undefined,
-          undefined,
-          usrIdParam,
-        )
+          sortBy: SORT_FIELD,
+          sortDesc: true,
+          statuses: statusFilter,
+          usrId: usrIdParam,
+        })
         .then((res) => res.data),
     { keepPreviousData: true },
   );
@@ -71,7 +69,7 @@ export default function ActivsPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <ListPageHeader
+      <PageHeader
         icon={CalendarCheck}
         title="Визиты"
         totalCount={data?.totalCount}

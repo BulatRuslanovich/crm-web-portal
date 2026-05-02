@@ -5,12 +5,10 @@ import { physesApi } from '@/lib/api/physes';
 import { startOfDay } from '@/lib/date';
 import { HEATMAP_DAYS } from './heatmap';
 
-const ACTIVS_PAGE_SIZE = 1000;
-
 export function useDashboardSummary(usrId: number | undefined) {
   return useApi(['dashboard-summary', usrId], () =>
     Promise.all([
-      activsApi.getAll(1, 1, undefined, 'start', true, undefined, undefined, undefined, usrId),
+      activsApi.getAll({ pageSize: 1, sortBy: 'start', sortDesc: true, usrId }),
       orgsApi.getAll(1, 1),
       physesApi.getAll(1, 1),
     ]).then(([activsRes, orgsRes, physesRes]) => ({
@@ -24,21 +22,18 @@ export function useDashboardSummary(usrId: number | undefined) {
 export function useDashboardActivs(usrId: number | undefined) {
   return useApi(['dashboard-my-activs', usrId], () => {
     const to = new Date();
+    to.setHours(23, 59, 59, 999);
     const fromDay = startOfDay(new Date());
     fromDay.setDate(fromDay.getDate() - (HEATMAP_DAYS - 1));
-    to.setHours(23, 59, 59, 999);
     return activsApi
-      .getAll(
-        1,
-        ACTIVS_PAGE_SIZE,
-        undefined,
-        'start',
-        true,
-        undefined,
-        fromDay.toISOString(),
-        to.toISOString(),
+      .getAll({
+        pageSize: 1000,
+        sortBy: 'start',
+        sortDesc: true,
+        dateFrom: fromDay.toISOString(),
+        dateTo: to.toISOString(),
         usrId,
-      )
+      })
       .then((r) => r.data.items);
   });
 }

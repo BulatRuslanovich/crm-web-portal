@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, ChevronLeft, ChevronRight, History, RotateCw, Search, X } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useApi } from '@/lib/hooks/use-api';
-import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import { useRoles } from '@/lib/hooks/use-roles';
 import { usePickerUsers } from '@/lib/hooks/use-picker-users';
 import { auditLogsApi, type AuditLogQuery } from '@/lib/api/audit-logs';
 import { PageTransition } from '@/components/motion';
@@ -14,7 +14,7 @@ import { Combobox } from '@/components/Combobox';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import type { AuditAction, AuditEntityType, AuditLogResponse } from '@/lib/api/types';
 import { ActionBadge, EntityLink, ValueCell } from '@/components/AuditLogItems';
-import { PageHero } from '@/components/PageHero';
+import { Hero } from '@/components/Hero';
 
 const PAGE_SIZE_OPTIONS = [50, 100, 200];
 
@@ -39,7 +39,7 @@ const EMPTY_FILTERS: FiltersState = {
 export default function AuditLogPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useRoles();
 
   useEffect(() => {
     if (!isLoading && user && !isAdmin) {
@@ -91,7 +91,7 @@ export default function AuditLogPage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <PageHero
+      <Hero
         icon={History}
         kicker="Безопасность"
         title="Аудит-лог"

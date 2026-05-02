@@ -4,7 +4,7 @@ import type { ActivResponse } from '@/lib/api/types';
 import { STATUS_HEX } from '@/lib/api/statuses';
 import { StatusBadge } from '@/components/ui';
 import { formatShort } from '@/lib/format';
-import { targetKind, targetLabel } from '@/lib/target';
+import { targetKind, targetLabel } from '@/lib/activ-helper';
 
 const DEFAULT_COLOR = '#94a3b8';
 const PREVIEW_LIMIT = 50;

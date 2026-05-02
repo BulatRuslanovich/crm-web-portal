@@ -2,8 +2,6 @@ import { startOfDay, subDays } from 'date-fns';
 import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 
-const PAGE_SIZE = 1000;
-
 export function useAnalyticsData({
   enabled,
   periodDays,
@@ -15,22 +13,17 @@ export function useAnalyticsData({
 }) {
   const { data, loading } = useApi(
     enabled ? ['analytics-activs', periodDays, usrId] : null,
-    async () => {
-      const to = new Date().toISOString();
-      const from = subDays(startOfDay(new Date()), periodDays - 1).toISOString();
-      const r = await activsApi.getAll(
-        1,
-        PAGE_SIZE,
-        undefined,
-        'start',
-        true,
-        undefined,
-        from,
-        to,
-        usrId,
-      );
-      return r.data.items;
-    },
+    () =>
+      activsApi
+        .getAll({
+          pageSize: 1000,
+          sortBy: 'start',
+          sortDesc: true,
+          dateFrom: subDays(startOfDay(new Date()), periodDays - 1).toISOString(),
+          dateTo: new Date().toISOString(),
+          usrId,
+        })
+        .then((r) => r.data.items),
     { keepPreviousData: true },
   );
 

@@ -8,7 +8,7 @@ import { activsApi } from '@/lib/api/activs';
 import { toast } from 'sonner';
 import { Card, ErrorBox } from '@/components/ui';
 import type { ComboboxOption } from '@/components/Combobox';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useSubmitAction } from '@/lib/use-submit-action';
 import { type TargetKind } from '@/components/TargetSwitcher';
@@ -16,7 +16,7 @@ import { TargetField } from '@/components/TargetField';
 import { DrugsField } from '@/components/DrugsField';
 import { DescriptionField } from '@/components/DescriptionField';
 import { DateTimeField } from '@/components/DateTimeField';
-import { useDrugPicker } from '@/lib/use-drug-picker';
+import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 import { syncDrugs } from '@/lib/activ-helper';
 import {
   CREATE_ACTIV_DEFAULT_VALUES,
@@ -31,7 +31,7 @@ export default function CreateActivPage() {
   const [selectedOrg, setSelectedOrg] = useState<ComboboxOption | undefined>();
   const [selectedPhys, setSelectedPhys] = useState<ComboboxOption | undefined>();
   const submitAction = useSubmitAction({ fallbackError: 'Ошибка создания визита' });
-  const drugPicker = useDrugPicker(undefined);
+  const drugPicker = useMultiPicker([]);
 
   const form = useForm<CreateActivFormValues>({ defaultValues: CREATE_ACTIV_DEFAULT_VALUES });
 
@@ -66,7 +66,7 @@ export default function CreateActivPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <FormPageHeader icon={CalendarCheck} iconTone="primary" title="Новый визит" />
+      <PageHeader icon={CalendarCheck} iconTone="primary" title="Новый визит" />
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>

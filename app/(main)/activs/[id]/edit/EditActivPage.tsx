@@ -11,14 +11,15 @@ import { useRoles } from '@/lib/hooks/use-roles';
 import { toast } from 'sonner';
 import type { ActivResponse } from '@/lib/api/types';
 import { Card, CardSkeleton, ErrorBox, SectionLabel, StatusBadge } from '@/components/ui';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useSubmitAction } from '@/lib/use-submit-action';
 import { DescriptionField } from '@/components/DescriptionField';
 import { DrugsField } from '@/components/DrugsField';
 import { DateTimeField } from '@/components/DateTimeField';
 import { StatusField } from '@/components/StatusField';
-import { useDrugPicker } from '@/lib/use-drug-picker';
+import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
+import { useMemo } from 'react';
 import { syncDrugs } from '@/lib/activ-helper';
 import {
   EDIT_ACTIV_DEFAULT_VALUES,
@@ -35,7 +36,18 @@ export default function EditActivPage({ params }: { params: Promise<{ id: string
 
   const submitAction = useSubmitAction({ fallbackError: 'Ошибка обновления' });
   const activ = useLoadedActiv(numId);
-  const drugPicker = useDrugPicker(activ);
+  const drugPicker = useMultiPicker(
+    useMemo(
+      () =>
+        activ
+          ? activ.drugs.map((d) => ({
+              id: d.drugId,
+              option: { value: String(d.drugId), label: d.drugName, sublabel: d.brand },
+            }))
+          : [],
+      [activ],
+    ),
+  );
   const form = useForm<EditActivFormValues>({ defaultValues: EDIT_ACTIV_DEFAULT_VALUES });
 
   useEffect(() => {
@@ -129,14 +141,14 @@ function EditHeader({ activ, backHref }: { activ: ActivResponse; backHref: strin
   const targetName = (isPhys ? activ.physName : activ.orgName) ?? '—';
 
   return (
-    <FormPageHeader
+    <PageHeader
       backHref={backHref}
       icon={Pencil}
       iconTone="primary"
       kicker="Редактирование визита"
       title={targetName}
       subtitleIcon={TargetIcon}
-      trailing={<StatusBadge name={activ.statusName} />}
+      action={<StatusBadge name={activ.statusName} />}
     />
   );
 }

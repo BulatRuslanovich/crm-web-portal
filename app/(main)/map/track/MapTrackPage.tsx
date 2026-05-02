@@ -12,7 +12,7 @@ import { PageTransition } from '@/components/motion';
 import { AlertBanner, Skeleton } from '@/components/ui';
 import { DateTimePicker } from '@/components/DateTimePicker';
 import { UserFilter } from '@/components/UserFilter';
-import { PageHero } from '@/components/PageHero';
+import { Hero } from '@/components/Hero';
 import type { ActivResponse } from '@/lib/api/types';
 
 const MapTrackClient = dynamic(() => import('./MapTrackClient'), {
@@ -61,7 +61,13 @@ export default function MapTrackPage() {
 
   const { data, loading } = useApi(['map-track', effectiveUsrId, fromIso, toIso], () =>
     activsApi
-      .getAll(1, PAGE_SIZE, undefined, 'end', false, undefined, fromIso, toIso, effectiveUsrId)
+      .getAll({
+        pageSize: PAGE_SIZE,
+        sortBy: 'end',
+        dateFrom: fromIso,
+        dateTo: toIso,
+        usrId: effectiveUsrId,
+      })
       .then((r) => r.data),
   );
 
@@ -71,7 +77,7 @@ export default function MapTrackPage() {
 
   return (
     <PageTransition className="flex h-[calc(100vh-6rem)] flex-col gap-4">
-      <PageHero
+      <Hero
         icon={Route}
         kicker="Маршрут"
         title="Трекинг визитов"

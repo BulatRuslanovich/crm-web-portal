@@ -1,8 +1,6 @@
 import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
-import { toIso } from './date-range';
-
-const PAGE_SIZE = 10000;
+import { toIso } from './date';
 
 export function useReportsData({
   enabled,
@@ -21,17 +19,14 @@ export function useReportsData({
     enabled ? ['reports-activs', dateFrom, dateTo, statusFilter, usrId] : null,
     () =>
       activsApi
-        .getAll(
-          1,
-          PAGE_SIZE,
-          undefined,
-          'start',
-          false,
-          statusFilter.length > 0 ? statusFilter : undefined,
-          toIso(dateFrom, false),
-          toIso(dateTo, true),
+        .getAll({
+          pageSize: 10000,
+          sortBy: 'start',
+          statuses: statusFilter.length > 0 ? statusFilter : undefined,
+          dateFrom: toIso(dateFrom, false),
+          dateTo: toIso(dateTo, true),
           usrId,
-        )
+        })
         .then((r) => r.data.items),
     { keepPreviousData: true },
   );

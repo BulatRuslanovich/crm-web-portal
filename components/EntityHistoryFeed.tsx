@@ -2,7 +2,7 @@
 
 import { History } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
-import { useIsAdmin } from '@/lib/hooks/use-is-admin';
+import { useRoles } from '@/lib/hooks/use-roles';
 import { auditLogsApi } from '@/lib/api/audit-logs';
 import { Skeleton, SectionLabel } from '@/components/ui';
 import type { AuditEntityType, AuditLogResponse } from '@/lib/api/types';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function EntityHistoryFeed({ entityType, entityId }: Props) {
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useRoles();
 
   const { data, loading, error } = useApi(
     isAdmin ? ['entity-history', entityType, entityId] : null,

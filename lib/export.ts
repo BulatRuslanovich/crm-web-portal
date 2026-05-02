@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import type { ActivResponse } from '@/lib/api/types';
 import { formatFull } from '@/lib/format';
-import { targetKind, targetKindLabel, targetLabel } from './target';
+import { targetKind, targetKindLabel, targetLabel } from './activ-helper';
 
 const HEADER = [
   'ID',

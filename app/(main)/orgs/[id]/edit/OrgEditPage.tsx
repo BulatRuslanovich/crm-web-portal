@@ -8,7 +8,7 @@ import { useEntity } from '@/lib/hooks/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
 import { toast } from 'sonner';
 import { Card, CardSkeleton, ErrorBox } from '@/components/ui';
-import { FormPageHeader } from '@/components/FormPageHeader';
+import { PageHeader } from '@/components/PageHeader';
 import { FormSection } from '@/components/FormSection';
 import { FormCardFooter } from '@/components/FormCardFooter';
 import { useOrgTypeOptions } from '@/lib/dictionary-options';
@@ -57,7 +57,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <FormPageHeader
+      <PageHeader
         backHref={`/orgs/${id}`}
         icon={Pencil}
         iconTone="success"
