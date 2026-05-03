@@ -25,7 +25,7 @@ export function ActivRow({ activ, first }: Props) {
       }`}
     >
       <span
-        className={`absolute top-2 bottom-2 left-0 w-0.5 rounded-r-full ${statusStripeClass(activ.statusName)} opacity-70 transition-opacity group-hover:opacity-100`}
+        className={`absolute top-2 bottom-2 left-0 w-1 rounded-r-full ${statusStripeClass(activ.statusName)} opacity-90 transition-all duration-200 group-hover:top-0 group-hover:bottom-0 group-hover:opacity-100`}
       />
       <DateBlock {...dateParts} />
       <ActivMeta activ={activ} target={target} time={dateParts.time} />

@@ -4,7 +4,6 @@ import { useEffect, useMemo, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister } from 'react-hook-form';
-import { BriefcaseMedical, Building2, Pencil, Phone, Stethoscope, User } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { searchOrgOptions } from '@/lib/api/orgs';
 import { toast } from 'sonner';
@@ -87,23 +86,20 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
     <div className="mx-auto w-full space-y-4">
       <PageHeader
         backHref={`/physes/${id}`}
-        icon={Pencil}
-        iconTone="warning"
         kicker="Редактирование врача"
         title={physFullName(phys.lastName, phys.firstName, phys.middleName)}
-        subtitleIcon={Stethoscope}
       />
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <FormSection icon={User} title="ФИО">
+            <FormSection title="ФИО">
               <PhysNameFields register={form.register} requireMiddleName />
             </FormSection>
 
             <hr className="border-border" />
 
-            <FormSection icon={BriefcaseMedical} title="Специальность">
+            <FormSection title="Специальность">
               <PhysSpecField
                 control={form.control}
                 options={specOptions}
@@ -114,13 +110,13 @@ export default function PhysEditPage({ params }: { params: Promise<{ id: string 
 
             <hr className="border-border" />
 
-            <FormSection icon={Phone} title="Контакты">
+            <FormSection title="Контакты">
               <PhysContactFields register={form.register} />
             </FormSection>
 
             <hr className="border-border" />
 
-            <FormSection icon={Building2} title="Организации">
+            <FormSection title="Организации">
               <MultiCombobox
                 asyncSearch={searchOrgOptions}
                 selectedOptions={orgPicker.selectedOptions}

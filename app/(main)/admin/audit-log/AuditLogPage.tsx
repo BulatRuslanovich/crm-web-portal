@@ -92,7 +92,6 @@ export default function AuditLogPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-5">
       <Hero
-        icon={History}
         kicker="Безопасность"
         title="Аудит-лог"
         subtitle="Кто, когда и какое поле изменил"

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { CalendarCheck, Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -137,17 +137,17 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
 function EmptyActivs({ hasFilter }: { hasFilter: boolean }) {
   return (
     <EmptyState
+      icon={CalendarCheck}
       message={hasFilter ? 'Ничего не найдено' : 'Визитов пока нет'}
+      hint={hasFilter ? 'Сбросьте фильтры или измените поиск' : undefined}
       action={
         hasFilter ? undefined : (
-          <div className="flex flex-col items-center gap-3">
-            <Link
-              href="/activs/create"
-              className="text-foreground text-sm font-medium hover:underline"
-            >
-              Создать первый визит
-            </Link>
-          </div>
+          <Link
+            href="/activs/create"
+            className="text-foreground text-sm font-medium hover:underline"
+          >
+            Создать первый визит
+          </Link>
         )
       }
     />

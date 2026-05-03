@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { MapPinOff, Users, AlertTriangle } from 'lucide-react';
+import { MapPinOff, Users } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -97,7 +97,6 @@ export default function MapTrackPage() {
         }
       />
 
-      {/* Filters */}
       <div className="flex flex-wrap items-stretch gap-3">
         {canPickUser ? (
           <UserFilter users={users} value={usrId} onChange={setUsrId} currentUsrId={user?.usrId} />
@@ -120,12 +119,11 @@ export default function MapTrackPage() {
       </div>
 
       {overflow && (
-        <AlertBanner icon={AlertTriangle}>
+        <AlertBanner>
           Период слишком широкий — показаны первые {PAGE_SIZE} визитов. Сузьте диапазон дат.
         </AlertBanner>
       )}
 
-      {/* Map */}
       <div className="border-border relative min-h-[400px] flex-1 overflow-hidden rounded-2xl border shadow-sm">
         {loading ? (
           <Skeleton className="h-full w-full rounded-2xl" />

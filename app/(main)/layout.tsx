@@ -69,7 +69,25 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="bg-background min-h-screen">
       <Sidebar collapsed={collapsed} onToggle={toggle} />
       <ChaosOverlay />
-      <Toaster position="top-right" theme={resolvedTheme === 'dark' ? 'dark' : 'light'} />
+      <Toaster
+        position="top-right"
+        theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+        closeButton
+        toastOptions={{
+          classNames: {
+            toast:
+              '!border !border-border !bg-card !text-card-foreground !rounded-xl !shadow-lg !font-sans',
+            title: '!text-sm !font-semibold !text-foreground',
+            description: '!text-xs !text-muted-foreground',
+            success: '!border-success/40',
+            error: '!border-destructive/40',
+            warning: '!border-warning/40',
+            info: '!border-primary/40',
+            closeButton:
+              '!bg-card !border-border !text-muted-foreground hover:!text-foreground hover:!bg-muted',
+          },
+        }}
+      />
       <main
         className={`px-4 py-6 pt-16 transition-all duration-300 sm:px-6 md:pt-6 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}
       >

@@ -120,7 +120,6 @@ export default function ReportsPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-4">
       <Hero
-        icon={FileDown}
         kicker="Отчёты"
         title="Экспорт визитов"
         subtitle={

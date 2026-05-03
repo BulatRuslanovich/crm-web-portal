@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { BriefcaseMedical, Phone, Plus, User } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { toast } from 'sonner';
 import { Card, ErrorBox } from '@/components/ui';
@@ -38,24 +37,24 @@ export default function CreatePhysPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <PageHeader icon={Plus} iconTone="warning" title="Новый врач" />
+      <PageHeader title="Новый врач" />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <FormSection icon={User} title="ФИО">
+            <FormSection title="ФИО">
               <PhysNameFields register={register} withPlaceholders />
             </FormSection>
 
             <hr className="border-border" />
 
-            <FormSection icon={BriefcaseMedical} title="Специальность">
+            <FormSection title="Специальность">
               <PhysSpecField control={control} options={specOptions} required />
             </FormSection>
 
             <hr className="border-border" />
 
-            <FormSection icon={Phone} title="Контакты">
+            <FormSection title="Контакты">
               <PhysContactFields register={register} withPlaceholders required />
             </FormSection>
 

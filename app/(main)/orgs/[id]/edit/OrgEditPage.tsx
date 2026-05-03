@@ -3,7 +3,6 @@
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Building2, FileText, MapPin, Pencil } from 'lucide-react';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { orgsApi } from '@/lib/api/orgs';
 import { toast } from 'sonner';
@@ -59,8 +58,6 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
     <div className="mx-auto w-full space-y-4">
       <PageHeader
         backHref={`/orgs/${id}`}
-        icon={Pencil}
-        iconTone="success"
         kicker="Редактирование организации"
         title={org.orgName}
       />
@@ -68,7 +65,7 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <div className="space-y-6 p-5">
-            <FormSection icon={Building2} title="Основная информация">
+            <FormSection title="Основная информация">
               <OrgMainFields
                 register={form.register}
                 control={form.control}
@@ -78,13 +75,13 @@ export default function OrgEditPage({ params }: { params: Promise<{ id: string }
 
             <hr className="border-border" />
 
-            <FormSection icon={FileText} title="Реквизиты">
+            <FormSection title="Реквизиты">
               <OrgInnField register={form.register} />
             </FormSection>
 
             <hr className="border-border" />
 
-            <FormSection icon={MapPin} title="Местоположение">
+            <FormSection title="Местоположение">
               <OrgLocationFields register={form.register} />
             </FormSection>
 

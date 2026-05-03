@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Hash, MapPin, Plus } from 'lucide-react';
+import { Building2, Hash, MapPin, Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { orgsApi } from '@/lib/api/orgs';
@@ -115,7 +115,9 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
 function EmptyOrgs({ hasFilter, canCreate }: { hasFilter: boolean; canCreate: boolean }) {
   return (
     <EmptyState
+      icon={Building2}
       message={hasFilter ? 'Ничего не найдено' : 'Организаций пока нет'}
+      hint={hasFilter ? 'Попробуйте изменить поиск' : undefined}
       action={
         !hasFilter && canCreate ? (
           <Link href="/orgs/create" className="text-foreground text-sm font-medium hover:underline">

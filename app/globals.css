@@ -6,105 +6,105 @@
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0); /* #FFFFFF */
-  --foreground: oklch(0.18 0.005 200); /* почти чёрный с холодным отливом */
+  --background: oklch(0.995 0.003 210); /* clinical white — едва уловимая прохлада */
+  --foreground: oklch(0.18 0.005 210); /* почти чёрный с холодным отливом */
 
-  --card: oklch(0.985 0.003 200); /* почти белый, чуть прохладный */
-  --card-foreground: oklch(0.18 0.005 200);
+  --card: oklch(0.985 0.004 210); /* почти белый, чуть прохладный */
+  --card-foreground: oklch(0.18 0.005 210);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.005 200);
+  --popover: oklch(0.995 0.003 210);
+  --popover-foreground: oklch(0.18 0.005 210);
 
-  --primary: oklch(0.6 0.16 165); /* фирменный emerald — холодный зелёный */
+  --primary: oklch(0.58 0.12 188); /* medical teal — спокойная бирюза, классика pharma UI */
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.955 0.008 200);
-  --secondary-foreground: oklch(0.25 0.005 200);
+  --secondary: oklch(0.96 0.008 210);
+  --secondary-foreground: oklch(0.25 0.005 210);
 
-  --muted: oklch(0.955 0.008 200);
-  --muted-foreground: oklch(0.52 0.008 200); /* холодный серый */
+  --muted: oklch(0.96 0.008 210);
+  --muted-foreground: oklch(0.52 0.01 210); /* прохладный клинический серый */
 
-  --accent: oklch(0.95 0.035 165); /* лёгкая мята */
-  --accent-foreground: oklch(0.45 0.15 165); /* глубокий emerald */
+  --accent: oklch(0.95 0.03 188); /* лёгкая мята-бирюза */
+  --accent-foreground: oklch(0.42 0.13 188); /* глубокий teal */
 
-  --destructive: oklch(0.58 0.22 27);
+  --destructive: oklch(0.62 0.18 22); /* приглушённый коралл вместо алого */
   --destructive-foreground: oklch(1 0 0);
 
-  --success: oklch(0.68 0.17 140); /* свежий лайм — отличается от primary */
-  --success-foreground: oklch(0.18 0.005 200);
+  --success: oklch(0.66 0.16 145); /* травяной зелёный — отличим от teal */
+  --success-foreground: oklch(0.18 0.005 210);
 
-  --warning: oklch(0.76 0.16 67); /* янтарный */
-  --warning-foreground: oklch(0.18 0.005 200);
+  --warning: oklch(0.74 0.13 75); /* мягкий янтарь — менее «пожарный» */
+  --warning-foreground: oklch(0.18 0.005 210);
 
-  --border: oklch(0.91 0.008 200);
-  --input: oklch(0.91 0.008 200);
-  --ring: oklch(0.6 0.16 165); /* emerald фокус-ринг */
+  --border: oklch(0.91 0.01 210);
+  --input: oklch(0.91 0.01 210);
+  --ring: oklch(0.58 0.12 188);
 
-  --chart-1: oklch(0.6 0.16 165); /* emerald */
-  --chart-2: oklch(0.68 0.17 140); /* lime */
-  --chart-3: oklch(0.58 0.22 27); /* red */
-  --chart-4: oklch(0.76 0.16 67); /* amber */
-  --chart-5: oklch(0.56 0.15 250); /* blue */
+  --chart-1: oklch(0.58 0.12 188); /* medical teal */
+  --chart-2: oklch(0.66 0.16 145); /* lime/grass */
+  --chart-3: oklch(0.62 0.18 22); /* coral */
+  --chart-4: oklch(0.74 0.13 75); /* amber */
+  --chart-5: oklch(0.6 0.14 250); /* clinical blue */
 
-  --sidebar: oklch(0.985 0.003 200);
-  --sidebar-foreground: oklch(0.18 0.005 200);
-  --sidebar-primary: oklch(0.6 0.16 165);
+  --sidebar: oklch(0.985 0.004 210);
+  --sidebar-foreground: oklch(0.18 0.005 210);
+  --sidebar-primary: oklch(0.58 0.12 188);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0.035 165);
-  --sidebar-accent-foreground: oklch(0.45 0.15 165);
-  --sidebar-border: oklch(0.91 0.008 200);
-  --sidebar-ring: oklch(0.6 0.16 165);
+  --sidebar-accent: oklch(0.95 0.03 188);
+  --sidebar-accent-foreground: oklch(0.42 0.13 188);
+  --sidebar-border: oklch(0.91 0.01 210);
+  --sidebar-ring: oklch(0.58 0.12 188);
 }
 
 .dark {
-  --background: oklch(0.15 0.006 200); /* холодный почти-чёрный */
-  --foreground: oklch(0.96 0.005 200); /* холодный off-white */
+  --background: oklch(0.15 0.008 210); /* глубокий клинический сине-чёрный */
+  --foreground: oklch(0.96 0.005 210);
 
-  --card: oklch(0.2 0.008 200);
-  --card-foreground: oklch(0.96 0.005 200);
+  --card: oklch(0.2 0.01 210);
+  --card-foreground: oklch(0.96 0.005 210);
 
-  --popover: oklch(0.2 0.008 200);
-  --popover-foreground: oklch(0.96 0.005 200);
+  --popover: oklch(0.2 0.01 210);
+  --popover-foreground: oklch(0.96 0.005 210);
 
-  --primary: oklch(0.72 0.16 165); /* emerald, ярче для тёмного */
-  --primary-foreground: oklch(0.15 0.006 200);
+  --primary: oklch(0.72 0.13 188); /* medical teal, ярче для тёмного */
+  --primary-foreground: oklch(0.15 0.006 210);
 
-  --secondary: oklch(0.25 0.008 200);
-  --secondary-foreground: oklch(0.96 0.005 200);
+  --secondary: oklch(0.25 0.008 210);
+  --secondary-foreground: oklch(0.96 0.005 210);
 
-  --muted: oklch(0.25 0.008 200);
-  --muted-foreground: oklch(0.68 0.008 200);
+  --muted: oklch(0.25 0.008 210);
+  --muted-foreground: oklch(0.68 0.008 210);
 
-  --accent: oklch(0.3 0.07 165); /* глубокий emerald */
-  --accent-foreground: oklch(0.83 0.13 165); /* мятный */
+  --accent: oklch(0.3 0.06 188); /* глубокий teal */
+  --accent-foreground: oklch(0.83 0.11 188); /* светлая бирюза */
 
-  --destructive: oklch(0.64 0.22 27);
-  --destructive-foreground: oklch(0.96 0.005 200);
+  --destructive: oklch(0.68 0.18 22); /* мягкий коралл */
+  --destructive-foreground: oklch(0.96 0.005 210);
 
-  --success: oklch(0.74 0.18 140); /* лайм поярче */
-  --success-foreground: oklch(0.15 0.006 200);
+  --success: oklch(0.72 0.17 145); /* травяной поярче */
+  --success-foreground: oklch(0.15 0.006 210);
 
-  --warning: oklch(0.78 0.16 67);
-  --warning-foreground: oklch(0.15 0.006 200);
+  --warning: oklch(0.76 0.13 75); /* мягкий янтарь */
+  --warning-foreground: oklch(0.15 0.006 210);
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.16 165);
+  --ring: oklch(0.72 0.13 188);
 
-  --chart-1: oklch(0.72 0.16 165); /* emerald */
-  --chart-2: oklch(0.74 0.18 140); /* lime */
-  --chart-3: oklch(0.64 0.22 27); /* red */
-  --chart-4: oklch(0.78 0.16 67); /* amber */
-  --chart-5: oklch(0.66 0.16 250); /* blue */
+  --chart-1: oklch(0.72 0.13 188); /* medical teal */
+  --chart-2: oklch(0.72 0.17 145); /* lime */
+  --chart-3: oklch(0.68 0.18 22); /* coral */
+  --chart-4: oklch(0.76 0.13 75); /* amber */
+  --chart-5: oklch(0.7 0.14 250); /* clinical blue */
 
-  --sidebar: oklch(0.2 0.008 200);
-  --sidebar-foreground: oklch(0.96 0.005 200);
-  --sidebar-primary: oklch(0.72 0.16 165);
-  --sidebar-primary-foreground: oklch(0.15 0.006 200);
-  --sidebar-accent: oklch(0.3 0.07 165);
-  --sidebar-accent-foreground: oklch(0.83 0.13 165);
+  --sidebar: oklch(0.2 0.008 210);
+  --sidebar-foreground: oklch(0.96 0.005 210);
+  --sidebar-primary: oklch(0.72 0.13 188);
+  --sidebar-primary-foreground: oklch(0.15 0.006 210);
+  --sidebar-accent: oklch(0.3 0.06 188);
+  --sidebar-accent-foreground: oklch(0.83 0.11 188);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.72 0.16 165);
+  --sidebar-ring: oklch(0.72 0.13 188);
 }
 
 @theme inline {
@@ -198,18 +198,33 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:active {
   background: var(--muted-foreground);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent) transparent;
 }
 
 ::selection {
@@ -245,6 +260,14 @@ body {
   }
   50% {
     opacity: 0.4;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 @keyframes slide-down {
@@ -299,6 +322,17 @@ body {
 }
 .animate-skeleton {
   animation: skeleton-pulse 1.8s ease-in-out infinite;
+}
+.animate-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    color-mix(in oklab, var(--muted-foreground) 12%, var(--muted)) 50%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: shimmer 1.6s ease-in-out infinite;
 }
 .animate-float {
   animation: float 3s ease-in-out infinite;

@@ -48,10 +48,8 @@ export default function PhysesPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-5">
       <PageHeader
-        icon={Stethoscope}
         title="Врачи"
         totalCount={data?.totalCount}
-        iconTone="warning"
         action={
           isAdmin && (
             <LinkButton href="/physes/create">
@@ -142,7 +140,9 @@ function PhysMeta({ phys, name }: { phys: PhysResponse; name: string }) {
 function EmptyPhyses({ hasFilter, canCreate }: { hasFilter: boolean; canCreate: boolean }) {
   return (
     <EmptyState
+      icon={Stethoscope}
       message={hasFilter ? 'Ничего не найдено' : 'Врачей пока нет'}
+      hint={hasFilter ? 'Попробуйте изменить поиск' : undefined}
       action={
         !hasFilter && canCreate ? (
           <Link

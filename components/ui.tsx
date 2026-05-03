@@ -283,11 +283,27 @@ export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   );
 }
 
-export function EmptyState({ message, action }: { message: string; action?: React.ReactNode }) {
+export function EmptyState({
+  message,
+  action,
+  icon: Icon,
+  hint,
+}: {
+  message: string;
+  action?: React.ReactNode;
+  icon?: React.ElementType;
+  hint?: string;
+}) {
   return (
-    <div className="animate-fade-in bg-card rounded-xl border px-4 py-20 text-center shadow-sm">
-      <p className="text-muted-foreground text-sm">{message}</p>
-      {action && <div className="mt-4">{action}</div>}
+    <div className="animate-fade-in border-border bg-card flex flex-col items-center justify-center rounded-2xl border px-6 py-16 text-center shadow-sm">
+      {Icon && (
+        <div className="from-muted/50 ring-border/40 mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent ring-1">
+          <Icon size={36} className="text-muted-foreground/40" strokeWidth={1.5} />
+        </div>
+      )}
+      <p className="text-foreground text-sm font-medium">{message}</p>
+      {hint && <p className="text-muted-foreground mt-1.5 max-w-sm text-xs">{hint}</p>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
