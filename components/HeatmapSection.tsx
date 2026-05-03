@@ -17,7 +17,7 @@ function HeaderStats({ stats }: { stats: HeatmapStats }) {
       </div>
       <div className="text-right">
         <p className="text-muted-foreground flex items-center justify-end gap-1 text-[10px] font-bold tracking-wider uppercase">
-          <Flame size={10} className={stats.streak > 0 ? 'text-success' : ''} />
+          <Flame size={10} className={stats.streak > 0 ? 'text-emerald-500' : ''} />
           Серия
         </p>
         <p className="text-foreground font-bold tabular-nums">{stats.streak} дн.</p>
@@ -39,7 +39,7 @@ export function HeatmapSection({
     <section className="border-border bg-card rounded-2xl border shadow-sm">
       <div className="border-border flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
         <div className="flex items-center gap-3">
-          <ToneIcon icon={Flame} tone="success" />
+          <ToneIcon icon={Flame} tone="success" solid />
           <div>
             <h3 className="text-foreground text-sm font-bold">Активность</h3>
             <p className="text-muted-foreground text-xs">Закрытые визиты за год</p>

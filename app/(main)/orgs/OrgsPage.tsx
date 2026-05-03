@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Building2, Hash, MapPin, Plus } from 'lucide-react';
+import { Hash, MapPin, Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { orgsApi } from '@/lib/api/orgs';
@@ -34,10 +34,8 @@ export default function OrgsPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-5">
       <PageHeader
-        icon={Building2}
         title="Организации"
         totalCount={data?.totalCount}
-        iconTone="success"
         action={
           isAdmin && (
             <LinkButton href="/orgs/create">

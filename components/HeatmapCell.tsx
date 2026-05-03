@@ -1,6 +1,12 @@
 import { MONTHS_ABBR } from '@/lib/ru-dates';
 
-const LEVEL_BG = ['bg-muted', 'bg-success/30', 'bg-success/55', 'bg-success/80', 'bg-success'];
+const LEVEL_BG = [
+  'bg-muted/40',
+  'bg-emerald-500/35',
+  'bg-emerald-500/60',
+  'bg-emerald-500/85',
+  'bg-emerald-400 shadow-sm shadow-emerald-500/40',
+];
 
 function pluralizeClosed(count: number): string {
   if (count === 1) return 'закрыт визит';

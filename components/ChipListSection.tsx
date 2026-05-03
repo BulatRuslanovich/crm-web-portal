@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 import { SectionLabel } from '@/components/ui';
 
 interface Item {
@@ -7,17 +6,16 @@ interface Item {
 }
 
 interface Props {
-  icon: LucideIcon;
   title: string;
   items: Item[];
 }
 
-export function ChipListSection({ icon: Icon, title, items }: Props) {
+export function ChipListSection({ title, items }: Props) {
   return (
     <>
       <hr className="border-border" />
       <div>
-        <SectionLabel icon={Icon}>
+        <SectionLabel>
           {title} <span className="text-muted-foreground/60 ml-1">· {items.length}</span>
         </SectionLabel>
         <div className="flex flex-wrap gap-2">
@@ -26,7 +24,6 @@ export function ChipListSection({ icon: Icon, title, items }: Props) {
               key={item.key}
               className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium"
             >
-              <Icon size={11} className="text-muted-foreground" />
               {item.label}
             </span>
           ))}

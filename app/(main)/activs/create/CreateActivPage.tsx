@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { CalendarCheck } from 'lucide-react';
 import { activsApi } from '@/lib/api/activs';
 import { toast } from 'sonner';
 import { Card, ErrorBox } from '@/components/ui';
@@ -66,7 +65,7 @@ export default function CreateActivPage() {
 
   return (
     <div className="mx-auto w-full space-y-4">
-      <PageHeader icon={CalendarCheck} iconTone="primary" title="Новый визит" />
+      <PageHeader title="Новый визит" />
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>

@@ -3,8 +3,6 @@
 import { useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Building2, Clock, Pencil, Stethoscope } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { activsApi } from '@/lib/api/activs';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -85,7 +83,7 @@ export default function EditActivPage({ params }: { params: Promise<{ id: string
                 <hr className="border-border" />
 
                 <div>
-                  <SectionLabel icon={Clock}>Время визита</SectionLabel>
+                  <SectionLabel>Время визита</SectionLabel>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <DateTimeField
                       name="start"
@@ -137,17 +135,13 @@ function useLoadedActiv(numId: number): ActivResponse | undefined {
 
 function EditHeader({ activ, backHref }: { activ: ActivResponse; backHref: string }) {
   const isPhys = activ.physId != null;
-  const TargetIcon: LucideIcon = isPhys ? Stethoscope : Building2;
   const targetName = (isPhys ? activ.physName : activ.orgName) ?? '—';
 
   return (
     <PageHeader
       backHref={backHref}
-      icon={Pencil}
-      iconTone="primary"
       kicker="Редактирование визита"
       title={targetName}
-      subtitleIcon={TargetIcon}
       action={<StatusBadge name={activ.statusName} />}
     />
   );

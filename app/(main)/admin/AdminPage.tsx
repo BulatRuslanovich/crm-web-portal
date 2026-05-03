@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { PageTransition } from '@/components/motion';
 import {
-  ShieldCheck,
   Users,
   Pill,
   GraduationCap,
@@ -90,7 +89,6 @@ export default function AdminPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-5">
       <Hero
-        icon={ShieldCheck}
         kicker="Панель администратора"
         title="Администрирование"
         subtitle={activeTab.subtitle}

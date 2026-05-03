@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui';
 import { HoverCard } from '@/components/motion';
 import { ToneIcon } from '@/components/ToneIcon';
@@ -25,21 +25,23 @@ export function StatCard({
     <HoverCard>
       <Link
         href={href}
-        className="group hover-glow border-border bg-card block rounded-2xl border p-5 transition-all duration-200"
+        className="group hover-glow border-border bg-card relative flex items-center gap-4 overflow-hidden rounded-2xl border p-4 transition-all duration-200"
       >
-        <div className="mb-3 flex items-center justify-between">
-          <ToneIcon icon={icon} tone={tone} />
-          <ArrowRight
-            size={15}
-            className="text-muted-foreground/50 group-hover:text-foreground transition-transform group-hover:translate-x-0.5"
-          />
+        <ToneIcon icon={icon} tone={tone} size="lg" solid />
+        <div className="min-w-0 flex-1">
+          <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            {label}
+          </p>
+          {loading ? (
+            <Skeleton className="mt-1 h-7 w-16" />
+          ) : (
+            <p className="text-foreground text-2xl font-bold tabular-nums">{value}</p>
+          )}
         </div>
-        {loading ? (
-          <Skeleton className="mb-1 h-9 w-20" />
-        ) : (
-          <p className="text-foreground text-3xl font-bold tracking-tight tabular-nums">{value}</p>
-        )}
-        <p className="text-muted-foreground text-sm">{label}</p>
+        <ArrowUpRight
+          size={16}
+          className="text-muted-foreground/40 group-hover:text-foreground shrink-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+        />
       </Link>
     </HoverCard>
   );

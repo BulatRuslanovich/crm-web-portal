@@ -13,8 +13,8 @@ interface Props {
 
 const BASE_CLASS = 'flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3';
 
-export function InfoBlock({ label, icon: Icon, value, mono, href }: Props) {
-  const inner = <InfoBlockInner label={label} icon={Icon} value={value} mono={mono} />;
+export function InfoBlock({ label, value, mono, href }: Props) {
+  const inner = <InfoBlockInner label={label} value={value} mono={mono} />;
 
   if (href && value) {
     return (
@@ -29,14 +29,9 @@ export function InfoBlock({ label, icon: Icon, value, mono, href }: Props) {
   return <div className={BASE_CLASS}>{inner}</div>;
 }
 
-function InfoBlockInner({ label, icon: Icon, value, mono }: Props) {
+function InfoBlockInner({ label, value, mono }: Props) {
   return (
     <>
-      {Icon && (
-        <div className="bg-card ring-border flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1">
-          <Icon size={14} className="text-muted-foreground" />
-        </div>
-      )}
       <div className="min-w-0 flex-1">
         <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           {label}

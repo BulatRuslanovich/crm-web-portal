@@ -67,7 +67,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'bg-card text-card-foreground overflow-hidden rounded-xl border shadow-sm transition-shadow duration-200 hover:shadow-md',
+        'bg-card text-card-foreground overflow-hidden rounded-xl shadow-sm transition-shadow duration-200',
         className,
       )}
     >
@@ -159,15 +159,12 @@ export function SuccessBox({ message }: { message: string }) {
 }
 
 export function AlertBanner({
-  icon: Icon,
   children,
 }: {
-  icon: React.ElementType;
   children: React.ReactNode;
 }) {
   return (
     <div className="animate-fade-in border-warning/50 bg-warning/15 text-warning flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm">
-      <Icon size={15} />
       <span>{children}</span>
     </div>
   );

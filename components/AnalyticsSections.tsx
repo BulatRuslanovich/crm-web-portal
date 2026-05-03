@@ -1,12 +1,3 @@
-import {
-  Activity,
-  Building2,
-  CalendarCheck,
-  CheckCircle2,
-  Pill,
-  Stethoscope,
-  TrendingUp,
-} from 'lucide-react';
 import type { ActivResponse } from '@/lib/api/types';
 import { buildByStatus, buildByUsr, buildDailyData, buildSummary, topN } from '@/lib/aggregates';
 import { useMemo } from 'react';
@@ -37,29 +28,21 @@ export function AnalyticsSections({
         <SummaryCard
           label="Всего визитов"
           value={summary.total}
-          icon={CalendarCheck}
-          tone="primary"
           hint={`В среднем ${summary.avgPerDay}/день`}
         />
         <SummaryCard
           label="Закрыто"
           value={`${summary.closed}`}
-          icon={CheckCircle2}
-          tone="success"
           hint={`${summary.closedPct}% от всех`}
         />
         <SummaryCard
           label="Организаций"
           value={summary.uniqueOrgs}
-          icon={Building2}
-          tone="warning"
           hint="уникальных"
         />
         <SummaryCard
           label="Врачей"
           value={summary.uniquePhyses}
-          icon={Stethoscope}
-          tone="default"
           hint="уникальных"
         />
       </div>
@@ -67,8 +50,6 @@ export function AnalyticsSections({
       <ChartCard
         title="Визиты по дням"
         subtitle={`Последние ${periodDays} дн.`}
-        icon={Activity}
-        tone="primary"
       >
         <DailyAreaChart data={daily} periodDays={periodDays} />
       </ChartCard>
@@ -78,8 +59,6 @@ export function AnalyticsSections({
           <ChartCard
             title="По статусам"
             subtitle="Распределение визитов"
-            icon={CheckCircle2}
-            tone="success"
           >
             <StatusPieChart data={byStatus} total={summary.total} />
           </ChartCard>
@@ -88,8 +67,6 @@ export function AnalyticsSections({
           <ChartCard
             title="Активность сотрудников"
             subtitle="По количеству визитов"
-            icon={TrendingUp}
-            tone="primary"
           >
             <TopBarChart data={byUsr} color="var(--primary)" />
           </ChartCard>
@@ -101,8 +78,6 @@ export function AnalyticsSections({
           <ChartCard
             title="Топ врачей"
             subtitle="По количеству визитов"
-            icon={Stethoscope}
-            tone="warning"
           >
             <TopBarChart
               data={topPhyses}
@@ -117,8 +92,6 @@ export function AnalyticsSections({
           <ChartCard
             title="Топ организаций"
             subtitle="По количеству визитов"
-            icon={Building2}
-            tone="success"
           >
             <TopBarChart
               data={topOrgs}
@@ -135,8 +108,6 @@ export function AnalyticsSections({
         <ChartCard
           title="Топ препаратов"
           subtitle="По количеству упоминаний в визитах"
-          icon={Pill}
-          tone="default"
         >
           <TopBarChart
             data={topDrugs}

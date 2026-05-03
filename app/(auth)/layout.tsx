@@ -6,6 +6,7 @@ import { Sun, Moon, Monitor } from 'lucide-react';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
+import { APP_NAME, APP_VERSION, APP_YEAR, SUPPORT_EMAIL } from '@/lib/app-info';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -47,13 +48,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="bg-primary/10 ring-primary/20 mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1">
             <Image src="/icon.svg" width={56} height={56} alt="Pharmo" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold tracking-tight">Pharmo CRM</h1>
+          <h1 className="text-foreground text-2xl font-bold tracking-tight">{APP_NAME}</h1>
           <p className="text-muted-foreground mt-1 text-sm">Система управления визитами</p>
         </div>
 
         <div className="border-border bg-card overflow-hidden rounded-xl border shadow-lg">
           {children}
         </div>
+
+        <p className="text-muted-foreground/70 mt-6 text-center text-xs">
+          © {APP_YEAR} {APP_NAME} · v{APP_VERSION} ·{' '}
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-foreground hover:underline">
+            Поддержка
+          </a>
+        </p>
       </div>
     </div>
   );

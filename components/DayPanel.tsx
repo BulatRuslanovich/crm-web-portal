@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CalendarDays, Plus, X, User, Building2, Stethoscope } from 'lucide-react';
+import { Plus, X, User, Building2, Stethoscope } from 'lucide-react';
 import type { ActivResponse } from '@/lib/api/types';
 import { STATUS_HEX } from '@/lib/api/statuses';
 import { StatusBadge } from '@/components/ui';
@@ -57,9 +57,6 @@ function PanelHeader({ date, count, onClose }: { date: Date; count: number; onCl
   return (
     <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3.5">
       <div className="flex items-center gap-3">
-        <div className="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
-          <CalendarDays size={16} className="text-primary" />
-        </div>
         <div>
           <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
             {weekday}

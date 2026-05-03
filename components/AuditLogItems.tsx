@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
 import type { AuditAction } from '@/lib/api/types';
 
 const VALUE_TRUNCATE = 80;
@@ -20,29 +19,24 @@ const ENTITY_ROUTE: Record<string, string> = {
 
 export function ActionBadge({ action }: { action: AuditAction }) {
   const styles = ACTION_STYLES[action];
-  const Icon = styles.icon;
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase ${styles.cls}`}
     >
-      <Icon size={10} />
       {action}
     </span>
   );
 }
 
-const ACTION_STYLES: Record<AuditAction, { cls: string; icon: React.ElementType }> = {
+const ACTION_STYLES: Record<AuditAction, { cls: string; }> = {
   INSERT: {
     cls: 'border-success/40 bg-success/10 text-success',
-    icon: Plus,
   },
   UPDATE: {
     cls: 'border-primary/40 bg-primary/10 text-primary',
-    icon: Pencil,
   },
   DELETE: {
     cls: 'border-destructive/40 bg-destructive/10 text-destructive',
-    icon: Trash2,
   },
 };
 

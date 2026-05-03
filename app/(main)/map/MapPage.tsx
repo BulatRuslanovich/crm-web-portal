@@ -76,13 +76,7 @@ export default function MapPage() {
       <div className="border-border from-success/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-3">
-            <div className="bg-success/10 ring-success/20 flex h-11 w-11 items-center justify-center rounded-xl ring-1">
-              <MapPin size={18} className="text-success" />
-            </div>
             <div>
-              <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
-                География
-              </p>
               <h2 className="text-foreground text-xl font-bold">Карта организаций</h2>
               {!loading && (
                 <p className="text-muted-foreground mt-0.5 text-xs">

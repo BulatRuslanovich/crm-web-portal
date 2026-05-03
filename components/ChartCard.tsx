@@ -1,24 +1,17 @@
-import { ToneIcon } from '@/components/ToneIcon';
-import type { Tone } from '@/lib/tone';
 import React from 'react';
 
 export function ChartCard({
   title,
   subtitle,
-  icon,
-  tone = 'default',
   children,
 }: {
   title: string;
   subtitle?: string;
-  icon?: React.ElementType;
-  tone?: Tone;
   children: React.ReactNode;
 }) {
   return (
     <div className="border-border bg-card rounded-2xl border shadow-sm">
       <div className="border-border flex items-start gap-3 border-b px-5 py-4">
-        {icon && <ToneIcon icon={icon} tone={tone} size="sm" />}
         <div className="min-w-0 flex-1">
           <h3 className="text-foreground text-sm font-bold">{title}</h3>
           {subtitle && <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>}

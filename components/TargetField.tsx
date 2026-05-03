@@ -2,7 +2,6 @@
 
 import { Controller } from 'react-hook-form';
 import type { Control, FieldValues, Path } from 'react-hook-form';
-import { Target } from 'lucide-react';
 import { Label, SectionLabel } from '@/components/ui';
 import { Combobox, type ComboboxOption } from '@/components/Combobox';
 import { searchOrgOptions } from '@/lib/api/orgs';
@@ -30,7 +29,7 @@ export function TargetField<T extends FieldValues>({
 }: Props<T>) {
   return (
     <div>
-      <SectionLabel icon={Target}>Цель визита</SectionLabel>
+      <SectionLabel>Цель визита</SectionLabel>
       <TargetSwitcher value={targetKind} onChange={onSwitch} />
       {targetKind === 'org' ? (
         <TargetPicker

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Route, MapPinOff, Users, AlertTriangle } from 'lucide-react';
+import { MapPinOff, Users, AlertTriangle } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -78,7 +78,6 @@ export default function MapTrackPage() {
   return (
     <PageTransition className="flex h-[calc(100vh-6rem)] flex-col gap-4">
       <Hero
-        icon={Route}
         kicker="Маршрут"
         title="Трекинг визитов"
         tone="primary"

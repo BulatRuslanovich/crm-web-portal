@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { BriefcaseMedical, Building2, Mail, Phone, Stethoscope } from 'lucide-react';
+import { Stethoscope } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
@@ -74,7 +74,6 @@ function PhysDetailContent({ id }: { id: string }) {
           <ContactsSection phys={phys} />
           {phys.orgs.length > 0 && (
             <ChipListSection
-              icon={Building2}
               title="Организации"
               items={phys.orgs.map((o) => ({ key: o.orgId, label: o.orgName }))}
             />
@@ -115,7 +114,6 @@ function PhysHeroContent({ phys }: { phys: PhysResponse }) {
         {phys.specName && (
           <div className="mt-2">
             <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
-              <BriefcaseMedical size={11} className="text-muted-foreground" />
               {phys.specName}
             </span>
           </div>
@@ -131,10 +129,10 @@ function ContactsSection({ phys }: { phys: PhysResponse }) {
 
   return (
     <div>
-      <SectionLabel icon={Phone}>Контакты</SectionLabel>
+      <SectionLabel>Контакты</SectionLabel>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <InfoBlock label="Телефон" icon={Phone} value={phys.phone} href={phoneHref} />
-        <InfoBlock label="Email" icon={Mail} value={phys.email} href={emailHref} />
+        <InfoBlock label="Телефон" value={phys.phone} href={phoneHref} />
+        <InfoBlock label="Email" value={phys.email} href={emailHref} />
       </div>
     </div>
   );
@@ -158,7 +156,6 @@ function GetnamePage() {
             <h2 className="text-foreground text-xl font-bold">getname</h2>
             <div className="mt-2 flex flex-wrap gap-2">
               <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
-                <BriefcaseMedical size={11} className="text-muted-foreground" />
                 Разработка ПО
               </span>
             </div>

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { APP_VERSION, SUPPORT_EMAIL } from '@/lib/app-info';
 import type { NavGroup } from './nav-config';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarNav } from './SidebarNav';
@@ -51,6 +52,14 @@ export function SidebarContent({
           onProfile={onProfile}
           onLogout={onLogout}
         />
+        {!compact && (
+          <p className="text-muted-foreground border-sidebar-border/40 mt-2 border-t pt-2 text-center text-[10px] tracking-wide">
+            v{APP_VERSION} ·{' '}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-foreground hover:underline">
+              Поддержка
+            </a>
+          </p>
+        )}
       </div>
     </div>
   );

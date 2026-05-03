@@ -2,7 +2,6 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, FileText, Hash, MapPin, Navigation } from 'lucide-react';
 import { orgsApi } from '@/lib/api/orgs';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
@@ -14,7 +13,6 @@ import { Hero } from '@/components/Hero';
 import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
 import { InfoBlock } from '@/components/InfoBlock';
 import { AdminDetailFooter } from '@/components/AdminDetailFooter';
-import { orgInitials } from '@/lib/initials';
 import { useConfirm } from '@/components/ConfirmDialog';
 
 const HERO_ACCENT = 'from-success/15 via-success/5 to-transparent';
@@ -86,22 +84,11 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
 function OrgHeroContent({ org }: { org: OrgResponse }) {
   return (
     <div className="flex flex-wrap items-start gap-4">
-      <div className="bg-card text-success ring-success/30 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-sm font-bold ring-1">
-        {orgInitials(org.orgName)}
-      </div>
       <div className="min-w-0 flex-1">
         <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
           Организация
         </p>
         <h2 className="text-foreground truncate text-xl font-bold">{org.orgName}</h2>
-        {org.orgTypeName && (
-          <div className="mt-2">
-            <span className="border-border bg-muted/60 text-foreground inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium">
-              <Building2 size={11} className="text-muted-foreground" />
-              {org.orgTypeName}
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -110,10 +97,10 @@ function OrgHeroContent({ org }: { org: OrgResponse }) {
 function RequisitesSection({ org }: { org: OrgResponse }) {
   return (
     <div>
-      <SectionLabel icon={FileText}>Реквизиты</SectionLabel>
+      <SectionLabel>Реквизиты</SectionLabel>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <InfoBlock label="ИНН" icon={Hash} value={org.inn} mono />
-        <InfoBlock label="Тип" icon={Building2} value={org.orgTypeName} />
+        <InfoBlock label="ИНН" value={org.inn} mono />
+        <InfoBlock label="Тип" value={org.orgTypeName} />
       </div>
     </div>
   );
@@ -124,13 +111,12 @@ function LocationSection({ org }: { org: OrgResponse }) {
 
   return (
     <div>
-      <SectionLabel icon={MapPin}>Местоположение</SectionLabel>
+      <SectionLabel>Местоположение</SectionLabel>
       <div className="space-y-3">
-        <InfoBlock label="Адрес" icon={MapPin} value={org.address} />
+        <InfoBlock label="Адрес" value={org.address} />
         {hasCoords && (
           <InfoBlock
             label="Координаты"
-            icon={Navigation}
             value={`${org.latitude}, ${org.longitude}`}
             mono
           />

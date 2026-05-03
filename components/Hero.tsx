@@ -1,8 +1,6 @@
 'use client';
 
-import type { LucideIcon } from 'lucide-react';
 import React from 'react';
-import { ToneIcon } from './ToneIcon';
 
 type Tone = 'primary' | 'success' | 'warning';
 
@@ -13,7 +11,6 @@ const TONE_GRADIENT: Record<Tone, string> = {
 };
 
 interface HeroProps {
-  icon?: LucideIcon;
   kicker?: string;
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -24,7 +21,6 @@ interface HeroProps {
 }
 
 export function Hero({
-  icon: Icon,
   kicker,
   title,
   subtitle,
@@ -51,7 +47,6 @@ export function Hero({
     >
       <div className="relative flex flex-wrap items-start justify-between gap-4 p-5">
         <div className="flex items-center gap-3">
-          {Icon && <ToneIcon icon={Icon} tone={tone} size="lg" />}
           <div>
             {kicker && (
               <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">

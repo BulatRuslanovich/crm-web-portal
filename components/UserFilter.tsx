@@ -35,14 +35,10 @@ export function UserFilter({
   }, [users, currentUsrId, placeholder]);
 
   return (
-    <div className="border-border bg-card flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
-      <div className="flex items-center gap-2">
-        <div className="bg-muted ring-border flex h-8 w-8 items-center justify-center rounded-lg ring-1">
-          <Users size={14} className="text-muted-foreground" />
-        </div>
-        <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-          {label}
-        </span>
+    <div className="flex flex-wrap items-center gap-2 px-1">
+      <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
+        <Users size={13} />
+        {label}
       </div>
       <div className="min-w-[220px] flex-1 sm:max-w-xs">
         <Combobox

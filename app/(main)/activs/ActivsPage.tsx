@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CalendarCheck, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -70,10 +70,8 @@ export default function ActivsPage() {
   return (
     <PageTransition className="mx-auto w-full space-y-5">
       <PageHeader
-        icon={CalendarCheck}
         title="Визиты"
         totalCount={data?.totalCount}
-        iconTone="primary"
         action={
           <LinkButton href="/activs/create">
             <Plus size={15} /> Новый визит

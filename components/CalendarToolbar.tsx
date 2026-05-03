@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { pluralizeVisits } from '@/lib/ru-dates';
 
 export type CalendarView = 'month' | 'week';
@@ -78,9 +78,6 @@ export function CalendarToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="bg-primary/10 ring-primary/15 flex h-11 w-11 items-center justify-center rounded-xl ring-1">
-          <CalendarDays size={20} className="text-primary" />
-        </div>
         <div>
           <h2 className="text-foreground text-xl font-bold">Календарь</h2>
           {!loading && (

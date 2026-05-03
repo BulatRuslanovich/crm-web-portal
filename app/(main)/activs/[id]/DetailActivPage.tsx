@@ -2,9 +2,7 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, FileText, Lock, MapPin, Pill, Stethoscope, User } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { activsApi } from '@/lib/api/activs';
+import * as activs from '@/lib/api/activs';
 import { useAuth } from '@/lib/auth-context';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { useRoles } from '@/lib/hooks/use-roles';
@@ -42,7 +40,7 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
   const numId = Number(id);
   const { data: activ, reload } = useEntity(
     ['activ', numId],
-    () => activsApi.getById(numId),
+    () => activs.activsApi.getById(numId),
     '/activs',
   );
 
@@ -68,7 +66,7 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
       confirmLabel: 'Удалить',
     });
     if (!ok) return;
-    await activsApi.delete(numId);
+    await activs.activsApi.delete(numId);
     toast('Визит удалён', { description: `#${numId}` });
     router.push('/activs');
   }
@@ -85,7 +83,7 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
       </Hero>
 
       {perms.isLocked && (
-        <AlertBanner icon={Lock}>
+        <AlertBanner>
           {activ.statusId === STATUS_CANCELED
             ? 'Визит отменён — редактирование недоступно'
             : 'Визит закрыт — редактирование недоступно'}
@@ -106,7 +104,6 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
           {activ.description && <DescriptionSection description={activ.description} />}
           {activ.drugs.length > 0 && (
             <ChipListSection
-              icon={Pill}
               title="Препараты"
               items={activ.drugs.map((d) => ({ key: d.drugId, label: d.drugName }))}
             />
@@ -143,18 +140,13 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
 
 function ActivHeroContent({ activ }: { activ: ActivResponse }) {
   const isPhys = activ.physId != null;
-  const targetIcon: LucideIcon = isPhys ? Stethoscope : Building2;
   const targetName = (isPhys ? activ.physName : activ.orgName) ?? '—';
   const kindLabel = isPhys ? 'Врач' : 'Организация';
-  const Icon = targetIcon;
 
   return (
     <>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="bg-card ring-border flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1">
-            <Icon size={22} className="text-foreground" />
-          </div>
           <div className="min-w-0">
             <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
               {kindLabel}
@@ -175,9 +167,9 @@ function ActivHeroContent({ activ }: { activ: ActivResponse }) {
 function InfoSection({ activ }: { activ: ActivResponse }) {
   return (
     <div>
-      <SectionLabel icon={User}>Информация</SectionLabel>
+      <SectionLabel>Информация</SectionLabel>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <InfoBlock label="Сотрудник" icon={User} value={activ.usrLogin} />
+        <InfoBlock label="Сотрудник" value={activ.usrLogin} />
         <InfoBlock label="Статус" value={activ.statusName} />
       </div>
     </div>
@@ -195,7 +187,7 @@ function CoordsSection({ activ }: { activ: ActivResponse }) {
   const osmHref = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
   return (
     <div>
-      <SectionLabel icon={MapPin}>Координаты закрытия</SectionLabel>
+      <SectionLabel>Координаты закрытия</SectionLabel>
       <div className="border-border bg-muted/40 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-sm">
         <span className="text-foreground font-mono">{formatted}</span>
         <a
@@ -204,7 +196,7 @@ function CoordsSection({ activ }: { activ: ActivResponse }) {
           rel="noopener noreferrer"
           className="text-primary text-xs font-semibold hover:underline"
         >
-          Открыть на карте →
+          Открыть на карте
         </a>
       </div>
     </div>
@@ -216,7 +208,7 @@ function DescriptionSection({ description }: { description: string }) {
     <>
       <hr className="border-border" />
       <div>
-        <SectionLabel icon={FileText}>Описание</SectionLabel>
+        <SectionLabel>Описание</SectionLabel>
         <p className="border-border bg-muted/40 text-foreground rounded-xl border px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
           {description}
         </p>

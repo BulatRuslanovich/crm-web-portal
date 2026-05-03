@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TrendingUp } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { useUserFilter } from '@/lib/hooks/use-user-filter';
@@ -93,7 +92,6 @@ export default function AnalyticsPage() {
   return (
     <PageTransition className="space-y-6">
       <Hero
-        icon={TrendingUp}
         kicker="Аналитика"
         title="Динамика визитов"
         subtitle={

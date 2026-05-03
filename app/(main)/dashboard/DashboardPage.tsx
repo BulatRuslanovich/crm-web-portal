@@ -1,15 +1,12 @@
 'use client';
 
-import { Building2, CalendarDays, Stethoscope } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { useUserFilter } from '@/lib/hooks/use-user-filter';
 import { usePickerUsers } from '@/lib/hooks/use-picker-users';
-import { PageTransition, StaggerList, StaggerItem } from '@/components/motion';
+import { PageTransition } from '@/components/motion';
 import { UserFilter } from '@/components/UserFilter';
-import { useDashboardActivs, useDashboardSummary } from '@/lib/use-dashboard-data';
-import { StatCard } from '@/components/StatCard';
-import { MyDay } from '@/components/MyDay';
+import { useDashboardActivs } from '@/lib/use-dashboard-data';
 import { HeatmapSection } from '@/components/HeatmapSection';
 
 export default function DashboardPage() {
@@ -21,7 +18,6 @@ export default function DashboardPage() {
   const { users: pickerUsers } = usePickerUsers(canFilterByUser);
   const usrIdParam = filterUsrId ? Number(filterUsrId) : undefined;
 
-  const { data: summary, loading: summaryLoading } = useDashboardSummary(usrIdParam);
   const { data: myActivs, loading: activsLoading } = useDashboardActivs(usrIdParam);
   const filteredActivs = myActivs ?? [];
   const name = user?.firstName ?? user?.login ?? '';
@@ -29,39 +25,6 @@ export default function DashboardPage() {
   return (
     <PageTransition className="space-y-6">
       <DashboardGreeting name={name} />
-
-      <StaggerList className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StaggerItem>
-          <StatCard
-            loading={summaryLoading}
-            label="Визиты"
-            value={summary?.activsCount ?? 0}
-            href="/activs"
-            icon={CalendarDays}
-            tone="primary"
-          />
-        </StaggerItem>
-        <StaggerItem>
-          <StatCard
-            loading={summaryLoading}
-            label="Организации"
-            value={summary?.orgsCount ?? 0}
-            href="/orgs"
-            icon={Building2}
-            tone="success"
-          />
-        </StaggerItem>
-        <StaggerItem>
-          <StatCard
-            loading={summaryLoading}
-            label="Врачи"
-            value={summary?.physesCount ?? 0}
-            href="/physes"
-            icon={Stethoscope}
-            tone="warning"
-          />
-        </StaggerItem>
-      </StaggerList>
 
       {canFilterByUser && pickerUsers.length > 0 && (
         <UserFilter
@@ -73,7 +36,6 @@ export default function DashboardPage() {
       )}
 
       <HeatmapSection activs={filteredActivs} loading={activsLoading} />
-      <MyDay activs={filteredActivs} loading={activsLoading} />
     </PageTransition>
   );
 }
@@ -87,17 +49,18 @@ function getGreeting(hour: number): string {
 
 function DashboardGreeting({ name }: { name: string }) {
   const greeting = getGreeting(new Date().getHours());
+  const today = new Date().toLocaleDateString('ru-RU', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
   return (
-    <div className="border-border from-primary/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br px-6 py-8 shadow-sm">
-      <div className="relative z-10">
-        <h2 className="text-foreground text-2xl font-bold">
-          {greeting}
-          {name ? `, ${name}` : ''}
-        </h2>
-        <p className="text-muted-foreground mt-1.5 text-sm">
-          Вот что происходит в вашей CRM сегодня
-        </p>
-      </div>
+    <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
+      <h2 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+        {greeting}
+        {name ? `, ${name}` : ''}
+      </h2>
+      <p className="text-muted-foreground text-xs first-letter:uppercase">{today}</p>
     </div>
   );
 }

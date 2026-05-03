@@ -1,6 +1,5 @@
 'use client';
 
-import { History } from 'lucide-react';
 import { useApi } from '@/lib/hooks/use-api';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { auditLogsApi } from '@/lib/api/audit-logs';
@@ -25,7 +24,7 @@ export function EntityHistoryFeed({ entityType, entityId }: Props) {
 
   return (
     <div>
-      <SectionLabel icon={History}>История изменений</SectionLabel>
+      <SectionLabel>История изменений</SectionLabel>
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -62,7 +61,7 @@ function HistoryRow({ row }: { row: AuditLogResponse }) {
         {row.action === 'UPDATE' && (
           <span className="flex items-center gap-1.5">
             <ValueCell value={row.oldValue} />
-            <span className="text-muted-foreground/60">→</span>
+            <span className="text-muted-foreground/60">-{'>'}</span>
             <ValueCell value={row.newValue} />
           </span>
         )}
