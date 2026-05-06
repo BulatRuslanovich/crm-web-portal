@@ -4,14 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-const BUILD_VERSION = '0.1.0';
-const DEVELOPER = 'getname';
-const REPO = 'github.com/BulatRuslanovich/crm-web-portal';
-const BUILD_DATE = new Date().toLocaleDateString('ru-RU', {
-  day: '2-digit',
-  month: 'long',
-  year: 'numeric',
-});
+const BUILD_VERSION = '0.1.0'
 
 type LineKind = 'prompt' | 'output' | 'comment' | 'error' | 'blank' | 'highlight';
 
@@ -22,31 +15,11 @@ interface Line {
 }
 
 const SESSION: Line[] = [
-  { kind: 'comment', text: '# добро пожаловать в /pharmo' },
-  { kind: 'blank', text: '' },
-  { kind: 'prompt', text: 'whoami' },
-  { kind: 'highlight', text: DEVELOPER },
-  { kind: 'blank', text: '' },
-  { kind: 'prompt', text: 'cat package.json | grep version' },
-  { kind: 'output', text: `  "version": "${BUILD_VERSION}"` },
-  { kind: 'blank', text: '' },
-  { kind: 'prompt', text: 'git log --oneline -1' },
-  { kind: 'output', text: `62a913b feat: add UI components` },
-  { kind: 'blank', text: '' },
-  { kind: 'prompt', text: 'echo $BUILD_DATE' },
-  { kind: 'output', text: BUILD_DATE },
-  { kind: 'blank', text: '' },
-  { kind: 'prompt', text: `cat credits.txt` },
-  { kind: 'output', text: '  Pharmo CRM — дипломная работа' },
-  { kind: 'output', text: `  Разработчик : ${DEVELOPER}` },
-  { kind: 'output', text: `  Репозиторий : ${REPO}` },
-  { kind: 'output', text: `  Контакт     : bulatruslanovich@gmail.com` },
   { kind: 'blank', text: '' },
   { kind: 'prompt', text: 'fortune' },
-  { kind: 'output', text: '  «Случай помогает только подготовленному уму.»' },
-  { kind: 'output', text: '                              — Луи Пастер' },
+  { kind: 'output', text: '  «Барсик хочет секса»' },
+  { kind: 'output', text: '  —  Барсик Ренатович' },
   { kind: 'blank', text: '' },
-  { kind: 'comment', text: '# если ты здесь — привет 👾' },
 ];
 
 const DELAY_BY_KIND: Record<LineKind, number> = {
