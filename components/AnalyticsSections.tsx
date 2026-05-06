@@ -35,39 +35,22 @@ export function AnalyticsSections({
           value={`${summary.closed}`}
           hint={`${summary.closedPct}% от всех`}
         />
-        <SummaryCard
-          label="Организаций"
-          value={summary.uniqueOrgs}
-          hint="уникальных"
-        />
-        <SummaryCard
-          label="Врачей"
-          value={summary.uniquePhyses}
-          hint="уникальных"
-        />
+        <SummaryCard label="Организаций" value={summary.uniqueOrgs} hint="уникальных" />
+        <SummaryCard label="Врачей" value={summary.uniquePhyses} hint="уникальных" />
       </div>
 
-      <ChartCard
-        title="Визиты по дням"
-        subtitle={`Последние ${periodDays} дн.`}
-      >
+      <ChartCard title="Визиты по дням" subtitle={`Последние ${periodDays} дн.`}>
         <DailyAreaChart data={daily} periodDays={periodDays} />
       </ChartCard>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {byStatus.length > 0 && (
-          <ChartCard
-            title="По статусам"
-            subtitle="Распределение визитов"
-          >
+          <ChartCard title="По статусам" subtitle="Распределение визитов">
             <StatusPieChart data={byStatus} total={summary.total} />
           </ChartCard>
         )}
         {byUsr.length > 0 && (
-          <ChartCard
-            title="Активность сотрудников"
-            subtitle="По количеству визитов"
-          >
+          <ChartCard title="Активность сотрудников" subtitle="По количеству визитов">
             <TopBarChart data={byUsr} color="var(--primary)" />
           </ChartCard>
         )}
@@ -75,10 +58,7 @@ export function AnalyticsSections({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {topPhyses.length > 0 && (
-          <ChartCard
-            title="Топ врачей"
-            subtitle="По количеству визитов"
-          >
+          <ChartCard title="Топ врачей" subtitle="По количеству визитов">
             <TopBarChart
               data={topPhyses}
               color="var(--warning)"
@@ -89,10 +69,7 @@ export function AnalyticsSections({
           </ChartCard>
         )}
         {topOrgs.length > 0 && (
-          <ChartCard
-            title="Топ организаций"
-            subtitle="По количеству визитов"
-          >
+          <ChartCard title="Топ организаций" subtitle="По количеству визитов">
             <TopBarChart
               data={topOrgs}
               color="var(--success)"
@@ -105,10 +82,7 @@ export function AnalyticsSections({
       </div>
 
       {topDrugs.length > 0 && (
-        <ChartCard
-          title="Топ препаратов"
-          subtitle="По количеству упоминаний в визитах"
-        >
+        <ChartCard title="Топ препаратов" subtitle="По количеству упоминаний в визитах">
           <TopBarChart
             data={topDrugs}
             color="var(--muted-foreground)"

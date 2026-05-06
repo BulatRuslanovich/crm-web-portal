@@ -81,7 +81,7 @@ export default function AnalyticsPage() {
   const { users: pickerUsers } = usePickerUsers(canView);
   const usrIdParam = filterUsrId ? Number(filterUsrId) : undefined;
 
-  const { activs, loading } = useAnalyticsData({
+  const { activs, loading, meta } = useAnalyticsData({
     enabled: canView,
     periodDays,
     usrId: usrIdParam,
@@ -97,7 +97,9 @@ export default function AnalyticsPage() {
         subtitle={
           !loading && (
             <>
-              {activs.length} визитов за последние {periodDays} дн.
+              {activs.length}
+              {meta && meta.totalCount !== activs.length && ` из ${meta.totalCount}`} визитов за
+              последние {periodDays} дн.
             </>
           )
         }
@@ -122,6 +124,12 @@ export default function AnalyticsPage() {
           onChange={setFilterUsrId}
           currentUsrId={user?.usrId}
         />
+      )}
+
+      {!loading && meta && meta.totalCount > 0 && (
+        <p className="text-muted-foreground px-1 text-xs">
+          Аналитика рассчитана по {activs.length} из {meta.totalCount} загруженных записей.
+        </p>
       )}
 
       {loading ? (

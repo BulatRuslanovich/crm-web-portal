@@ -28,7 +28,7 @@ export function ActionBadge({ action }: { action: AuditAction }) {
   );
 }
 
-const ACTION_STYLES: Record<AuditAction, { cls: string; }> = {
+const ACTION_STYLES: Record<AuditAction, { cls: string }> = {
   INSERT: {
     cls: 'border-success/40 bg-success/10 text-success',
   },

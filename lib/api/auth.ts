@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { apiClient, BASE_URL } from './client';
+import { apiClient, BASE_URL } from './browser-client';
 import type { UserResponse } from './types';
 
 interface LoginRequest {

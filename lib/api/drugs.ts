@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient } from './browser-client';
 import type { DrugResponse, CreateDrugRequest, UpdateDrugRequest, PagedResponse } from './types';
 
 export const drugsApi = {

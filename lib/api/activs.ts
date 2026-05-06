@@ -1,4 +1,5 @@
-import { apiClient } from './client';
+import { apiClient } from './browser-client';
+import type { AxiosRequestConfig } from 'axios';
 import type { ActivResponse, CreateActivRequest, UpdateActivRequest, PagedResponse } from './types';
 
 export interface ActivsQuery {
@@ -14,8 +15,9 @@ export interface ActivsQuery {
 }
 
 export const activsApi = {
-  getAll: (q: ActivsQuery = {}) =>
+  getAll: (q: ActivsQuery = {}, config?: AxiosRequestConfig) =>
     apiClient.get<PagedResponse<ActivResponse>>('/api/activs', {
+      ...config,
       params: { page: 1, pageSize: 20, ...q },
     }),
 

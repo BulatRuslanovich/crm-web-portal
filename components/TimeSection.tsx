@@ -29,13 +29,7 @@ export function TimeSection({ start, end }: Props) {
   );
 }
 
-function TimeBlock({
-  label,
-  value,
-}: {
-  label: string;
-  value: DateTimeParts | null;
-}) {
+function TimeBlock({ label, value }: { label: string; value: DateTimeParts | null }) {
   return (
     <div className="border-border bg-muted/30 flex items-center gap-3 rounded-xl border px-4 py-3">
       <div className="min-w-0">

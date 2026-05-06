@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { authApi, type RegisterRequest } from './api/auth';
-import { refreshAccessToken } from './api/client';
+import { refreshAccessToken } from './api/browser-client';
 import { usersApi } from './api/users';
 import type { UserResponse } from './api/types';
 

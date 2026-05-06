@@ -15,12 +15,11 @@ export const STATUSES: StatusResponse[] = [
 ];
 
 export const STATUS_HEX: Record<string, string> = {
-  запланирован: '#0d9488',
-  открыт: '#d97706',
-  сохранен: '#0369a1',
-  закрыт: '#059669',
-  отменен: '#6b7280',
+  "запланирован": '#0d9488',
+  "открыт": '#d97706',
+  "сохранен": '#0369a1',
+  "закрыт": '#059669',
+  "отменен": '#6b7280',
 };
 
-// Финальные статусы — после них визит не подлежит дальнейшему стандартному переходу.
 export const FINAL_STATUSES: ReadonlySet<number> = new Set([STATUS_CLOSED, STATUS_CANCELED]);

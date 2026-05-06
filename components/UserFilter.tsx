@@ -40,7 +40,7 @@ export function UserFilter({
         <Users size={13} />
         {label}
       </div>
-      <div className="min-w-[220px] flex-1 sm:max-w-xs">
+      <div className="min-w-55 flex-1 sm:max-w-xs">
         <Combobox
           options={options}
           value={value}

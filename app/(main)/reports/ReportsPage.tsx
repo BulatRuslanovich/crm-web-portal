@@ -76,7 +76,11 @@ export default function ReportsPage() {
   const { users: pickerUsers } = usePickerUsers(canView);
   const usrIdParam = usrFilter ? Number(usrFilter) : undefined;
 
-  const { data: activs, loading } = useReportsData({
+  const {
+    data: activs,
+    loading,
+    meta,
+  } = useReportsData({
     enabled: canView,
     dateFrom,
     dateTo,
@@ -104,7 +108,7 @@ export default function ReportsPage() {
   }
 
   function handleExportXlsx() {
-    exportXlsx(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.xlsx`);
+    void exportXlsx(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.xlsx`);
   }
 
   function resetAll() {
@@ -127,8 +131,8 @@ export default function ReportsPage() {
           activs && (
             <>
               {filtered.length}
-              {filtered.length !== activs.length && ` из ${activs.length}`} визитов · {dateFrom} →{' '}
-              {dateTo}
+              {meta && meta.totalCount !== filtered.length && ` из ${meta.totalCount}`} визитов ·{' '}
+              {dateFrom} → {dateTo}
             </>
           )
         }
@@ -151,6 +155,12 @@ export default function ReportsPage() {
 
       {!loading && filtered.length > 0 && (
         <StatPills stats={stats} filteredCount={filtered.length} />
+      )}
+
+      {!loading && meta && meta.totalCount > 0 && (
+        <p className="text-muted-foreground px-1 text-xs">
+          Загружено {filtered.length} из {meta.totalCount} записей для отчёта и экспорта.
+        </p>
       )}
 
       {canView && pickerUsers.length > 0 && (

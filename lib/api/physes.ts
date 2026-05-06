@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient } from './browser-client';
 import type { PhysResponse, CreatePhysRequest, UpdatePhysRequest, PagedResponse } from './types';
 
 export const physesApi = {

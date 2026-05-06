@@ -72,10 +72,10 @@ function dayGroupLabel(iso: string | null): string {
 }
 
 const GROUP_ORDER: Record<string, number> = {
-  Сегодня: 0,
-  Завтра: 1,
+  "Сегодня": 0,
+  "Завтра": 1,
   'На этой неделе': 2,
-  Вчера: 3,
+  "Вчера": 3,
   'На прошлой неделе': 4,
   'Без даты': 99,
 };
@@ -85,11 +85,11 @@ function dayGroupOrder(label: string): number {
 }
 
 const STATUS_STRIPE: Record<string, string> = {
-  запланирован: 'bg-primary',
-  открыт: 'bg-warning',
-  сохранен: 'bg-muted-foreground',
-  закрыт: 'bg-success',
-  отменен: 'bg-destructive',
+  "запланирован": 'bg-primary',
+  "открыт": 'bg-warning',
+  "сохранен": 'bg-muted-foreground',
+  "закрыт": 'bg-success',
+  "отменен": 'bg-destructive',
 };
 
 export function statusStripeClass(statusName: string): string {
@@ -97,11 +97,11 @@ export function statusStripeClass(statusName: string): string {
 }
 
 const STATUS_ACCENT: Record<string, string> = {
-  запланирован: 'from-primary/15 via-primary/5 to-transparent',
-  открыт: 'from-warning/20 via-warning/5 to-transparent',
-  сохранен: 'from-muted-foreground/15 via-muted-foreground/5 to-transparent',
-  закрыт: 'from-success/15 via-success/5 to-transparent',
-  отменен: 'from-destructive/15 via-destructive/5 to-transparent',
+  "запланирован": 'from-primary/15 via-primary/5 to-transparent',
+  "открыт": 'from-warning/20 via-warning/5 to-transparent',
+  "сохранен": 'from-muted-foreground/15 via-muted-foreground/5 to-transparent',
+  "закрыт": 'from-success/15 via-success/5 to-transparent',
+  "отменен": 'from-destructive/15 via-destructive/5 to-transparent',
 };
 
 export function statusAccentGradient(statusName: string): string {

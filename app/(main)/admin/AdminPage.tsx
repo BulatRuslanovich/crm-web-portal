@@ -5,14 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { PageTransition } from '@/components/motion';
-import {
-  Users,
-  Pill,
-  GraduationCap,
-  Building,
-  History,
-  ArrowRight,
-} from 'lucide-react';
+import { Users, Pill, GraduationCap, Building, History, ArrowRight } from 'lucide-react';
 import { UsersSection } from './UsersSection';
 import { DepartmentsSection } from './DepartmentsSection';
 import { DrugsSection } from './DrugsSection';

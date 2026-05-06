@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient } from './browser-client';
 import type { SpecResponse } from './types';
 
 export const specsApi = {

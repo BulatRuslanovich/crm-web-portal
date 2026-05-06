@@ -97,10 +97,10 @@ function Legend() {
     <div className="text-muted-foreground mt-2 flex items-center justify-end gap-1.5 text-[10px]">
       <span>меньше</span>
       <div className="bg-muted/40 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
-      <div className="bg-emerald-500/35 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
-      <div className="bg-emerald-500/60 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
-      <div className="bg-emerald-500/85 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
-      <div className="bg-emerald-400 ring-border/50 h-2.5 w-2.5 rounded-sm ring-1" />
+      <div className="ring-border/50 h-2.5 w-2.5 rounded-sm bg-emerald-500/35 ring-1" />
+      <div className="ring-border/50 h-2.5 w-2.5 rounded-sm bg-emerald-500/60 ring-1" />
+      <div className="ring-border/50 h-2.5 w-2.5 rounded-sm bg-emerald-500/85 ring-1" />
+      <div className="ring-border/50 h-2.5 w-2.5 rounded-sm bg-emerald-400 ring-1" />
       <span>больше</span>
     </div>
   );

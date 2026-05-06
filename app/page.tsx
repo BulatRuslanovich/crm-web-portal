@@ -1,18 +1,17 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { refreshServerAccessToken } from '@/lib/api/server-client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
+export const dynamic = 'force-dynamic';
 
-export default function RootPage() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
+export default async function RootPage() {
+  let isAuthenticated;
 
-  useEffect(() => {
-    if (!isLoading) {
-      router.replace(isAuthenticated ? '/dashboard' : '/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
+  try {
+    await refreshServerAccessToken();
+    isAuthenticated = true;
+  } catch {
+    isAuthenticated = false;
+  }
 
-  return null;
+  redirect(isAuthenticated ? '/dashboard' : '/login');
 }

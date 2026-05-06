@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import { startOfDay, subDays } from 'date-fns';
-import { useApi } from '@/lib/hooks/use-api';
-import { activsApi } from '@/lib/api/activs';
+import { fetchAllActivPages, type ActivsPageLoadResult } from '@/lib/api/activ-pages';
 
 export function useAnalyticsData({
   enabled,
@@ -11,21 +11,44 @@ export function useAnalyticsData({
   periodDays: number;
   usrId: number | undefined;
 }) {
-  const { data, loading } = useApi(
-    enabled ? ['analytics-activs', periodDays, usrId] : null,
-    () =>
-      activsApi
-        .getAll({
-          pageSize: 1000,
-          sortBy: 'start',
-          sortDesc: true,
-          dateFrom: subDays(startOfDay(new Date()), periodDays - 1).toISOString(),
-          dateTo: new Date().toISOString(),
-          usrId,
-        })
-        .then((r) => r.data.items),
-    { keepPreviousData: true },
-  );
+  const [data, setData] = useState<ActivsPageLoadResult | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  return { activs: data ?? [], loading };
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    const controller = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+
+    fetchAllActivPages(
+      {
+        sortBy: 'start',
+        sortDesc: true,
+        dateFrom: subDays(startOfDay(new Date()), periodDays - 1).toISOString(),
+        dateTo: new Date().toISOString(),
+        usrId,
+      },
+      controller.signal,
+    )
+      .then((result) => {
+        setData(result);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setData(null);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [enabled, periodDays, usrId]);
+
+  return { activs: data?.items ?? [], loading, meta: data };
 }

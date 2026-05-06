@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx';
 import type { ActivResponse } from '@/lib/api/types';
 import { formatFull } from '@/lib/format';
 import { targetKind, targetKindLabel, targetLabel } from './activ-helper';
@@ -67,7 +66,8 @@ export function exportCsv(activs: ActivResponse[], filename: string): void {
   downloadBlob(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }), filename);
 }
 
-export function exportXlsx(activs: ActivResponse[], filename: string): void {
+export async function exportXlsx(activs: ActivResponse[], filename: string): Promise<void> {
+  const XLSX = await import('xlsx');
   const rows = activs.map(toRow);
   const ws = XLSX.utils.aoa_to_sheet([HEADER as unknown as string[], ...rows]);
   ws['!cols'] = COLUMN_WIDTHS;

@@ -3,7 +3,6 @@
 import React from 'react';
 import { BackButton } from '@/components/ui';
 
-
 interface PageHeaderProps {
   title: string;
   kicker?: string;
@@ -12,13 +11,7 @@ interface PageHeaderProps {
   backHref?: string;
 }
 
-export function PageHeader({
-  title,
-  kicker,
-  totalCount,
-  action,
-  backHref,
-}: PageHeaderProps) {
+export function PageHeader({ title, kicker, totalCount, action, backHref }: PageHeaderProps) {
   const hasBack = backHref !== undefined;
 
   return (

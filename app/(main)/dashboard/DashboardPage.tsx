@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const { users: pickerUsers } = usePickerUsers(canFilterByUser);
   const usrIdParam = filterUsrId ? Number(filterUsrId) : undefined;
 
-  const { data: myActivs, loading: activsLoading } = useDashboardActivs(usrIdParam);
+  const { data: myActivs, loading: activsLoading, meta } = useDashboardActivs(usrIdParam);
   const filteredActivs = myActivs ?? [];
   const name = user?.firstName ?? user?.login ?? '';
 
@@ -33,6 +33,13 @@ export default function DashboardPage() {
           onChange={setFilterUsrId}
           currentUsrId={user?.usrId}
         />
+      )}
+
+      {!activsLoading && meta && meta.totalCount > 0 && (
+        <p className="text-muted-foreground px-1 text-xs">
+          Тепловая карта рассчитана по {filteredActivs.length} из {meta.totalCount} загруженных
+          визитов.
+        </p>
       )}
 
       <HeatmapSection activs={filteredActivs} loading={activsLoading} />

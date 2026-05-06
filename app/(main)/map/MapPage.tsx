@@ -47,10 +47,8 @@ export default function MapPage() {
     const q = search.toLowerCase().trim();
     return items.filter((o) => {
       if (typeFilter !== null && o.orgTypeId !== typeFilter) return false;
-      if (q && !o.orgName.toLowerCase().includes(q) && !o.address?.toLowerCase().includes(q)) {
-        return false;
-      }
-      return true;
+      return !(q && !o.orgName.toLowerCase().includes(q) && !o.address?.toLowerCase().includes(q));
+
     });
   }, [orgsData, typeFilter, search]);
 

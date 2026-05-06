@@ -15,11 +15,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 type BadgeVariant = NonNullable<React.ComponentProps<typeof Badge>['variant']>;
 
 const STATUS_STYLE: Record<string, { variant: BadgeVariant; dot: string }> = {
-  запланирован: { variant: 'default', dot: 'bg-primary-foreground' },
-  открыт: { variant: 'warning', dot: 'bg-warning-foreground' },
-  сохранен: { variant: 'secondary', dot: 'bg-muted-foreground' },
-  закрыт: { variant: 'success', dot: 'bg-success-foreground' },
-  отменен: { variant: 'destructive', dot: 'bg-white' },
+  "запланирован": { variant: 'default', dot: 'bg-primary-foreground' },
+  "открыт": { variant: 'warning', dot: 'bg-warning-foreground' },
+  "охранен": { variant: 'secondary', dot: 'bg-muted-foreground' },
+  "закрыт": { variant: 'success', dot: 'bg-success-foreground' },
+  "отменен": { variant: 'destructive', dot: 'bg-white' },
 };
 
 export function StatusBadge({ name }: { name: string }) {
@@ -158,11 +158,7 @@ export function SuccessBox({ message }: { message: string }) {
   );
 }
 
-export function AlertBanner({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AlertBanner({ children }: { children: React.ReactNode }) {
   return (
     <div className="animate-fade-in border-warning/50 bg-warning/15 text-warning flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm">
       <span>{children}</span>

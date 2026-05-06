@@ -41,11 +41,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       />
       {/* decorative blobs */}
       <div
-        className="bg-primary/15 pointer-events-none absolute -top-40 -left-32 h-[420px] w-[420px] rounded-full blur-3xl dark:bg-primary/20"
+        className="bg-primary/15 dark:bg-primary/20 pointer-events-none absolute -top-40 -left-32 h-[420px] w-[420px] rounded-full blur-3xl"
         aria-hidden
       />
       <div
-        className="bg-violet-500/10 pointer-events-none absolute -right-32 -bottom-40 h-[420px] w-[420px] rounded-full blur-3xl dark:bg-violet-500/15"
+        className="pointer-events-none absolute -right-32 -bottom-40 h-[420px] w-[420px] rounded-full bg-violet-500/10 blur-3xl dark:bg-violet-500/15"
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,hsl(var(--primary)/0.08),transparent)]" />

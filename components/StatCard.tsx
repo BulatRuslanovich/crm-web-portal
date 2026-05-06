@@ -40,7 +40,7 @@ export function StatCard({
         </div>
         <ArrowUpRight
           size={16}
-          className="text-muted-foreground/40 group-hover:text-foreground shrink-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          className="text-muted-foreground/40 group-hover:text-foreground shrink-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
         />
       </Link>
     </HoverCard>

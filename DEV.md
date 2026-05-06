@@ -13,6 +13,7 @@
 - [Production-сборка](#production-сборка)
 - [Линтинг и форматирование](#линтинг-и-форматирование)
 - [Структура проекта](#структура-проекта)
+- [Архитектурная схема](#архитектурная-схема)
 - [Частые проблемы](#частые-проблемы)
 
 ---
@@ -46,34 +47,19 @@ npm install
 
 ---
 
-## 2. Поднять бэкенд
-
-Портал без бэка работать не будет. Варианта два:
-
-**В Docker (рекомендуется):**
-
-```bash
-cd ../CrmWebApi
-docker compose up -d
-```
-
-**Через `dotnet run`:** см. [../CrmWebApi/DEV.md](../CrmWebApi/DEV.md).
-
-В обоих случаях API поднимется на `http://localhost:5000`.
-
----
-
-## 3. Настроить переменные окружения
+## 2. Настроить переменные окружения
 
 Создай файл `.env.local` в корне (не коммитится):
 
 ```bash
 # .env.local
 NEXT_PUBLIC_API_URL=http://localhost:5000
+API_URL=http://localhost:5000
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-`NEXT_PUBLIC_API_URL` используется API-клиентом ([lib/api/client.ts:5](lib/api/client.ts#L5)).
+`NEXT_PUBLIC_API_URL` используется браузерным API-клиентом ([lib/api/browser-client.ts](lib/api/browser-client.ts)).
+`API_URL` используется серверным API-клиентом ([lib/api/server-client.ts](lib/api/server-client.ts)); если не задан, берётся `NEXT_PUBLIC_API_URL`.
 `NEXT_PUBLIC_SITE_URL` используется для metadata, sitemap и robots.
 
 > **Важно:** `NEXT_PUBLIC_*` встраивается в бандл при сборке. После смены — перезапусти `npm run dev` (или пересобери `npm run build`).
@@ -121,9 +107,9 @@ NODE_OPTIONS='--inspect' npm run dev
 
 Открой [http://localhost:3000](http://localhost:3000) — должен появиться экран входа.
 
-Зарегистрируйся / войди. Токены сохранятся в `localStorage` (`accessToken`, `refreshToken`). Axios-interceptor ([lib/api/client.ts](lib/api/client.ts)) автоматически обновит токен на 401.
+Зарегистрируйся / войди. `accessToken` сохраняется в `localStorage`, refresh-сессия приходит через cookie от API. Browser axios-interceptor ([lib/api/browser-client.ts](lib/api/browser-client.ts)) автоматически обновит access token на 401.
 
-**Ручной сброс сессии:** DevTools → Application → Local Storage → удалить `accessToken` и `refreshToken`.
+**Ручной сброс сессии:** DevTools → Application → Local Storage → удалить `accessToken`; при необходимости также очистить cookies API-домена.
 
 ---
 
@@ -175,15 +161,50 @@ crm-web-portal/
 ├── lib/
 │   ├── api/            — API-клиенты (axios + ресурсы)
 │   ├── auth-context.tsx — контекст авторизации (JWT + refresh)
-│   ├── use-api.ts      — хук запросов к API
-│   ├── use-entity.ts   — хук CRUD-операций
-│   ├── use-set-diff.ts — хук отслеживания изменений набора
-│   ├── use-roles.ts    — роли текущего пользователя
-│   ├── use-is-admin.ts — проверка прав админа
+│   ├── hooks/          — клиентские хуки
+│   │   ├── use-api.ts      — хук запросов к API
+│   │   ├── use-entity.ts   — хук CRUD-операций
+│   │   ├── use-set-diff.ts — хук отслеживания изменений набора
+│   │   └── use-roles.ts    — роли текущего пользователя
+│   ├── export.ts       — экспорт отчётов в CSV/XLSX
 │   └── format.ts       — форматирование дат/значений
 ├── next.config.ts      — React Compiler, standalone output
 └── Dockerfile          — multi-stage сборка
 ```
+
+---
+
+## Архитектурная схема
+
+### Auth flow
+
+- `AuthProvider` ([lib/auth-context.tsx](lib/auth-context.tsx)) живёт на клиенте и хранит текущего пользователя, `isAuthenticated`, `isLoading`.
+- При входе API возвращает `accessToken`; фронт кладёт его в `localStorage`.
+- Refresh выполняется через `/api/auth/refresh` с `withCredentials: true`, поэтому refresh-сессия зависит от cookie API-домена.
+- Корневой `/` делает server-side redirect через [app/page.tsx](app/page.tsx): серверный клиент пробует refresh по cookie и ведёт на `/dashboard` или `/login`.
+- Защищённый `(main)` layout пока остаётся client-side gate, потому что рабочий access token хранится в браузере.
+
+### API layer
+
+- [lib/api/config.ts](lib/api/config.ts) — общие URL, JSON headers и сериализация query params.
+- [lib/api/browser-client.ts](lib/api/browser-client.ts) — browser-only axios client: добавляет `Authorization` из `localStorage`, обновляет access token на 401, шлёт событие `auth:expired`.
+- [lib/api/server-client.ts](lib/api/server-client.ts) — server-only axios client для Server Components, route handlers и server redirects; пробрасывает cookies из `next/headers`.
+- [lib/api/client.ts](lib/api/client.ts) — совместимый shim на browser client. В новом коде лучше импортировать явно `browser-client` или `server-client`.
+- Ресурсные модули (`activs.ts`, `users.ts`, `orgs.ts` и т.д.) сейчас используются клиентскими страницами и импортируют browser client.
+
+### SWR cache keys
+
+- Общий хук [lib/hooks/use-api.ts](lib/hooks/use-api.ts) принимает `key`, `fetcher` и опции SWR.
+- Для списков и сущностей ключ должен включать endpoint и все фильтры/параметры, которые меняют результат.
+- Если запрос временно выключен, передавай `null` вместо key, чтобы SWR не делал network request.
+- После мутаций используй `mutate`, чтобы обновить связанные ключи без полной перезагрузки страницы.
+
+### Role model
+
+- Роли берутся из `user.policies`, который приходит из `/api/users/me`.
+- [lib/hooks/use-roles.ts](lib/hooks/use-roles.ts) вычисляет `isAdmin`, `isDirector`, `isManager`, `isRepresentative`.
+- Отдельного `use-is-admin.ts` нет; для проверки прав используй `useRoles()`.
+- UI-гейты на страницах скрывают недоступные действия, но backend всё равно остаётся источником истины для прав.
 
 ---
 
@@ -200,7 +221,7 @@ Dev-сервер не перечитал переменные — перезап
 
 ### 401 на каждый запрос после входа
 
-Refresh-токен протух или запись в `localStorage` повреждена. Очисти `accessToken` / `refreshToken` и войди заново.
+Refresh-сессия протухла или запись в `localStorage` повреждена. Очисти `accessToken`, при необходимости cookie API-домена, и войди заново.
 
 ### Leaflet: серые тайлы / карта не грузится
 

@@ -115,11 +115,7 @@ function LocationSection({ org }: { org: OrgResponse }) {
       <div className="space-y-3">
         <InfoBlock label="Адрес" value={org.address} />
         {hasCoords && (
-          <InfoBlock
-            label="Координаты"
-            value={`${org.latitude}, ${org.longitude}`}
-            mono
-          />
+          <InfoBlock label="Координаты" value={`${org.latitude}, ${org.longitude}`} mono />
         )}
       </div>
     </div>

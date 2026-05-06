@@ -1,15 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Nunito } from 'next/font/google';
+import '@fontsource-variable/nunito';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import React from 'react';
-
-const nunito = Nunito({
-  variable: '--font-nunito',
-  subsets: ['latin', 'cyrillic'],
-  display: 'swap',
-});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://crmwebapi.ru';
 
@@ -65,7 +59,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${nunito.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="ru" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>

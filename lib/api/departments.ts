@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient } from './browser-client';
 import type { DepartmentResponse, CreateDepartmentRequest, PagedResponse } from './types';
 
 export const departmentsApi = {
