@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
-import { YMaps, Map as YMap, Placemark, Polyline, ZoomControl, TypeSelector } from '@pbe/react-yandex-maps';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type ymaps from 'yandex-maps';
 import { useTheme } from 'next-themes';
+import { loadYandexMaps } from '@/lib/yandex-maps-loader';
 import type { TrackedActiv } from './MapTrackPage';
 
 const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY ?? '';
@@ -72,10 +72,94 @@ export default function MapTrackClient({ points }: Props) {
   );
 
   const mapRef = useRef<ymaps.Map | null>(null);
+  const ymapsRef = useRef<typeof ymaps | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const polylineRef = useRef<ymaps.Polyline | null>(null);
+  const placemarksRef = useRef<ymaps.Placemark[] | null>(null);
   const lastBoundsKey = useRef<string>('');
+  const [mapReady, setMapReady] = useState(false);
 
-  const center: [number, number] =
-    display.length > 0 ? [display[0].displayLat, display[0].displayLng] : [55.751244, 37.618423];
+  const center = useMemo<[number, number]>(
+    () => (display.length > 0 ? [display[0].displayLat, display[0].displayLng] : [55.751244, 37.618423]),
+    [display],
+  );
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let disposed = false;
+
+    loadYandexMaps(YANDEX_API_KEY).then((api) => {
+      if (disposed || mapRef.current) return;
+
+      ymapsRef.current = api;
+      const map = new api.Map(container, {
+        center,
+        zoom: 11,
+        controls: [],
+        type: isDark ? 'yandex#hybrid' : 'yandex#map',
+      });
+      map.controls.add(new api.control.ZoomControl({ options: { position: { right: 10, top: 10 } } }));
+      const typeSelector = new api.control.TypeSelector();
+      map.controls.add(typeSelector, { position: { right: 10, top: 110 } });
+
+      mapRef.current = map;
+      setMapReady(true);
+    });
+
+    return () => {
+      disposed = true;
+      setMapReady(false);
+      polylineRef.current = null;
+      placemarksRef.current = null;
+      ymapsRef.current = null;
+      mapRef.current?.destroy();
+      mapRef.current = null;
+    };
+  }, [center, isDark]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.setType(isDark ? 'yandex#hybrid' : 'yandex#map');
+  }, [isDark]);
+
+  useEffect(() => {
+    const ym = ymapsRef.current;
+    const map = mapRef.current;
+    if (!ym || !map) return;
+
+    if (polylineRef.current) {
+      map.geoObjects.remove(polylineRef.current);
+      polylineRef.current = null;
+    }
+    placemarksRef.current?.forEach((placemark) => map.geoObjects.remove(placemark));
+
+    if (polyline.length > 1) {
+      const line = new ym.Polyline(polyline, {}, { strokeColor: LINE_COLOR, strokeWidth: 3, strokeOpacity: 0.7 });
+      map.geoObjects.add(line);
+      polylineRef.current = line;
+    }
+
+    const placemarks = display.map(
+      (p) =>
+        new ym.Placemark(
+          [p.displayLat, p.displayLng],
+          {
+            iconContent: String(p.index),
+            balloonContentBody: popupHtml(p),
+            hintContent: p.physName ?? p.orgName ?? '',
+          },
+          {
+            preset: 'islands#darkGreenStretchyIcon',
+            iconColor: MARKER_COLOR,
+          },
+        ),
+    );
+    placemarks.forEach((placemark) => map.geoObjects.add(placemark));
+    placemarksRef.current = placemarks;
+  }, [display, mapReady, polyline]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -97,53 +181,7 @@ export default function MapTrackClient({ points }: Props) {
     map.setBounds(bounds, { checkZoomRange: true, zoomMargin: [40, 40, 40, 40] }).then(() => {
       if (map.getZoom() > 15) map.setZoom(15);
     });
-  }, [polyline]);
+  }, [mapReady, polyline]);
 
-  return (
-    <YMaps query={{ apikey: YANDEX_API_KEY, lang: 'ru_RU' }}>
-      <YMap
-        instanceRef={(ref) => {
-          mapRef.current = (ref as ymaps.Map | null) ?? null;
-        }}
-        defaultState={{
-          center,
-          zoom: 11,
-          controls: [],
-          type: isDark ? 'yandex#hybrid' : 'yandex#map',
-        }}
-        width="100%"
-        height="100%"
-      >
-        <ZoomControl options={{ position: { right: 10, top: 10 } }} />
-        <TypeSelector options={{ position: { right: 10, top: 110 } } as unknown as ymaps.IOptionManager} />
-
-        {polyline.length > 1 && (
-          <Polyline
-            geometry={polyline}
-            options={{
-              strokeColor: LINE_COLOR,
-              strokeWidth: 3,
-              strokeOpacity: 0.7,
-            }}
-          />
-        )}
-
-        {display.map((p) => (
-          <Placemark
-            key={p.activId}
-            geometry={[p.displayLat, p.displayLng]}
-            properties={{
-              iconContent: String(p.index),
-              balloonContentBody: popupHtml(p),
-              hintContent: p.physName ?? p.orgName ?? '',
-            }}
-            options={{
-              preset: 'islands#darkGreenStretchyIcon',
-              iconColor: MARKER_COLOR,
-            }}
-          />
-        ))}
-      </YMap>
-    </YMaps>
-  );
+  return <div ref={containerRef} className="h-full w-full" />;
 }

@@ -1,7 +1,12 @@
 import { AxiosError } from 'axios';
 
 export function extractApiError(err: unknown, fallback = 'Неизвестная ошибка'): string {
-  const data = (err as AxiosError)?.response?.data as Record<string, unknown> | undefined;
+  const axiosError = err as AxiosError;
+  if (axiosError.isAxiosError && !axiosError.response) {
+    return 'API недоступен. Проверьте адрес сервера и подключение к сети.';
+  }
+
+  const data = axiosError.response?.data as Record<string, unknown> | undefined;
   if (!data) return fallback;
 
   const errors = data.errors as Record<string, string[]> | undefined;

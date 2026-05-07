@@ -6,6 +6,7 @@ export interface GeoPoint {
 
 export type GeoFailureReason =
   | 'unsupported'
+  | 'insecure_context'
   | 'permission_denied'
   | 'position_unavailable'
   | 'timeout'
@@ -29,6 +30,10 @@ export function getCurrentPosition(options: PositionOptions = DEFAULT_OPTIONS): 
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
       reject(new GeolocationError('unsupported', 'Geolocation API недоступен'));
+      return;
+    }
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      reject(new GeolocationError('insecure_context', 'Geolocation requires HTTPS'));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -59,6 +64,8 @@ export function describeGeoFailure(reason: GeoFailureReason): string {
   switch (reason) {
     case 'unsupported':
       return 'Браузер не поддерживает определение координат';
+    case 'insecure_context':
+      return 'Р“РµРѕР»РѕРєР°С†РёСЏ РґРѕСЃС‚СѓРїРЅР° С‚РѕР»СЊРєРѕ РЅР° HTTPS РёР»Рё localhost';
     case 'permission_denied':
       return 'Доступ к геолокации отклонён';
     case 'position_unavailable':

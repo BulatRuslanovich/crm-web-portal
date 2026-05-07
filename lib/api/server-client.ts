@@ -2,13 +2,13 @@ import 'server-only';
 
 import axios from 'axios';
 import { cookies } from 'next/headers';
-import { SERVER_BASE_URL, jsonHeaders, paramsSerializer } from './config';
+import { BASE_URL, jsonHeaders, paramsSerializer } from './config';
 
 export async function createServerApiClient() {
   const cookieStore = await cookies();
 
   return axios.create({
-    baseURL: SERVER_BASE_URL,
+    baseURL: BASE_URL,
     headers: {
       ...jsonHeaders,
       Cookie: cookieStore.toString(),

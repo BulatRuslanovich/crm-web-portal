@@ -1,10 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { YMaps, Map as YMap, Placemark, Clusterer, ZoomControl, TypeSelector } from '@pbe/react-yandex-maps';
 import { useTheme } from 'next-themes';
 import { Locate } from 'lucide-react';
 import type { OrgResponse } from '@/lib/api/types';
+import { loadYandexMaps } from '@/lib/yandex-maps-loader';
 import { colorForType } from './palette';
 import type { FlyToOrgTarget } from './MapPage';
 import type ymaps from 'yandex-maps';
@@ -48,8 +48,86 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
   const lastBoundsKey = useRef<string>('');
   const [busy, setBusy] = useState(false);
 
-  const defaultCenter: [number, number] =
-    validOrgs.length > 0 ? [validOrgs[0].latitude, validOrgs[0].longitude] : [55.751244, 37.618423];
+  const defaultCenter = useMemo<[number, number]>(
+    () =>
+      validOrgs.length > 0 ? [validOrgs[0].latitude, validOrgs[0].longitude] : [55.751244, 37.618423],
+    [validOrgs],
+  );
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const clustererRef = useRef<ymaps.Clusterer | null>(null);
+  const [mapReady, setMapReady] = useState(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let disposed = false;
+
+    loadYandexMaps(YANDEX_API_KEY).then((api) => {
+      if (disposed || mapRef.current) return;
+
+      ymapsRef.current = api;
+      const map = new api.Map(container, {
+        center: defaultCenter,
+        zoom: 10,
+        controls: [],
+        type: isDark ? 'yandex#hybrid' : 'yandex#map',
+      });
+      map.controls.add(new api.control.ZoomControl({ options: { position: { right: 10, top: 10 } } }));
+      const typeSelector = new api.control.TypeSelector();
+      map.controls.add(typeSelector, { position: { right: 10, top: 110 } });
+
+      const clusterer = new api.Clusterer({
+        preset: 'islands#invertedDarkGreenClusterIcons',
+        groupByCoordinates: false,
+      });
+      map.geoObjects.add(clusterer as unknown as ymaps.IGeoObject);
+
+      mapRef.current = map;
+      clustererRef.current = clusterer;
+      setMapReady(true);
+    });
+
+    return () => {
+      disposed = true;
+      setMapReady(false);
+      clustererRef.current = null;
+      ymapsRef.current = null;
+      mapRef.current?.destroy();
+      mapRef.current = null;
+    };
+  }, [defaultCenter, isDark]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.setType(isDark ? 'yandex#hybrid' : 'yandex#map');
+  }, [isDark]);
+
+  useEffect(() => {
+    const ym = ymapsRef.current;
+    const clusterer = clustererRef.current;
+    if (!ym || !clusterer) return;
+
+    clusterer.removeAll();
+    clusterer.add(
+      validOrgs.map(
+        (org) =>
+          new ym.Placemark(
+            [org.latitude, org.longitude],
+            {
+              balloonContentBody: popupHtml(org),
+              hintContent: org.orgName,
+            },
+            {
+              preset: 'islands#circleDotIcon',
+              iconColor: colorForType(org.orgTypeId),
+            },
+          ),
+      ),
+    );
+  }, [mapReady, validOrgs]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -71,7 +149,7 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
     map.setBounds(bounds, { checkZoomRange: true, zoomMargin: [40, 40, 40, 40] }).then(() => {
       if (map.getZoom() > 14) map.setZoom(14);
     });
-  }, [validOrgs]);
+  }, [mapReady, validOrgs]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -94,55 +172,9 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
       .finally(() => setBusy(false));
   }, []);
 
-  const onLoad = useCallback((api: typeof ymaps) => {
-    ymapsRef.current = api;
-  }, []);
-
   return (
     <div className="relative h-full w-full">
-      <YMaps query={{ apikey: YANDEX_API_KEY, lang: 'ru_RU' }}>
-        <YMap
-          instanceRef={(ref) => {
-            mapRef.current = (ref as ymaps.Map | null) ?? null;
-          }}
-          onLoad={onLoad}
-          defaultState={{
-            center: defaultCenter,
-            zoom: 10,
-            controls: [],
-            type: isDark ? 'yandex#hybrid' : 'yandex#map',
-          }}
-          width="100%"
-          height="100%"
-          modules={['geolocation', 'geometry.Point']}
-        >
-          <ZoomControl options={{ position: { right: 10, top: 10 } }} />
-          <TypeSelector options={{ position: { right: 10, top: 110 } } as unknown as ymaps.IOptionManager} />
-
-          <Clusterer
-            options={{
-              preset: 'islands#invertedDarkGreenClusterIcons',
-              groupByCoordinates: false,
-              clusterDisableClickZoom: false,
-            }}
-          >
-            {validOrgs.map((org) => (
-              <Placemark
-                key={org.orgId}
-                geometry={[org.latitude, org.longitude]}
-                properties={{
-                  balloonContentBody: popupHtml(org),
-                  hintContent: org.orgName,
-                }}
-                options={{
-                  preset: 'islands#circleDotIcon',
-                  iconColor: colorForType(org.orgTypeId),
-                }}
-              />
-            ))}
-          </Clusterer>
-        </YMap>
-      </YMaps>
+      <div ref={containerRef} className="h-full w-full" />
 
       <button
         onClick={handleLocate}

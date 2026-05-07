@@ -64,7 +64,7 @@ export default function LoginForm() {
         </>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label required>Логин</Label>
           <Input type="text" placeholder="Введите логин" {...register('login', authRules.login)} />

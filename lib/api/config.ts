@@ -1,8 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-export const SERVER_BASE_URL =
-  process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://192.168.0.23:5000';
 
 export const jsonHeaders = { 'Content-Type': 'application/json' };
 
