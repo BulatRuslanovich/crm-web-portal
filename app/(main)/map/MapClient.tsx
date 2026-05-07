@@ -1,165 +1,32 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, LayersControl, useMap } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import L from 'leaflet';
-import 'leaflet.markercluster';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { YMaps, Map as YMap, Placemark, Clusterer, ZoomControl, TypeSelector } from '@pbe/react-yandex-maps';
 import { useTheme } from 'next-themes';
 import { Locate } from 'lucide-react';
 import type { OrgResponse } from '@/lib/api/types';
 import { colorForType } from './palette';
 import type { FlyToOrgTarget } from './MapPage';
+import type ymaps from 'yandex-maps';
 
-/* ── colored DivIcon ────────────────────────────────────────────────────── */
-function makeIcon(color: string): L.DivIcon {
-  const html = `
-    <span style="
-      display:block;width:24px;height:24px;border-radius:50% 50% 50% 0;
-      background:${color};transform:rotate(-45deg);
-      border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);
-    ">
-      <span style="
-        display:block;width:8px;height:8px;border-radius:50%;
-        background:#fff;margin:6px auto;transform:rotate(45deg);
-      "></span>
-    </span>`;
-  return L.divIcon({
-    html,
-    className: '',
-    iconSize: [24, 24],
-    iconAnchor: [12, 22],
-    popupAnchor: [0, -20],
-  });
-}
+const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY ?? '';
 
-const iconCache = new Map<string, L.DivIcon>();
-function getIcon(color: string) {
-  let icon = iconCache.get(color);
-  if (!icon) {
-    icon = makeIcon(color);
-    iconCache.set(color, icon);
-  }
-  return icon;
-}
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-/* ── cluster icon builder ───────────────────────────────────────────────── */
-function createClusterIcon(cluster: L.MarkerCluster): L.DivIcon {
-  const count = cluster.getChildCount();
-  const size = count < 10 ? 34 : count < 100 ? 40 : 48;
-  const bg = count < 10 ? '#0d9488' : count < 100 ? '#d97706' : '#dc2626';
-  return L.divIcon({
-    html: `
-      <div style="
-        display:flex;align-items:center;justify-content:center;
-        width:${size}px;height:${size}px;border-radius:50%;
-        background:${bg};color:#fff;font-weight:700;font-size:13px;
-        border:3px solid rgba(255,255,255,.9);
-        box-shadow:0 2px 8px rgba(0,0,0,.3);
-      ">${count}</div>`,
-    className: '',
-    iconSize: [size, size],
-  });
-}
-
-/* ── auto-fit bounds when org list changes ──────────────────────────────── */
-function FitBounds({ orgs }: { orgs: OrgResponse[] }) {
-  const map = useMap();
-  const lastKey = useRef<string>('');
-
-  useEffect(() => {
-    if (!orgs.length) return;
-    const key = orgs.map((o) => o.orgId).join(',');
-    if (key === lastKey.current) return;
-    lastKey.current = key;
-
-    if (orgs.length === 1) {
-      map.setView([orgs[0].latitude, orgs[0].longitude], 13);
-      return;
-    }
-    const bounds = L.latLngBounds(orgs.map((o) => [o.latitude, o.longitude] as [number, number]));
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
-  }, [orgs, map]);
-
-  return null;
-}
-
-function FlyTo({
-  target,
-  markerRefs,
-}: {
-  target: FlyToOrgTarget | null;
-  markerRefs: React.RefObject<Map<number, L.Marker>>;
-}) {
-  const map = useMap();
-  useEffect(() => {
-    if (!target) return;
-    map.flyTo([target.org.latitude, target.org.longitude], 15, { duration: 0.7 });
-    const marker = markerRefs.current.get(target.org.orgId);
-    if (marker) {
-      setTimeout(() => marker.openPopup(), 750);
-    }
-  }, [target, map, markerRefs]);
-  return null;
-}
-
-function LocateControl() {
-  const map = useMap();
-  const [busy, setBusy] = useState(false);
-
-  function locate() {
-    if (!('geolocation' in navigator)) return;
-    setBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        map.setView([pos.coords.latitude, pos.coords.longitude], 14);
-        setBusy(false);
-      },
-      () => setBusy(false),
-      { enableHighAccuracy: true, timeout: 10000 },
-    );
-  }
-
-  return (
-    <div className="leaflet-top leaflet-right" style={{ pointerEvents: 'none' }}>
-      <div className="leaflet-control" style={{ pointerEvents: 'auto', marginTop: 64 }}>
-        <button
-          onClick={locate}
-          disabled={busy}
-          title="Моё местоположение"
-          className="border-border bg-card text-foreground hover:bg-muted flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border shadow-md transition-all disabled:opacity-50"
-        >
-          <Locate size={16} className={busy ? 'animate-pulse' : ''} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function OrgPopup({ org }: { org: OrgResponse }) {
+function popupHtml(org: OrgResponse): string {
   const color = colorForType(org.orgTypeId);
-  return (
-    <div className="min-w-50 text-[13px] leading-snug">
-      <div className="mb-1 flex items-center gap-1.5">
-        <span className="inline-block h-2 w-2 rounded-full" style={{ background: color }} />
-        <span className="text-[10px] font-semibold tracking-wide uppercase" style={{ color }}>
-          {org.orgTypeName}
-        </span>
+  return `
+    <div style="min-width:200px;font-size:13px;line-height:1.35;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};"></span>
+        <span style="font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:${color};">${escapeHtml(org.orgTypeName)}</span>
       </div>
-      <div className="text-foreground mb-1 text-sm font-bold">{org.orgName}</div>
-      {org.address && <div className="text-muted-foreground mb-1 text-xs">{org.address}</div>}
-      {org.inn && <div className="text-muted-foreground/70 mb-2 text-[11px]">ИНН: {org.inn}</div>}
-      <a
-        href={`/orgs/${org.orgId}`}
-        className="text-foreground inline-block text-xs font-semibold hover:underline"
-      >
-        Открыть →
-      </a>
-    </div>
-  );
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px;">${escapeHtml(org.orgName)}</div>
+      ${org.address ? `<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">${escapeHtml(org.address)}</div>` : ''}
+      ${org.inn ? `<div style="font-size:11px;color:#9ca3af;margin-bottom:8px;">ИНН: ${escapeHtml(org.inn)}</div>` : ''}
+      <a href="/orgs/${org.orgId}" style="font-size:12px;font-weight:600;text-decoration:none;color:inherit;">Открыть →</a>
+    </div>`;
 }
 
 interface Props {
@@ -176,66 +43,115 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
     [orgs],
   );
 
-  const markerRefs = useRef<Map<number, L.Marker>>(new Map());
+  const mapRef = useRef<ymaps.Map | null>(null);
+  const ymapsRef = useRef<typeof ymaps | null>(null);
+  const lastBoundsKey = useRef<string>('');
+  const [busy, setBusy] = useState(false);
 
   const defaultCenter: [number, number] =
     validOrgs.length > 0 ? [validOrgs[0].latitude, validOrgs[0].longitude] : [55.751244, 37.618423];
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || validOrgs.length === 0) return;
+    const key = validOrgs.map((o) => o.orgId).join(',');
+    if (key === lastBoundsKey.current) return;
+    lastBoundsKey.current = key;
+
+    if (validOrgs.length === 1) {
+      map.setCenter([validOrgs[0].latitude, validOrgs[0].longitude], 13);
+      return;
+    }
+    const lats = validOrgs.map((o) => o.latitude);
+    const lngs = validOrgs.map((o) => o.longitude);
+    const bounds: [[number, number], [number, number]] = [
+      [Math.min(...lats), Math.min(...lngs)],
+      [Math.max(...lats), Math.max(...lngs)],
+    ];
+    map.setBounds(bounds, { checkZoomRange: true, zoomMargin: [40, 40, 40, 40] }).then(() => {
+      if (map.getZoom() > 14) map.setZoom(14);
+    });
+  }, [validOrgs]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyToOrg) return;
+    map.setCenter([flyToOrg.org.latitude, flyToOrg.org.longitude], 15, { duration: 700 });
+  }, [flyToOrg]);
+
+  const handleLocate = useCallback(() => {
+    const map = mapRef.current;
+    const ym = ymapsRef.current;
+    if (!map || !ym) return;
+    setBusy(true);
+    ym.geolocation
+      .get({ provider: 'browser', mapStateAutoApply: true })
+      .then((res) => {
+        const geom = res.geoObjects.get(0).geometry as ymaps.geometry.Point | null;
+        const pos = geom?.getCoordinates();
+        if (pos) map.setCenter(pos, 14);
+      })
+      .finally(() => setBusy(false));
+  }, []);
+
+  const onLoad = useCallback((api: typeof ymaps) => {
+    ymapsRef.current = api;
+  }, []);
+
   return (
-    <MapContainer
-      center={defaultCenter}
-      zoom={10}
-      style={{ height: '100%', width: '100%' }}
-      className="z-0"
-    >
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer name="Карта" checked={!isDark}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Тёмная" checked={isDark}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Спутник">
-          <TileLayer
-            attribution="&copy; Esri"
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          />
-        </LayersControl.BaseLayer>
-      </LayersControl>
+    <div className="relative h-full w-full">
+      <YMaps query={{ apikey: YANDEX_API_KEY, lang: 'ru_RU' }}>
+        <YMap
+          instanceRef={(ref) => {
+            mapRef.current = (ref as ymaps.Map | null) ?? null;
+          }}
+          onLoad={onLoad}
+          defaultState={{
+            center: defaultCenter,
+            zoom: 10,
+            controls: [],
+            type: isDark ? 'yandex#hybrid' : 'yandex#map',
+          }}
+          width="100%"
+          height="100%"
+          modules={['geolocation', 'geometry.Point']}
+        >
+          <ZoomControl options={{ position: { right: 10, top: 10 } }} />
+          <TypeSelector options={{ position: { right: 10, top: 110 } } as unknown as ymaps.IOptionManager} />
 
-      <FitBounds orgs={validOrgs} />
-      <LocateControl />
-      <FlyTo target={flyToOrg ?? null} markerRefs={markerRefs} />
-
-      <MarkerClusterGroup
-        chunkedLoading
-        iconCreateFunction={createClusterIcon}
-        spiderfyOnMaxZoom
-        showCoverageOnHover={false}
-        maxClusterRadius={50}
-      >
-        {validOrgs.map((org) => (
-          <Marker
-            key={org.orgId}
-            position={[org.latitude, org.longitude]}
-            icon={getIcon(colorForType(org.orgTypeId))}
-            ref={(m) => {
-              if (m) markerRefs.current.set(org.orgId, m);
-              else markerRefs.current.delete(org.orgId);
+          <Clusterer
+            options={{
+              preset: 'islands#invertedDarkGreenClusterIcons',
+              groupByCoordinates: false,
+              clusterDisableClickZoom: false,
             }}
           >
-            <Popup maxWidth={260}>
-              <OrgPopup org={org} />
-            </Popup>
-          </Marker>
-        ))}
-      </MarkerClusterGroup>
-    </MapContainer>
+            {validOrgs.map((org) => (
+              <Placemark
+                key={org.orgId}
+                geometry={[org.latitude, org.longitude]}
+                properties={{
+                  balloonContentBody: popupHtml(org),
+                  hintContent: org.orgName,
+                }}
+                options={{
+                  preset: 'islands#circleDotIcon',
+                  iconColor: colorForType(org.orgTypeId),
+                }}
+              />
+            ))}
+          </Clusterer>
+        </YMap>
+      </YMaps>
+
+      <button
+        onClick={handleLocate}
+        disabled={busy}
+        title="Моё местоположение"
+        className="border-border bg-card text-foreground hover:bg-muted absolute top-[170px] right-[10px] z-[1000] flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border shadow-md transition-all disabled:opacity-50"
+      >
+        <Locate size={16} className={busy ? 'animate-pulse' : ''} />
+      </button>
+    </div>
   );
 }

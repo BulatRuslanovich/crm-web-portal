@@ -1,60 +1,19 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  LayersControl,
-  useMap,
-} from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { YMaps, Map as YMap, Placemark, Polyline, ZoomControl, TypeSelector } from '@pbe/react-yandex-maps';
+import type ymaps from 'yandex-maps';
 import { useTheme } from 'next-themes';
 import type { TrackedActiv } from './MapTrackPage';
+
+const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY ?? '';
 
 const MARKER_COLOR = '#0d9488';
 const LINE_COLOR = '#0d9488';
 const JITTER_DEG = 0.00005;
 
-function makeNumberedIcon(n: number): L.DivIcon {
-  const html = `
-    <div style="
-      display:flex;align-items:center;justify-content:center;
-      width:30px;height:30px;border-radius:50% 50% 50% 0;
-      background:${MARKER_COLOR};color:#fff;font-weight:700;font-size:12px;
-      transform:rotate(-45deg);border:2px solid #fff;
-      box-shadow:0 2px 6px rgba(0,0,0,.3);
-    ">
-      <span style="transform:rotate(45deg);">${n}</span>
-    </div>`;
-  return L.divIcon({
-    html,
-    className: '',
-    iconSize: [30, 30],
-    iconAnchor: [15, 28],
-    popupAnchor: [0, -26],
-  });
-}
-
-function FitBounds({ positions }: { positions: [number, number][] }) {
-  const map = useMap();
-  const lastKey = useRef<string>('');
-  useEffect(() => {
-    if (positions.length === 0) return;
-    const key = positions.map(([la, lo]) => `${la.toFixed(5)}:${lo.toFixed(5)}`).join('|');
-    if (key === lastKey.current) return;
-    lastKey.current = key;
-    if (positions.length === 1) {
-      map.setView(positions[0], 14);
-      return;
-    }
-    map.fitBounds(L.latLngBounds(positions), { padding: [40, 40], maxZoom: 15 });
-  }, [positions, map]);
-  return null;
-}
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 interface DisplayPoint extends TrackedActiv {
   displayLat: number;
@@ -81,6 +40,23 @@ function applyJitter(points: TrackedActiv[]): DisplayPoint[] {
   });
 }
 
+function popupHtml(point: DisplayPoint): string {
+  const target = point.physName ?? point.orgName ?? '—';
+  const endLabel = new Date(point.end).toLocaleString('ru-RU');
+  return `
+    <div style="min-width:220px;font-size:13px;line-height:1.35;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:9999px;background:${MARKER_COLOR};color:#fff;font-weight:700;font-size:10px;padding:0 6px;">${point.index}</span>
+        <span style="font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6b7280;">${escapeHtml(point.statusName)}</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px;">${escapeHtml(target)}</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${escapeHtml(endLabel)}</div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">Сотрудник: ${escapeHtml(point.usrLogin)}</div>
+      ${point.description ? `<div style="font-size:11px;color:#9ca3af;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(point.description)}</div>` : ''}
+      <a href="/activs/${point.activId}" style="font-size:12px;font-weight:600;text-decoration:none;color:inherit;">Открыть визит →</a>
+    </div>`;
+}
+
 interface Props {
   points: TrackedActiv[];
 }
@@ -95,88 +71,79 @@ export default function MapTrackClient({ points }: Props) {
     [display],
   );
 
+  const mapRef = useRef<ymaps.Map | null>(null);
+  const lastBoundsKey = useRef<string>('');
+
   const center: [number, number] =
     display.length > 0 ? [display[0].displayLat, display[0].displayLng] : [55.751244, 37.618423];
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || polyline.length === 0) return;
+    const key = polyline.map(([la, lo]) => `${la.toFixed(5)}:${lo.toFixed(5)}`).join('|');
+    if (key === lastBoundsKey.current) return;
+    lastBoundsKey.current = key;
+
+    if (polyline.length === 1) {
+      map.setCenter(polyline[0], 14);
+      return;
+    }
+    const lats = polyline.map(([la]) => la);
+    const lngs = polyline.map(([, lo]) => lo);
+    const bounds: [[number, number], [number, number]] = [
+      [Math.min(...lats), Math.min(...lngs)],
+      [Math.max(...lats), Math.max(...lngs)],
+    ];
+    map.setBounds(bounds, { checkZoomRange: true, zoomMargin: [40, 40, 40, 40] }).then(() => {
+      if (map.getZoom() > 15) map.setZoom(15);
+    });
+  }, [polyline]);
+
   return (
-    <MapContainer
-      center={center}
-      zoom={11}
-      style={{ height: '100%', width: '100%' }}
-      className="z-0"
-    >
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer name="Карта" checked={!isDark}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Тёмная" checked={isDark}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Спутник">
-          <TileLayer
-            attribution="&copy; Esri"
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          />
-        </LayersControl.BaseLayer>
-      </LayersControl>
-
-      <FitBounds positions={polyline} />
-
-      {polyline.length > 1 && (
-        <Polyline
-          positions={polyline}
-          pathOptions={{ color: LINE_COLOR, weight: 3, opacity: 0.7 }}
-        />
-      )}
-
-      {display.map((p) => (
-        <Marker
-          key={p.activId}
-          position={[p.displayLat, p.displayLng]}
-          icon={makeNumberedIcon(p.index)}
-        >
-          <Popup maxWidth={280}>
-            <PointPopup point={p} />
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
-  );
-}
-
-function PointPopup({ point }: { point: DisplayPoint }) {
-  const target = point.physName ?? point.orgName ?? '—';
-  const endLabel = new Date(point.end).toLocaleString('ru-RU');
-  return (
-    <div className="min-w-[220px] text-[13px] leading-snug">
-      <div className="mb-1 flex items-center gap-1.5">
-        <span className="bg-primary text-primary-foreground inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold">
-          {point.index}
-        </span>
-        <span className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
-          {point.statusName}
-        </span>
-      </div>
-      <div className="text-foreground mb-1 text-sm font-bold">{target}</div>
-      <div className="text-muted-foreground mb-1 text-[11px]">{endLabel}</div>
-      <div className="text-muted-foreground mb-2 text-[11px]">Сотрудник: {point.usrLogin}</div>
-      {point.description && (
-        <div className="text-muted-foreground/80 mb-2 line-clamp-3 text-[11px]">
-          {point.description}
-        </div>
-      )}
-      <a
-        href={`/activs/${point.activId}`}
-        className="text-foreground inline-block text-xs font-semibold hover:underline"
+    <YMaps query={{ apikey: YANDEX_API_KEY, lang: 'ru_RU' }}>
+      <YMap
+        instanceRef={(ref) => {
+          mapRef.current = (ref as ymaps.Map | null) ?? null;
+        }}
+        defaultState={{
+          center,
+          zoom: 11,
+          controls: [],
+          type: isDark ? 'yandex#hybrid' : 'yandex#map',
+        }}
+        width="100%"
+        height="100%"
       >
-        Открыть визит →
-      </a>
-    </div>
+        <ZoomControl options={{ position: { right: 10, top: 10 } }} />
+        <TypeSelector options={{ position: { right: 10, top: 110 } } as unknown as ymaps.IOptionManager} />
+
+        {polyline.length > 1 && (
+          <Polyline
+            geometry={polyline}
+            options={{
+              strokeColor: LINE_COLOR,
+              strokeWidth: 3,
+              strokeOpacity: 0.7,
+            }}
+          />
+        )}
+
+        {display.map((p) => (
+          <Placemark
+            key={p.activId}
+            geometry={[p.displayLat, p.displayLng]}
+            properties={{
+              iconContent: String(p.index),
+              balloonContentBody: popupHtml(p),
+              hintContent: p.physName ?? p.orgName ?? '',
+            }}
+            options={{
+              preset: 'islands#darkGreenStretchyIcon',
+              iconColor: MARKER_COLOR,
+            }}
+          />
+        ))}
+      </YMap>
+    </YMaps>
   );
 }
