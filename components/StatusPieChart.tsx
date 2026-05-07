@@ -1,6 +1,6 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { STATUS_HEX } from '@/lib/api/statuses';
-import { CHART_TOOLTIP } from '@/lib/chart-style';
+import { ChartTooltip } from './ChartTooltip';
 
 const DEFAULT_COLOR = '#94a3b8';
 
@@ -47,7 +47,7 @@ export function StatusPieChart({ data, total }: { data: StatusSlice[]; total: nu
                 <Cell key={entry.name} fill={colors[i]} />
               ))}
             </Pie>
-            <Tooltip {...CHART_TOOLTIP} />
+            <Tooltip content={<ChartTooltip />} />
           </PieChart>
         </ResponsiveContainer>
       </div>

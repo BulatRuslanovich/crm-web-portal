@@ -23,13 +23,27 @@ const STATUS_STYLE: Record<string, { variant: BadgeVariant; dot: string }> = {
 };
 
 export function StatusBadge({ name }: { name: string }) {
-  const style = STATUS_STYLE[name.toLowerCase()] ?? {
+  const lower = name.toLowerCase();
+  const style = STATUS_STYLE[lower] ?? {
     variant: 'outline' as BadgeVariant,
     dot: 'bg-muted-foreground',
   };
+  const isOpen = lower === 'открыт';
   return (
     <Badge variant={style.variant} className="rounded-full">
-      <span className={cn('mr-1 size-1.5 rounded-full', style.dot)} />
+      {isOpen ? (
+        <span className="relative mr-1 flex size-1.5">
+          <span
+            className={cn(
+              'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75',
+              style.dot,
+            )}
+          />
+          <span className={cn('relative inline-flex size-1.5 rounded-full', style.dot)} />
+        </span>
+      ) : (
+        <span className={cn('mr-1 size-1.5 rounded-full', style.dot)} />
+      )}
       {name}
     </Badge>
   );

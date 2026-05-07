@@ -105,7 +105,7 @@ const STATUS_ACCENT: Record<string, string> = {
 };
 
 export function statusAccentGradient(statusName: string): string {
-  return STATUS_ACCENT[statusName.toLowerCase()] ?? 'from-success/15 via-success/5 to-transparent';
+  return STATUS_ACCENT[statusName.toLowerCase()] ?? 'from-success/30 via-success/10 to-transparent';
 }
 
 function pad2(n: number): string {

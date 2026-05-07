@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { AXIS_TICK, AXIS_TICK_SMALL, CHART_TOOLTIP, truncateTick } from '@/lib/chart-style';
+import { AXIS_TICK, AXIS_TICK_SMALL, CHART_CURSOR, CHART_GRID, truncateTick } from '@/lib/chart-style';
+import { ChartTooltip } from './ChartTooltip';
 
 interface BarDatum {
   name: string;
@@ -24,7 +25,7 @@ export function TopBarChart({
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+        <CartesianGrid {...CHART_GRID} horizontal={false} />
         <XAxis
           type="number"
           tick={AXIS_TICK}
@@ -41,12 +42,12 @@ export function TopBarChart({
           axisLine={false}
           tickFormatter={tickLimit ? truncateTick(tickLimit) : undefined}
         />
-        <Tooltip {...CHART_TOOLTIP} />
+        <Tooltip content={<ChartTooltip />} cursor={CHART_CURSOR} />
         <Bar
           dataKey="count"
           name={barName}
           fill={color}
-          radius={[0, 4, 4, 0]}
+          radius={[0, 6, 6, 0]}
           maxBarSize={tickLimit ? 18 : 20}
         />
       </BarChart>
