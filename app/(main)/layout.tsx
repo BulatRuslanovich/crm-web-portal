@@ -8,6 +8,7 @@ import { Toaster } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
 import Sidebar from '@/components/Sidebar';
 import { ChaosOverlay } from '@/components/ChaosOverlay';
+import { AssistantWidget } from '@/components/assistant/AssistantWidget';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -93,6 +94,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       >
         <div className="animate-fade-in mx-auto max-w-[1600px]">{children}</div>
       </main>
+      <AssistantWidget />
     </div>
   );
 }
