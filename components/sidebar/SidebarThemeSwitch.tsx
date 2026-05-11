@@ -58,7 +58,7 @@ function SegmentedSwitch({
             className={cn(
               'flex flex-1 cursor-pointer items-center justify-center rounded-md py-1.5 transition-all',
               active
-                ? 'bg-sidebar text-sidebar-foreground shadow-sm'
+                ? 'bg-sidebar text-sidebar-foreground'
                 : 'text-muted-foreground hover:text-sidebar-accent-foreground',
             )}
           >

@@ -31,7 +31,7 @@ function PeriodButton({
       onClick={onClick}
       className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
         active
-          ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+          ? 'border-primary bg-primary text-primary-foreground'
           : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
       }`}
     >

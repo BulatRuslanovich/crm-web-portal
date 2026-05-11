@@ -101,7 +101,7 @@ export default function MapTrackPage() {
         {canPickUser ? (
           <UserFilter users={users} value={usrId} onChange={setUsrId} currentUsrId={user?.usrId} />
         ) : (
-          <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
+          <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3">
             <div className="bg-muted ring-border flex h-8 w-8 items-center justify-center rounded-lg ring-1">
               <Users size={14} className="text-muted-foreground" />
             </div>
@@ -124,7 +124,7 @@ export default function MapTrackPage() {
         </AlertBanner>
       )}
 
-      <div className="border-border relative min-h-[400px] flex-1 overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border relative min-h-[400px] flex-1 overflow-hidden rounded-2xl border">
         {loading ? (
           <Skeleton className="h-full w-full rounded-2xl" />
         ) : points.length === 0 ? (
@@ -149,7 +149,7 @@ function DateRangeFilter({
   onToChange: (v: string) => void;
 }) {
   return (
-    <div className="border-border bg-card flex flex-1 flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
+    <div className="border-border bg-card flex flex-1 flex-wrap items-center gap-3 rounded-2xl border px-4 py-3">
       <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
         Период
       </span>

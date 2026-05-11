@@ -178,7 +178,7 @@ function FiltersPanel({
   }
 
   return (
-    <div className="border-border bg-card rounded-2xl border p-4 shadow-sm">
+    <div className="border-border bg-card rounded-2xl border p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <Label>Тип сущности</Label>
@@ -271,7 +271,7 @@ function PaginationBar({
   onReload: () => void;
 }) {
   return (
-    <div className="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5 shadow-sm">
+    <div className="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2.5">
       <div className="text-muted-foreground flex items-center gap-3 text-xs">
         <span>
           Всего записей: <span className="text-foreground font-semibold tabular-nums">{total}</span>
@@ -330,10 +330,10 @@ function PaginationBar({
 
 function AuditTable({ items }: { items: AuditLogResponse[] }) {
   return (
-    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border">
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
-          <thead className="bg-muted/40 text-muted-foreground text-[10px] font-bold tracking-wider uppercase">
+          <thead className="bg-muted/40 text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
             <tr>
               <Th>Дата</Th>
               <Th>Пользователь</Th>
@@ -395,8 +395,8 @@ function TableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="border-border bg-card flex flex-col items-center gap-2 rounded-2xl border px-6 py-12 text-center shadow-sm">
-      <div className="bg-muted ring-border flex h-10 w-10 items-center justify-center rounded-xl ring-1">
+    <div className="border-border bg-card flex flex-col items-center gap-2 rounded-2xl border px-6 py-12 text-center">
+      <div className="border-border bg-muted flex h-10 w-10 items-center justify-center rounded-xl border">
         <History size={16} className="text-muted-foreground" />
       </div>
       <p className="text-muted-foreground text-sm">Нет записей за выбранный период</p>
@@ -406,8 +406,8 @@ function EmptyState() {
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="border-destructive/40 bg-destructive/5 flex flex-col items-center gap-3 rounded-2xl border px-6 py-8 text-center shadow-sm">
-      <div className="bg-destructive/10 ring-destructive/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
+    <div className="border-destructive/40 bg-destructive/5 flex flex-col items-center gap-3 rounded-2xl border px-6 py-8 text-center">
+      <div className="border-border flex h-10 w-10 items-center justify-center rounded-xl border">
         <AlertCircle size={16} className="text-destructive" />
       </div>
       <p className="text-foreground text-sm">Не удалось загрузить аудит-лог</p>

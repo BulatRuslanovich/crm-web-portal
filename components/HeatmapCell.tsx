@@ -5,7 +5,7 @@ const LEVEL_BG = [
   'bg-emerald-500/35',
   'bg-emerald-500/60',
   'bg-emerald-500/85',
-  'bg-emerald-400 shadow-sm shadow-emerald-500/40',
+  'bg-emerald-400 shadow-emerald-500/40',
 ];
 
 function pluralizeClosed(count: number): string {

@@ -41,7 +41,7 @@ function SwitchButton({
   onClick: () => void;
 }) {
   const cls = active
-    ? 'bg-card text-foreground shadow-sm ring-1 ring-border'
+    ? 'bg-card text-foreground ring-1 ring-border'
     : 'text-muted-foreground hover:text-foreground';
   return (
     <button

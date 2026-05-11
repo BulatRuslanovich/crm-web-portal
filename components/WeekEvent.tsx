@@ -19,7 +19,7 @@ export function WeekEvent({ ev }: { ev: PositionedEvent }) {
   return (
     <Link
       href={`/activs/${ev.activ.activId}`}
-      className="absolute z-10 flex flex-col overflow-hidden rounded-md border-l-[3px] px-1.5 py-1 text-[10px] leading-tight shadow-sm transition-all duration-150 hover:z-30 hover:shadow-md hover:brightness-105"
+      className="absolute z-10 flex flex-col overflow-hidden rounded-md border-l-[3px] px-1.5 py-1 text-[10px] leading-tight transition-all duration-150 hover:z-30 hover:shadow-md hover:brightness-105"
       style={{
         top,
         height,

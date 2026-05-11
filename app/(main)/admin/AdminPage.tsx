@@ -51,18 +51,8 @@ const TABS: {
   },
 ];
 
-function toneRing(tone: 'primary' | 'success' | 'warning' | 'default', active: boolean) {
-  if (!active) return 'bg-muted text-muted-foreground ring-border';
-  switch (tone) {
-    case 'primary':
-      return 'bg-primary/10 text-primary ring-primary/20';
-    case 'success':
-      return 'bg-success/10 text-success ring-success/20';
-    case 'warning':
-      return 'bg-warning/15 text-warning ring-warning/25';
-    default:
-      return 'bg-foreground/10 text-foreground ring-foreground/20';
-  }
+function toneRing(_tone: 'primary' | 'success' | 'warning' | 'default', active: boolean) {
+  return active ? 'text-foreground' : 'text-muted-foreground/60';
 }
 
 export default function AdminPage() {
@@ -96,29 +86,29 @@ export default function AdminPage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`group relative flex cursor-pointer items-center gap-2.5 rounded-2xl border p-3 text-left transition-all duration-200 ${
+              className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors duration-200 ${
                 active
-                  ? 'border-primary/40 bg-card ring-primary/20 shadow-sm ring-1'
-                  : 'border-border bg-card/50 hover:border-border hover:bg-card'
+                  ? 'border-foreground/20 bg-card'
+                  : 'border-border bg-card/60 hover:bg-card'
               }`}
             >
-              <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 transition-colors ${toneRing(
-                  t.tone,
-                  active,
-                )}`}
-              >
-                <Icon size={15} />
-              </div>
+              {active && (
+                <span className="bg-primary absolute top-2 bottom-2 left-0 w-[2px] rounded-r-full" />
+              )}
+              <Icon
+                size={15}
+                strokeWidth={1.5}
+                className={`shrink-0 transition-colors ${toneRing(t.tone, active)}`}
+              />
               <div className="min-w-0">
                 <p
-                  className={`text-sm font-semibold ${
+                  className={`text-sm font-medium tracking-tight ${
                     active ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
                   }`}
                 >
                   {t.label}
                 </p>
-                <p className="text-muted-foreground/80 hidden truncate text-[10px] sm:block">
+                <p className="text-muted-foreground/70 hidden truncate text-[11px] sm:block">
                   {t.subtitle}
                 </p>
               </div>
@@ -129,18 +119,17 @@ export default function AdminPage() {
 
       <Link
         href="/admin/audit-log"
-        className="group border-border bg-card hover:border-warning/40 hover:bg-warning/5 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm transition-colors"
+        className="group border-border bg-card hover:bg-muted/40 flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-colors"
       >
-        <div className="bg-warning/15 ring-warning/25 flex h-9 w-9 items-center justify-center rounded-xl ring-1">
-          <History size={15} className="text-warning" />
-        </div>
+        <History size={15} strokeWidth={1.5} className="text-muted-foreground" />
         <div className="min-w-0 flex-1">
-          <p className="text-foreground text-sm font-semibold">Аудит-лог</p>
-          <p className="text-muted-foreground/80 text-[10px]">Кто, когда и какое поле изменил</p>
+          <p className="text-foreground text-sm font-medium tracking-tight">Аудит-лог</p>
+          <p className="text-muted-foreground/70 text-[11px]">Кто, когда и какое поле изменил</p>
         </div>
         <ArrowRight
           size={14}
-          className="text-muted-foreground transition-transform group-hover:translate-x-0.5"
+          strokeWidth={1.5}
+          className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5"
         />
       </Link>
 

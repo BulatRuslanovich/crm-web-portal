@@ -121,7 +121,7 @@ export function UsersSection() {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 sm:flex-row sm:items-center">
         <SearchInput
           value={search}
           onChange={setSearch}
@@ -141,12 +141,12 @@ export function UsersSection() {
       </div>
 
       {showCreate && (
-        <div className="animate-fade-in border-primary/30 bg-card overflow-hidden rounded-2xl border shadow-sm">
+        <div className="animate-fade-in border-primary/30 bg-card overflow-hidden rounded-2xl border">
           <div className="border-border bg-primary/5 flex items-center gap-3 border-b px-5 py-3.5">
-            <div className="bg-primary/10 ring-primary/20 flex h-8 w-8 items-center justify-center rounded-lg ring-1">
+            <div className="border-border flex h-8 w-8 items-center justify-center rounded-lg border">
               <UserPlus2 size={14} className="text-primary" />
             </div>
-            <p className="text-foreground text-sm font-bold">Новый пользователь</p>
+            <p className="text-foreground text-sm font-semibold">Новый пользователь</p>
           </div>
           <form action={handleCreate}>
             <div className="space-y-3 p-5">
@@ -186,9 +186,9 @@ export function UsersSection() {
         </div>
       )}
 
-      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border">
         <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3">
-          <p className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
+          <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
             Пользователей: {users.length}
           </p>
           <p className="text-muted-foreground/70 text-[10px]">
@@ -204,7 +204,7 @@ export function UsersSection() {
                 className="hover:bg-muted/40 flex flex-col gap-3 px-5 py-4 transition-colors lg:flex-row lg:items-center"
               >
                 <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <div className="bg-primary/10 text-primary ring-primary/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-bold ring-1">
+                  <div className="border-border text-muted-foreground flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold border">
                     {initialsOf(u)}
                   </div>
                   <div className="min-w-0 flex-1">

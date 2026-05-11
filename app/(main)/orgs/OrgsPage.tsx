@@ -45,7 +45,7 @@ export default function OrgsPage() {
         }
       />
 
-      <div className="border-border bg-card rounded-2xl border p-3 shadow-sm">
+      <div className="border-border bg-card rounded-2xl border p-3">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -59,7 +59,7 @@ export default function OrgsPage() {
         <EmptyOrgs hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+          <div className="border-border bg-card overflow-hidden rounded-2xl border">
             {orgs.map((org, i) => (
               <OrgRow key={org.orgId} org={org} first={i === 0} />
             ))}
@@ -79,21 +79,20 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
         first ? '' : 'border-border border-t'
       }`}
     >
-      <div className="bg-success/10 text-success ring-success/20 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold ring-1 transition-transform duration-200 group-hover:scale-105">
+      <div className="border-border text-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-[11px] font-medium tracking-tight">
         {orgInitials(org.orgName)}
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="text-foreground truncate text-sm font-semibold">{org.orgName}</p>
-        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-          {org.orgTypeName && (
-            <span className="bg-muted text-muted-foreground inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium">
-              {org.orgTypeName}
-            </span>
+        <p className="text-foreground truncate text-sm font-medium tracking-tight">{org.orgName}</p>
+        <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+          {org.orgTypeName && <span className="truncate">{org.orgTypeName}</span>}
+          {org.orgTypeName && org.address && (
+            <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />
           )}
           {org.address && (
-            <span className="text-muted-foreground flex min-w-0 items-center gap-1 truncate text-xs">
-              <MapPin size={11} className="shrink-0" />
+            <span className="flex min-w-0 items-center gap-1 truncate">
+              <MapPin size={11} className="shrink-0" strokeWidth={1.5} />
               <span className="truncate">{org.address}</span>
             </span>
           )}
@@ -102,10 +101,10 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
 
       {org.inn && (
         <div className="hidden shrink-0 flex-col items-end sm:flex">
-          <span className="text-muted-foreground/70 flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase">
-            <Hash size={10} /> ИНН
+          <span className="text-muted-foreground/60 flex items-center gap-1 text-[10px] font-medium tracking-[0.12em] uppercase">
+            <Hash size={10} strokeWidth={1.5} /> ИНН
           </span>
-          <span className="text-foreground font-mono text-xs tabular-nums">{org.inn}</span>
+          <span className="text-foreground/90 mt-0.5 font-mono text-xs tabular-nums">{org.inn}</span>
         </div>
       )}
     </Link>

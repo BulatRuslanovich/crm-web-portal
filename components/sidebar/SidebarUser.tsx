@@ -3,11 +3,11 @@ import { cn } from '@/lib/utils';
 
 function Avatar({ initials, size = 'md' }: { initials: string; size?: 'sm' | 'md' }) {
   const box = size === 'sm' ? 'size-8' : 'size-9';
-  const text = size === 'sm' ? 'text-xs' : 'text-sm';
+  const text = size === 'sm' ? 'text-xs' : 'text-[13px]';
   return (
     <span
       className={cn(
-        'from-primary to-primary/70 text-primary-foreground ring-sidebar flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-semibold shadow-sm ring-2',
+        'border-sidebar-border text-sidebar-foreground bg-sidebar flex shrink-0 items-center justify-center rounded-full border font-medium tracking-tight',
         box,
         text,
       )}
@@ -64,16 +64,18 @@ function ExpandedUser({
   onLogout: () => void;
 }) {
   return (
-    <div className="border-sidebar-border bg-sidebar-accent/30 rounded-xl border p-2">
+    <div className="space-y-1">
       <button
         type="button"
         onClick={onProfile}
-        className="hover:bg-sidebar-accent/60 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left transition-colors"
+        className="hover:bg-sidebar-accent/40 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors"
       >
         <Avatar initials={initials} />
         <div className="min-w-0 flex-1">
-          <p className="text-sidebar-foreground truncate text-sm font-semibold">{displayName}</p>
-          <p className="text-muted-foreground truncate text-[10px] font-medium tracking-wider uppercase">
+          <p className="text-sidebar-foreground truncate text-[13px] font-medium tracking-tight">
+            {displayName}
+          </p>
+          <p className="text-muted-foreground/70 truncate text-[10px] font-medium tracking-[0.12em] uppercase">
             {role}
           </p>
         </div>
@@ -81,9 +83,9 @@ function ExpandedUser({
       <button
         type="button"
         onClick={onLogout}
-        className="text-destructive hover:bg-destructive/10 mt-1 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+        className="text-muted-foreground hover:bg-sidebar-accent/40 hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
       >
-        <LogOut size={14} strokeWidth={2} />
+        <LogOut size={14} strokeWidth={1.5} />
         Выйти
       </button>
     </div>

@@ -14,7 +14,7 @@ function isActive(pathname: string, href: string, allHrefs: string[]): boolean {
 
 function GroupLabel({ label }: { label: string }) {
   return (
-    <p className="text-muted-foreground/70 px-3 pt-3 pb-1.5 text-[10px] font-semibold tracking-wider uppercase">
+    <p className="text-muted-foreground/60 px-3 pt-4 pb-2 text-[10px] font-semibold tracking-[0.14em] uppercase">
       {label}
     </p>
   );

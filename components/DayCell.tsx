@@ -12,7 +12,7 @@ function cellClass(
   outOfMonth: boolean,
   isWeekend: boolean,
 ): string {
-  if (isSelected) return 'border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30';
+  if (isSelected) return 'border-primary bg-primary/5 ring-1 ring-primary/30';
   if (isToday) return 'border-primary/40 bg-primary/5';
   if (outOfMonth) return 'border-border/50 bg-card/40 hover:bg-muted/40';
   if (isWeekend) return 'border-border bg-muted/30 hover:bg-muted';
@@ -20,7 +20,7 @@ function cellClass(
 }
 
 function dayNumClass(isToday: boolean, outOfMonth: boolean): string {
-  if (isToday) return 'bg-primary text-primary-foreground shadow-sm';
+  if (isToday) return 'bg-primary text-primary-foreground';
   if (outOfMonth) return 'text-muted-foreground/50';
   return 'text-foreground';
 }

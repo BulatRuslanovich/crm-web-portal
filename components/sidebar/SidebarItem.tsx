@@ -3,10 +3,10 @@ import { cn } from '@/lib/utils';
 import type { NavItem } from './nav-config';
 
 const BASE_CLS =
-  'group relative flex items-center gap-3 rounded-lg text-sm font-medium transition-all duration-150';
-const ACTIVE_CLS = 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm';
+  'group relative flex items-center gap-3 rounded-lg text-[13px] font-medium tracking-tight transition-colors duration-200';
+const ACTIVE_CLS = 'bg-sidebar-accent/70 text-sidebar-accent-foreground';
 const IDLE_CLS =
-  'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground';
+  'text-muted-foreground hover:bg-sidebar-accent/40 hover:text-sidebar-accent-foreground';
 
 export function SidebarItem({
   item,
@@ -33,13 +33,9 @@ export function SidebarItem({
       )}
     >
       {active && !compact && (
-        <span className="bg-sidebar-primary absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full" />
+        <span className="bg-sidebar-primary absolute top-1/2 left-0 h-4 w-[2px] -translate-y-1/2 rounded-r-full" />
       )}
-      <Icon
-        size={18}
-        strokeWidth={active ? 2.25 : 1.75}
-        className="shrink-0 transition-transform group-hover:scale-110"
-      />
+      <Icon size={17} strokeWidth={active ? 2 : 1.6} className="shrink-0" />
       {!compact && <span className="truncate">{item.label}</span>}
     </Link>
   );

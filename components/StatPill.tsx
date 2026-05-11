@@ -14,7 +14,7 @@ export function StatPill({
   tone: Tone;
 }) {
   return (
-    <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm">
+    <div className="border-border bg-card flex items-center gap-3 rounded-2xl border px-4 py-3">
       <ToneIcon icon={icon} tone={tone} size="sm" />
       <div className="min-w-0">
         <p className="text-foreground text-lg font-bold tracking-tight tabular-nums">{value}</p>

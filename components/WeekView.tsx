@@ -28,7 +28,7 @@ function DayHeader({ date, today }: { date: Date; today: Date }) {
       </div>
       <div
         className={`mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-          isToday ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground'
+          isToday ? 'bg-primary text-primary-foreground' : 'text-foreground'
         }`}
       >
         {date.getDate()}
@@ -111,7 +111,7 @@ export function WeekView({
   }, []);
 
   return (
-    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border">
       <div
         className="border-border bg-card/95 sticky top-0 z-20 grid border-b backdrop-blur"
         style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}

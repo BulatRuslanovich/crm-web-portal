@@ -25,7 +25,7 @@ export function ActivRow({ activ, first }: Props) {
       }`}
     >
       <span
-        className={`absolute top-2 bottom-2 left-0 w-1 rounded-r-full ${statusStripeClass(activ.statusName)} opacity-90 transition-all duration-200 group-hover:top-0 group-hover:bottom-0 group-hover:opacity-100`}
+        className={`absolute top-3 bottom-3 left-0 w-[2px] ${statusStripeClass(activ.statusName)} opacity-80 transition-opacity duration-200 group-hover:opacity-100`}
       />
       <DateBlock {...dateParts} />
       <ActivMeta activ={activ} target={target} time={dateParts.time} />
@@ -38,12 +38,14 @@ export function ActivRow({ activ, first }: Props) {
 
 function DateBlock({ day, month, weekday }: DateParts) {
   return (
-    <div className="bg-muted/60 flex w-14 shrink-0 flex-col items-center justify-center rounded-lg py-1.5">
-      <span className="text-muted-foreground/80 text-[10px] font-semibold tracking-wide uppercase">
+    <div className="flex w-12 shrink-0 flex-col items-center justify-center">
+      <span className="text-muted-foreground/70 text-[10px] font-medium tracking-[0.12em] uppercase">
         {weekday}
       </span>
-      <span className="text-foreground text-lg leading-none font-bold">{day}</span>
-      <span className="text-muted-foreground/80 text-[10px]">{month}</span>
+      <span className="text-foreground text-xl leading-none font-semibold tabular-nums tracking-tight">
+        {day}
+      </span>
+      <span className="text-muted-foreground/70 text-[10px] tracking-wide">{month}</span>
     </div>
   );
 }
@@ -62,7 +64,7 @@ function ActivMeta({
     <div className="min-w-0 flex-1">
       <div className="flex min-w-0 items-center gap-1.5">
         <Icon size={13} className="text-muted-foreground/70 shrink-0" />
-        <p className="text-foreground truncate text-sm font-semibold">{target.name ?? '—'}</p>
+        <p className="text-foreground truncate text-sm font-medium tracking-tight">{target.name ?? '—'}</p>
       </div>
       <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
         {time && <span className="text-foreground/80 font-medium tabular-nums">{time}</span>}

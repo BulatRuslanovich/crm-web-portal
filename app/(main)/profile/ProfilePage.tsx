@@ -84,7 +84,7 @@ function SectionCard({
             ? 'bg-destructive/10 text-destructive ring-destructive/20'
             : 'bg-muted text-muted-foreground ring-border';
   return (
-    <section className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+    <section className="border-border bg-card overflow-hidden rounded-2xl border">
       <div className="border-border flex items-center gap-3 border-b px-5 py-4">
         <div className={`flex h-9 w-9 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
           <Icon size={16} />
@@ -174,7 +174,7 @@ export default function ProfilePage() {
 
   return (
     <PageTransition className="mx-auto w-full space-y-5">
-      <section className="border-border from-primary/10 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
+      <section className="border-border from-primary/10 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br">
         <div className="bg-primary/10 absolute -top-20 -right-20 h-60 w-60 rounded-full blur-3xl" />
         <div className="relative flex flex-wrap items-center gap-5 p-6">
           <div className="relative">

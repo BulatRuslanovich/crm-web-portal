@@ -79,7 +79,7 @@ export default function ActivsPage() {
         }
       />
 
-      <div className="border-border bg-card space-y-3 rounded-2xl border p-3 shadow-sm">
+      <div className="border-border bg-card space-y-3 rounded-2xl border p-3">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -125,7 +125,7 @@ function ActivGroup({ label, items }: { label: string; items: ActivResponse[] })
         <div className="bg-border h-px flex-1" />
         <span className="text-muted-foreground/70 text-xs">{items.length}</span>
       </div>
-      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border">
         {items.map((activ, i) => (
           <ActivRow key={activ.activId} activ={activ} first={i === 0} />
         ))}
