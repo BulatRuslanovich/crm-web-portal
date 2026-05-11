@@ -28,8 +28,8 @@ interface Props {
 export function StatusStepper({ currentStatusId }: Props) {
   if (currentStatusId === STATUS_CANCELED) {
     return (
-      <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold">
-        <Ban size={13} />
+      <div className="border-border text-muted-foreground flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium tracking-tight">
+        <Ban size={12} strokeWidth={1.5} className="text-destructive/80" />
         Визит отменён
       </div>
     );
@@ -63,12 +63,12 @@ function StepMarker({
   return (
     <div className="flex flex-col items-center gap-1.5">
       <div
-        className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${markerClass(isCurrent, reached)}`}
+        className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] font-medium tabular-nums transition-colors ${markerClass(isCurrent, reached)}`}
       >
-        {reached && !isCurrent ? <Check size={11} /> : index + 1}
+        {reached && !isCurrent ? <Check size={11} strokeWidth={2} /> : index + 1}
       </div>
       <span
-        className={`text-[10px] font-medium whitespace-nowrap ${reached ? 'text-foreground' : 'text-muted-foreground/70'}`}
+        className={`text-[10px] font-medium tracking-tight whitespace-nowrap ${reached ? 'text-foreground/80' : 'text-muted-foreground/60'}`}
       >
         {step.label}
       </span>
@@ -79,15 +79,15 @@ function StepMarker({
 function StepConnector({ active }: { active: boolean }) {
   return (
     <div
-      className={`mb-5 h-0.5 flex-1 rounded-full transition-colors ${
-        active ? 'bg-primary/70' : 'bg-border'
+      className={`mb-5 h-px flex-1 transition-colors ${
+        active ? 'bg-foreground/30' : 'bg-border'
       }`}
     />
   );
 }
 
 function markerClass(isCurrent: boolean, reached: boolean): string {
-  if (isCurrent) return 'bg-primary text-primary-foreground ring-2 ring-primary/30';
-  if (reached) return 'bg-primary/80 text-primary-foreground';
-  return 'bg-muted text-muted-foreground/60';
+  if (isCurrent) return 'border-foreground/40 bg-foreground text-background';
+  if (reached) return 'border-foreground/30 bg-foreground/[0.08] text-foreground';
+  return 'border-border text-muted-foreground/60';
 }

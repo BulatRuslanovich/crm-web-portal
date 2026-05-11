@@ -46,7 +46,7 @@ export function AssistantInput({
         if (canSend) onSubmit();
       }}
       className={cn(
-        'group border-input bg-background flex items-end gap-2 rounded-2xl border p-1.5 shadow-sm transition-all',
+        'group border-input bg-background flex items-end gap-2 rounded-2xl border p-1.5 transition-all',
         'focus-within:border-primary/60 focus-within:shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_15%,transparent)]',
       )}
     >
@@ -69,7 +69,7 @@ export function AssistantInput({
           onClick={onStop}
           aria-label="Остановить"
           className={cn(
-            'bg-destructive text-destructive-foreground flex size-8 cursor-pointer items-center justify-center rounded-full shadow-sm transition-transform',
+            'bg-destructive text-destructive-foreground flex size-8 cursor-pointer items-center justify-center rounded-full transition-transform',
             'hover:scale-105 active:scale-95',
           )}
         >
@@ -83,7 +83,7 @@ export function AssistantInput({
           className={cn(
             'flex size-8 shrink-0 items-center justify-center rounded-full transition-all',
             canSend
-              ? 'bg-primary text-primary-foreground cursor-pointer shadow-sm hover:scale-105 hover:shadow-[0_4px_10px_-2px_color-mix(in_oklab,var(--primary)_45%,transparent)] active:scale-95'
+              ? 'bg-primary text-primary-foreground cursor-pointer hover:scale-105 hover:shadow-[0_4px_10px_-2px_color-mix(in_oklab,var(--primary)_45%,transparent)] active:scale-95'
               : 'bg-muted text-muted-foreground/50 cursor-not-allowed',
           )}
         >

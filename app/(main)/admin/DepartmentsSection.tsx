@@ -73,14 +73,14 @@ function DepartmentMembersModal({
       <div className="border-border bg-card w-full max-w-2xl overflow-hidden rounded-2xl border shadow-xl">
         <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="bg-success/10 ring-success/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1">
+            <div className="border-border flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
               <Building size={16} className="text-success" />
             </div>
             <div className="min-w-0">
               <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
                 Состав департамента
               </p>
-              <h3 className="text-foreground truncate text-base font-bold">
+              <h3 className="text-foreground truncate text-base font-semibold">
                 {department.departmentName}
               </h3>
             </div>
@@ -225,11 +225,11 @@ export function DepartmentsSection() {
     <div className="space-y-4">
       {/* Info banner */}
       <div className="border-warning/30 bg-warning/10 flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm">
-        <div className="bg-warning/15 ring-warning/25 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1">
+        <div className="border-border flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border">
           <Eye size={14} className="text-warning" />
         </div>
         <div className="min-w-0">
-          <p className="text-warning text-xs font-bold">Как работает видимость</p>
+          <p className="text-warning text-xs font-semibold">Как работает видимость</p>
           <p className="text-foreground/80 mt-0.5 text-xs">
             Менеджеры видят визиты пользователей только из своих департаментов. Управление составом
             — это управление тем, кто чьи визиты видит.
@@ -238,8 +238,8 @@ export function DepartmentsSection() {
       </div>
 
       {/* Toolbar */}
-      <div className="border-border bg-card flex items-center justify-between gap-2 rounded-2xl border p-3 shadow-sm">
-        <p className="text-muted-foreground px-2 text-xs font-bold tracking-wider uppercase">
+      <div className="border-border bg-card flex items-center justify-between gap-2 rounded-2xl border p-3">
+        <p className="text-muted-foreground px-2 text-xs font-semibold tracking-wider uppercase">
           Департаментов: {departments.length}
         </p>
         <BtnSuccess
@@ -262,12 +262,12 @@ export function DepartmentsSection() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="animate-fade-in border-success/30 bg-card overflow-hidden rounded-2xl border shadow-sm">
+        <div className="animate-fade-in border-success/30 bg-card overflow-hidden rounded-2xl border">
           <div className="border-border bg-success/5 flex items-center gap-3 border-b px-5 py-3.5">
-            <div className="bg-success/10 ring-success/20 flex h-8 w-8 items-center justify-center rounded-lg ring-1">
+            <div className="border-border flex h-8 w-8 items-center justify-center rounded-lg border">
               <Building size={14} className="text-success" />
             </div>
-            <p className="text-foreground text-sm font-bold">Новый департамент</p>
+            <p className="text-foreground text-sm font-semibold">Новый департамент</p>
           </div>
           <form onSubmit={handleCreate}>
             <div className="space-y-3 p-5">
@@ -301,14 +301,14 @@ export function DepartmentsSection() {
         {departments.map((d) => (
           <div
             key={d.departmentId}
-            className="group border-border bg-card hover:border-success/30 flex flex-col gap-3 rounded-2xl border p-4 shadow-sm transition-all hover:shadow-md"
+            className="group border-border bg-card hover:border-success/30 flex flex-col gap-3 rounded-2xl border p-4 transition-all hover:shadow-md"
           >
             <div className="flex items-start gap-3">
-              <div className="bg-success/10 ring-success/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1">
+              <div className="border-border flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
                 <Building size={16} className="text-success" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-sm font-bold">{d.departmentName}</p>
+                <p className="text-foreground truncate text-sm font-semibold">{d.departmentName}</p>
                 <p className="text-muted-foreground mt-0.5 inline-flex items-center gap-1 text-xs">
                   <Users size={11} />
                   {d.userCount} пользовател
@@ -334,7 +334,7 @@ export function DepartmentsSection() {
       </div>
 
       {departments.length === 0 && (
-        <div className="border-border bg-card rounded-2xl border py-16 text-center shadow-sm">
+        <div className="border-border bg-card rounded-2xl border py-16 text-center">
           <Building size={28} className="text-muted-foreground/40 mx-auto mb-2" />
           <p className="text-muted-foreground text-sm">Департаментов пока нет</p>
         </div>

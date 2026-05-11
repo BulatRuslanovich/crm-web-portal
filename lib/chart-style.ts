@@ -1,15 +1,22 @@
 export const CHART_CURSOR = {
   fill: 'var(--muted)',
-  fillOpacity: 0.4,
+  fillOpacity: 0.3,
 } as const;
 
-export const AXIS_TICK = { fontSize: 11, fill: 'var(--muted-foreground)' } as const;
-export const AXIS_TICK_SMALL = { fontSize: 10, fill: 'var(--muted-foreground)' } as const;
+export const AXIS_TICK = {
+  fontSize: 11,
+  fill: 'var(--muted-foreground)',
+  letterSpacing: '-0.01em',
+} as const;
+export const AXIS_TICK_SMALL = {
+  fontSize: 10,
+  fill: 'var(--muted-foreground)',
+  letterSpacing: '-0.01em',
+} as const;
 
 export const CHART_GRID = {
-  strokeDasharray: '3 3',
   stroke: 'var(--border)',
-  strokeOpacity: 0.6,
+  strokeOpacity: 1,
 } as const;
 
 export const PERIODS = [

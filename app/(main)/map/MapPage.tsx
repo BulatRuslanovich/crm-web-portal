@@ -71,7 +71,7 @@ export default function MapPage() {
   return (
     <PageTransition className="flex h-[calc(100vh-6rem)] flex-col gap-4">
       {/* Hero */}
-      <div className="border-border from-success/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm">
+      <div className="border-border from-success/5 via-muted to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br">
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-3">
             <div>
@@ -146,7 +146,7 @@ export default function MapPage() {
             onClick={() => setTypeFilter(null)}
             className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
               typeFilter === null
-                ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
             }`}
           >
@@ -161,7 +161,7 @@ export default function MapPage() {
                 onClick={() => setTypeFilter(active ? null : t.orgTypeId)}
                 className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                   active
-                    ? 'text-white shadow-sm'
+                    ? 'text-white'
                     : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
                 }`}
                 style={active ? { background: color, borderColor: color } : undefined}
@@ -180,7 +180,7 @@ export default function MapPage() {
       {/* Map + sidebar */}
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[1fr_340px]">
         {/* Map */}
-        <div className="border-border relative min-h-[400px] overflow-hidden rounded-2xl border shadow-sm">
+        <div className="border-border relative min-h-[400px] overflow-hidden rounded-2xl border">
           {loading ? (
             <Skeleton className="h-full w-full rounded-2xl" />
           ) : (
@@ -189,7 +189,7 @@ export default function MapPage() {
         </div>
 
         {/* Sidebar */}
-        <aside className="border-border bg-card flex min-h-0 flex-col overflow-hidden rounded-2xl border shadow-sm">
+        <aside className="border-border bg-card flex min-h-0 flex-col overflow-hidden rounded-2xl border">
           <div className="border-border flex shrink-0 border-b">
             <button
               onClick={() => setTab('located')}

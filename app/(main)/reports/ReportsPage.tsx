@@ -40,8 +40,12 @@ function EmptyState({
 }) {
   return (
     <div className="border-border bg-card rounded-2xl border py-20 text-center">
-      <FileSpreadsheet size={28} className="text-muted-foreground/40 mx-auto mb-2" />
-      <p className="text-muted-foreground text-sm">
+      <FileSpreadsheet
+        size={24}
+        strokeWidth={1.5}
+        className="text-muted-foreground/50 mx-auto mb-3"
+      />
+      <p className="text-foreground text-sm font-medium tracking-tight">
         {hasAnyResults
           ? 'Ничего не найдено по выбранным фильтрам'
           : 'Нет визитов за выбранный период'}
@@ -49,7 +53,7 @@ function EmptyState({
       {hasActiveFilters && (
         <button
           onClick={onReset}
-          className="text-primary mt-3 inline-block cursor-pointer text-sm font-medium hover:underline"
+          className="text-muted-foreground hover:text-foreground mt-3 inline-block cursor-pointer text-xs font-medium hover:underline"
         >
           Сбросить фильтры
         </button>

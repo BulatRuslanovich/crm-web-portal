@@ -34,7 +34,7 @@ export function AssistantMessage({
     >
       <div
         className={cn(
-          'flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold shadow-sm',
+          'flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
           isUser
             ? 'bg-muted text-muted-foreground ring-border ring-1'
             : 'bg-[radial-gradient(circle_at_30%_25%,color-mix(in_oklab,var(--primary)_85%,white)_0%,var(--primary)_60%,color-mix(in_oklab,var(--primary)_70%,black)_100%)] text-primary-foreground ring-primary/20 ring-1',
@@ -47,7 +47,7 @@ export function AssistantMessage({
         {(message.content || message.tools.length > 0 || (isStreaming && !message.content)) && (
           <div
             className={cn(
-              'rounded-2xl px-3.5 py-2 text-sm shadow-sm transition-shadow',
+              'rounded-2xl px-3.5 py-2 text-sm transition-shadow',
               isUser
                 ? 'bg-primary text-primary-foreground rounded-tr-sm'
                 : 'bg-muted/70 text-foreground border-border/40 rounded-tl-sm border',

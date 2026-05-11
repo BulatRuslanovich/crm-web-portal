@@ -40,7 +40,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return (
       <div className="bg-background flex min-h-screen items-center justify-center px-6">
         <div className="animate-fade-in flex w-full max-w-xs flex-col items-center gap-5">
-          <div className="bg-card ring-border relative flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1">
+          <div className="bg-card ring-border relative flex size-16 items-center justify-center rounded-2xl ring-1">
             <Image src="/icon.svg" width={52} height={52} alt="Pharmo" priority />
             <div className="border-primary/20 absolute -inset-1 rounded-[1.25rem] border" />
           </div>

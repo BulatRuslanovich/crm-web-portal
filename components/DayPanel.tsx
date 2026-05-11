@@ -99,7 +99,7 @@ export function DayPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="animate-fade-in border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+    <div className="animate-fade-in border-border bg-card overflow-hidden rounded-2xl border">
       <PanelHeader date={date} count={activs.length} onClose={onClose} />
       {activs.length === 0 ? (
         <div className="px-5 py-12 text-center">

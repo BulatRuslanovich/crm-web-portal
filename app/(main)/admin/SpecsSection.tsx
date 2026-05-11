@@ -56,7 +56,7 @@ export function SpecsSection() {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 sm:flex-row sm:items-center">
         <SearchInput
           value={search}
           onChange={(v) => {
@@ -80,9 +80,9 @@ export function SpecsSection() {
       </div>
 
       {/* Specs grid */}
-      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border">
         <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3">
-          <p className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
+          <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
             Специальностей: {filtered.length}
           </p>
         </div>
@@ -92,7 +92,7 @@ export function SpecsSection() {
               key={s.specId}
               className="group border-border bg-background hover:border-primary/30 hover:bg-muted/60 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors"
             >
-              <div className="bg-muted ring-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1">
+              <div className="bg-muted ring-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border">
                 <GraduationCap size={14} className="text-muted-foreground" />
               </div>
               <p className="text-foreground min-w-0 flex-1 truncate text-sm font-medium">

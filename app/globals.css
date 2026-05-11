@@ -6,110 +6,115 @@
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(0.995 0.003 210); /* clinical white — едва уловимая прохлада */
-  --foreground: oklch(0.18 0.005 210); /* почти чёрный с холодным отливом */
+  /* Pure neutral cool, no medical tint */
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.16 0 0);
 
-  --card: oklch(0.985 0.004 210); /* почти белый, чуть прохладный */
-  --card-foreground: oklch(0.18 0.005 210);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0 0);
 
-  --popover: oklch(0.995 0.003 210);
-  --popover-foreground: oklch(0.18 0.005 210);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0 0);
 
-  --primary: oklch(0.58 0.12 188); /* medical teal — спокойная бирюза, классика pharma UI */
-  --primary-foreground: oklch(1 0 0);
+  /* Graphite indigo — глубокий, низкочастотный акцент */
+  --primary: oklch(0.42 0.14 268);
+  --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.96 0.008 210);
-  --secondary-foreground: oklch(0.25 0.005 210);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.22 0 0);
 
-  --muted: oklch(0.96 0.008 210);
-  --muted-foreground: oklch(0.52 0.01 210); /* прохладный клинический серый */
+  --muted: oklch(0.965 0 0);
+  --muted-foreground: oklch(0.5 0 0);
 
-  --accent: oklch(0.95 0.03 188); /* лёгкая мята-бирюза */
-  --accent-foreground: oklch(0.42 0.13 188); /* глубокий teal */
+  --accent: oklch(0.95 0.018 268);
+  --accent-foreground: oklch(0.35 0.12 268);
 
-  --destructive: oklch(0.62 0.18 22); /* приглушённый коралл вместо алого */
-  --destructive-foreground: oklch(1 0 0);
+  /* Semantic — заметно приглушены, чтобы не дрались с indigo */
+  --destructive: oklch(0.54 0.14 27);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --success: oklch(0.66 0.16 145); /* травяной зелёный — отличим от teal */
-  --success-foreground: oklch(0.18 0.005 210);
+  --success: oklch(0.55 0.1 160);
+  --success-foreground: oklch(0.99 0 0);
 
-  --warning: oklch(0.74 0.13 75); /* мягкий янтарь — менее «пожарный» */
-  --warning-foreground: oklch(0.18 0.005 210);
+  --warning: oklch(0.7 0.09 75);
+  --warning-foreground: oklch(0.16 0 0);
 
-  --border: oklch(0.91 0.01 210);
-  --input: oklch(0.91 0.01 210);
-  --ring: oklch(0.58 0.12 188);
+  --border: oklch(0.16 0 0 / 8%);
+  --input: oklch(0.16 0 0 / 12%);
+  --ring: oklch(0.42 0.14 268);
 
-  --chart-1: oklch(0.58 0.12 188); /* medical teal */
-  --chart-2: oklch(0.66 0.16 145); /* lime/grass */
-  --chart-3: oklch(0.62 0.18 22); /* coral */
-  --chart-4: oklch(0.74 0.13 75); /* amber */
-  --chart-5: oklch(0.6 0.14 250); /* clinical blue */
+  --chart-1: oklch(0.42 0.14 268); /* indigo */
+  --chart-2: oklch(0.55 0.1 160); /* moss */
+  --chart-3: oklch(0.54 0.14 27); /* terracotta */
+  --chart-4: oklch(0.7 0.09 75); /* sand */
+  --chart-5: oklch(0.5 0.07 230); /* slate-blue */
 
-  --sidebar: oklch(0.985 0.004 210);
-  --sidebar-foreground: oklch(0.18 0.005 210);
-  --sidebar-primary: oklch(0.58 0.12 188);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0.03 188);
-  --sidebar-accent-foreground: oklch(0.42 0.13 188);
-  --sidebar-border: oklch(0.91 0.01 210);
-  --sidebar-ring: oklch(0.58 0.12 188);
+  --sidebar: oklch(0.975 0 0);
+  --sidebar-foreground: oklch(0.16 0 0);
+  --sidebar-primary: oklch(0.42 0.14 268);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.014 268);
+  --sidebar-accent-foreground: oklch(0.3 0.12 268);
+  --sidebar-border: oklch(0.16 0 0 / 8%);
+  --sidebar-ring: oklch(0.42 0.14 268);
 }
 
 .dark {
-  --background: oklch(0.15 0.008 210); /* глубокий клинический сине-чёрный */
-  --foreground: oklch(0.96 0.005 210);
+  /* Чистый neutral — никакого синего подтона. Чуть тёплый сдвиг даёт «ink» эффект. */
+  --background: oklch(0.13 0 0);
+  --foreground: oklch(0.96 0 0);
 
-  --card: oklch(0.2 0.01 210);
-  --card-foreground: oklch(0.96 0.005 210);
+  --card: oklch(0.165 0 0);
+  --card-foreground: oklch(0.96 0 0);
 
-  --popover: oklch(0.2 0.01 210);
-  --popover-foreground: oklch(0.96 0.005 210);
+  --popover: oklch(0.165 0 0);
+  --popover-foreground: oklch(0.96 0 0);
 
-  --primary: oklch(0.72 0.13 188); /* medical teal, ярче для тёмного */
-  --primary-foreground: oklch(0.15 0.006 210);
+  /* В тёмном indigo делаем светлее и слегка ярче для контраста */
+  --primary: oklch(0.7 0.13 268);
+  --primary-foreground: oklch(0.13 0 0);
 
-  --secondary: oklch(0.25 0.008 210);
-  --secondary-foreground: oklch(0.96 0.005 210);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
 
-  --muted: oklch(0.25 0.008 210);
-  --muted-foreground: oklch(0.68 0.008 210);
+  --muted: oklch(0.21 0 0);
+  --muted-foreground: oklch(0.66 0 0);
 
-  --accent: oklch(0.3 0.06 188); /* глубокий teal */
-  --accent-foreground: oklch(0.83 0.11 188); /* светлая бирюза */
+  --accent: oklch(0.28 0.06 268);
+  --accent-foreground: oklch(0.86 0.09 268);
 
-  --destructive: oklch(0.68 0.18 22); /* мягкий коралл */
-  --destructive-foreground: oklch(0.96 0.005 210);
+  --destructive: oklch(0.64 0.16 27);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --success: oklch(0.72 0.17 145); /* травяной поярче */
-  --success-foreground: oklch(0.15 0.006 210);
+  --success: oklch(0.66 0.11 160);
+  --success-foreground: oklch(0.13 0 0);
 
-  --warning: oklch(0.76 0.13 75); /* мягкий янтарь */
-  --warning-foreground: oklch(0.15 0.006 210);
+  --warning: oklch(0.76 0.1 75);
+  --warning-foreground: oklch(0.13 0 0);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.13 188);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.7 0.13 268);
 
-  --chart-1: oklch(0.72 0.13 188); /* medical teal */
-  --chart-2: oklch(0.72 0.17 145); /* lime */
-  --chart-3: oklch(0.68 0.18 22); /* coral */
-  --chart-4: oklch(0.76 0.13 75); /* amber */
-  --chart-5: oklch(0.7 0.14 250); /* clinical blue */
+  --chart-1: oklch(0.7 0.13 268);
+  --chart-2: oklch(0.66 0.11 160);
+  --chart-3: oklch(0.64 0.16 27);
+  --chart-4: oklch(0.76 0.1 75);
+  --chart-5: oklch(0.62 0.08 230);
 
-  --sidebar: oklch(0.2 0.008 210);
-  --sidebar-foreground: oklch(0.96 0.005 210);
-  --sidebar-primary: oklch(0.72 0.13 188);
-  --sidebar-primary-foreground: oklch(0.15 0.006 210);
-  --sidebar-accent: oklch(0.3 0.06 188);
-  --sidebar-accent-foreground: oklch(0.83 0.11 188);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.72 0.13 188);
+  --sidebar: oklch(0.155 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.7 0.13 268);
+  --sidebar-primary-foreground: oklch(0.13 0 0);
+  --sidebar-accent: oklch(0.26 0.05 268);
+  --sidebar-accent-foreground: oklch(0.86 0.09 268);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.7 0.13 268);
 }
 
 @theme inline {
   --font-sans:
-    'Nunito Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -185,7 +190,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family:
-    'Nunito Variable',
+    'Inter Variable',
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -193,12 +198,24 @@ body {
     'Segoe UI',
     sans-serif;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  font-feature-settings:
+    'cv11' 1,
+    'ss01' 1,
+    'cv02' 1;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.02em;
 }
 
 :focus-visible {
@@ -318,10 +335,10 @@ body {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.35s ease-out both;
+  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .animate-fade-in-scale {
-  animation: fade-in-scale 0.25s ease-out both;
+  animation: fade-in-scale 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .animate-slide-down {
   animation: slide-down 0.25s ease-out both;

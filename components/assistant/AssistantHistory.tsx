@@ -59,7 +59,7 @@ export function AssistantHistory({
       <div className="border-border space-y-2 border-b p-2.5">
         <Button
           size="sm"
-          className="bg-primary hover:bg-primary/90 w-full justify-start gap-2 shadow-sm"
+          className="bg-primary hover:bg-primary/90 w-full justify-start gap-2"
           onClick={onNewChat}
         >
           <Plus className="size-4" />

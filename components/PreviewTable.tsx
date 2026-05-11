@@ -56,7 +56,7 @@ export function PreviewTable({ activs }: { activs: ActivResponse[] }) {
   const shown = activs.slice(0, PREVIEW_LIMIT);
 
   return (
-    <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border">
       <div className="border-border flex items-center gap-2 border-b px-5 py-3.5">
         <FileSpreadsheet size={14} className="text-muted-foreground" />
         <p className="text-foreground text-sm font-bold">

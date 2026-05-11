@@ -28,7 +28,7 @@ function PresetButtons({
           onClick={() => onApply(p.days)}
           className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
             activeKey === p.key
-              ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+              ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
           }`}
         >
@@ -81,7 +81,7 @@ function StatusChip({
       onClick={() => onToggle(id)}
       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
         active
-          ? 'text-white shadow-sm'
+          ? 'text-white'
           : 'border-border bg-card text-muted-foreground hover:border-border hover:text-foreground'
       }`}
       style={active ? { background: color, borderColor: color } : undefined}
@@ -119,7 +119,7 @@ export function FiltersCard({
   showReset: boolean;
 }) {
   return (
-    <div className="border-border bg-card rounded-2xl border p-5 shadow-sm">
+    <div className="border-border bg-card rounded-2xl border p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={14} className="text-muted-foreground" />

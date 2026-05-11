@@ -59,7 +59,7 @@ export default function PhysesPage() {
         }
       />
 
-      <div className="border-border bg-card rounded-2xl border p-3 shadow-sm">
+      <div className="border-border bg-card rounded-2xl border p-3">
         <SearchBar
           value={input}
           onChange={setInput}
@@ -73,7 +73,7 @@ export default function PhysesPage() {
         <EmptyPhyses hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+          <div className="border-border bg-card overflow-hidden rounded-2xl border">
             {physes.map((phys, i) => (
               <PhysRow key={phys.physId} phys={phys} first={i === 0} />
             ))}
@@ -96,13 +96,13 @@ function PhysRow({ phys, first }: { phys: PhysResponse; first: boolean }) {
         first ? '' : 'border-border border-t'
       }`}
     >
-      <div className="bg-warning/15 text-warning ring-warning/25 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold ring-1 transition-transform duration-200 group-hover:scale-105">
-        {initials || <Stethoscope size={16} />}
+      <div className="border-border text-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-[11px] font-medium tracking-tight">
+        {initials || <Stethoscope size={15} strokeWidth={1.5} />}
       </div>
       <PhysMeta phys={phys} name={name} />
       {phys.orgs.length > 0 && (
-        <div className="bg-muted text-muted-foreground hidden shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium sm:flex">
-          <Building2 size={11} />
+        <div className="text-muted-foreground hidden shrink-0 items-center gap-1.5 text-xs tabular-nums sm:flex">
+          <Building2 size={11} strokeWidth={1.5} />
           {phys.orgs.length}
         </div>
       )}
@@ -113,22 +113,21 @@ function PhysRow({ phys, first }: { phys: PhysResponse; first: boolean }) {
 function PhysMeta({ phys, name }: { phys: PhysResponse; name: string }) {
   return (
     <div className="min-w-0 flex-1">
-      <p className="text-foreground truncate text-sm font-semibold">{name}</p>
-      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-        {phys.specName && (
-          <span className="bg-muted text-muted-foreground inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium">
-            {phys.specName}
-          </span>
+      <p className="text-foreground truncate text-sm font-medium tracking-tight">{name}</p>
+      <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        {phys.specName && <span className="truncate">{phys.specName}</span>}
+        {phys.specName && (phys.phone || phys.email) && (
+          <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />
         )}
         {phys.phone && (
-          <span className="text-muted-foreground flex items-center gap-1 text-xs">
-            <Phone size={11} />
+          <span className="flex items-center gap-1 tabular-nums">
+            <Phone size={11} strokeWidth={1.5} />
             {phys.phone}
           </span>
         )}
         {phys.email && (
-          <span className="text-muted-foreground hidden items-center gap-1 text-xs sm:flex">
-            <Mail size={11} />
+          <span className="hidden items-center gap-1 sm:flex">
+            <Mail size={11} strokeWidth={1.5} />
             <span className="max-w-[160px] truncate">{phys.email}</span>
           </span>
         )}

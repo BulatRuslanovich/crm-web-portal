@@ -57,15 +57,15 @@ export function SidebarHeader({
       >
         <div
           className={cn(
-            'from-primary/10 to-primary/5 ring-primary/20 relative flex size-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br ring-1',
+            'ring-sidebar-border/70 relative flex size-8 shrink-0 items-center justify-center rounded-lg ring-1',
             party && 'animate-logo-party',
           )}
         >
-          <Image src="/icon.svg" width={30} height={30} alt="Pharmo" />
+          <Image src="/icon.svg" width={28} height={28} alt="Pharmo" />
         </div>
         {!compact && (
           <div className="min-w-0">
-            <p className="text-sidebar-foreground truncate text-sm font-bold tracking-tight">
+            <p className="text-sidebar-foreground truncate text-[13px] font-semibold tracking-tight">
               Pharmo CRM
             </p>
           </div>

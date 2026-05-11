@@ -75,7 +75,7 @@ export function DrugsSection() {
 
   return (
     <div className="space-y-4">
-      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 shadow-sm sm:flex-row sm:items-center">
+      <div className="border-border bg-card flex flex-col gap-2 rounded-2xl border p-3 sm:flex-row sm:items-center">
         <SearchInput value={search} onChange={setSearch} placeholder="Поиск по названию…" />
         <BtnSuccess onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? (
@@ -91,12 +91,12 @@ export function DrugsSection() {
       </div>
 
       {showCreate && (
-        <div className="animate-fade-in border-warning/30 bg-card overflow-hidden rounded-2xl border shadow-sm">
+        <div className="animate-fade-in border-warning/30 bg-card overflow-hidden rounded-2xl border">
           <div className="border-border bg-warning/5 flex items-center gap-3 border-b px-5 py-3.5">
-            <div className="bg-warning/15 ring-warning/25 flex h-8 w-8 items-center justify-center rounded-lg ring-1">
+            <div className="border-border flex h-8 w-8 items-center justify-center rounded-lg border">
               <Pill size={14} className="text-warning" />
             </div>
-            <p className="text-foreground text-sm font-bold">Новый препарат</p>
+            <p className="text-foreground text-sm font-semibold">Новый препарат</p>
           </div>
           <form action={handleCreate}>
             <div className="space-y-3 p-5">
@@ -128,9 +128,9 @@ export function DrugsSection() {
         </div>
       )}
 
-      <div className="border-border bg-card overflow-hidden rounded-2xl border shadow-sm">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border">
         <div className="border-border bg-muted/30 flex items-center justify-between gap-3 border-b px-5 py-3">
-          <p className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
+          <p className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
             Препаратов: {drugs.length}
           </p>
         </div>
@@ -140,7 +140,7 @@ export function DrugsSection() {
               key={d.drugId}
               className="hover:bg-muted/40 flex items-center gap-3 px-5 py-3.5 transition-colors"
             >
-              <div className="bg-warning/10 ring-warning/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1">
+              <div className="border-border flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border">
                 <Pill size={15} className="text-warning" />
               </div>
               <div className="min-w-0 flex-1">

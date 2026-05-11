@@ -36,7 +36,7 @@ export function HeatmapSection({
   const stats = useMemo(() => buildHeatmap(activs), [activs]);
 
   return (
-    <section className="border-border bg-card rounded-2xl border shadow-sm">
+    <section className="border-border bg-card rounded-2xl border">
       <div className="border-border flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
         <div className="flex items-center gap-3">
           <ToneIcon icon={Flame} tone="success" solid />

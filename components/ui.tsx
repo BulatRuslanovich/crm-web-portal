@@ -6,46 +6,40 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input as ShadInput } from '@/components/ui/input';
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-type BadgeVariant = NonNullable<React.ComponentProps<typeof Badge>['variant']>;
-
-const STATUS_STYLE: Record<string, { variant: BadgeVariant; dot: string }> = {
-  "запланирован": { variant: 'default', dot: 'bg-primary-foreground' },
-  "открыт": { variant: 'warning', dot: 'bg-warning-foreground' },
-  "охранен": { variant: 'secondary', dot: 'bg-muted-foreground' },
-  "закрыт": { variant: 'success', dot: 'bg-success-foreground' },
-  "отменен": { variant: 'destructive', dot: 'bg-white' },
+const STATUS_DOT: Record<string, string> = {
+  "запланирован": 'bg-primary',
+  "открыт": 'bg-warning',
+  "сохранен": 'bg-muted-foreground',
+  "закрыт": 'bg-success',
+  "отменен": 'bg-destructive',
 };
 
 export function StatusBadge({ name }: { name: string }) {
   const lower = name.toLowerCase();
-  const style = STATUS_STYLE[lower] ?? {
-    variant: 'outline' as BadgeVariant,
-    dot: 'bg-muted-foreground',
-  };
+  const dot = STATUS_DOT[lower] ?? 'bg-muted-foreground';
   const isOpen = lower === 'открыт';
   return (
-    <Badge variant={style.variant} className="rounded-full">
+    <span className="border-border text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium tracking-tight">
       {isOpen ? (
-        <span className="relative mr-1 flex size-1.5">
+        <span className="relative flex size-1.5">
           <span
             className={cn(
-              'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75',
-              style.dot,
+              'absolute inline-flex h-full w-full animate-ping rounded-full opacity-60',
+              dot,
             )}
           />
-          <span className={cn('relative inline-flex size-1.5 rounded-full', style.dot)} />
+          <span className={cn('relative inline-flex size-1.5 rounded-full', dot)} />
         </span>
       ) : (
-        <span className={cn('mr-1 size-1.5 rounded-full', style.dot)} />
+        <span className={cn('size-1.5 rounded-full', dot)} />
       )}
-      {name}
-    </Badge>
+      <span className="text-foreground/80">{name}</span>
+    </span>
   );
 }
 
@@ -81,7 +75,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'bg-card text-card-foreground overflow-hidden rounded-xl shadow-sm transition-shadow duration-200',
+        'border-border bg-card text-card-foreground overflow-hidden rounded-xl border',
         className,
       )}
     >
@@ -265,7 +259,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function CardSkeleton() {
   return (
-    <div className="animate-fade-in bg-card space-y-3 rounded-xl border p-5 shadow-sm">
+    <div className="animate-fade-in border-border bg-card space-y-3 rounded-xl border p-5">
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-4 w-2/3" />
       <Skeleton className="h-4 w-1/2" />
@@ -276,7 +270,7 @@ export function CardSkeleton() {
 
 export function ListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="animate-fade-in bg-card divide-y rounded-xl border shadow-sm">
+    <div className="animate-fade-in border-border bg-card divide-y rounded-xl border">
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center justify-between gap-4 px-5 py-4">
           <div className="flex flex-1 items-center gap-3">
@@ -305,13 +299,11 @@ export function EmptyState({
   hint?: string;
 }) {
   return (
-    <div className="animate-fade-in border-border bg-card flex flex-col items-center justify-center rounded-2xl border px-6 py-16 text-center shadow-sm">
+    <div className="animate-fade-in border-border bg-card flex flex-col items-center justify-center rounded-2xl border px-6 py-20 text-center">
       {Icon && (
-        <div className="from-muted/50 ring-border/40 mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent ring-1">
-          <Icon size={36} className="text-muted-foreground/40" strokeWidth={1.5} />
-        </div>
+        <Icon size={28} className="text-muted-foreground/50 mb-5" strokeWidth={1.5} />
       )}
-      <p className="text-foreground text-sm font-medium">{message}</p>
+      <p className="text-foreground text-sm font-medium tracking-tight">{message}</p>
       {hint && <p className="text-muted-foreground mt-1.5 max-w-sm text-xs">{hint}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>

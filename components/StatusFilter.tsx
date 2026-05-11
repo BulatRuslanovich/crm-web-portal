@@ -14,10 +14,10 @@ export function StatusFilter({ value, onChange }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-        <SlidersHorizontal size={13} />
-        <span>Статус:</span>
+    <div className="flex flex-wrap items-center gap-1.5">
+      <div className="text-muted-foreground/70 flex items-center gap-1.5 pr-1 text-[11px] font-medium tracking-[0.12em] uppercase">
+        <SlidersHorizontal size={11} strokeWidth={1.5} />
+        <span>Статус</span>
       </div>
       {STATUSES.map((s) => (
         <StatusChip
@@ -50,13 +50,13 @@ function StatusChip({
   onClick: () => void;
 }) {
   const cls = active
-    ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-    : 'border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground';
+    ? 'border-foreground/30 bg-foreground/[0.06] text-foreground'
+    : 'border-border bg-transparent text-muted-foreground hover:border-foreground/20 hover:text-foreground';
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200 ${cls}`}
+      className={`cursor-pointer rounded-full border px-2.5 py-1 text-[11px] font-medium tracking-tight transition-colors duration-200 ${cls}`}
     >
       {label}
     </button>

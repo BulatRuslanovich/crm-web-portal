@@ -44,7 +44,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
 
   if (isDone && action.result) {
     return (
-      <div className="animate-fade-in border-success/40 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--success)_10%,var(--card))_0%,var(--card)_100%)] relative overflow-hidden rounded-xl border p-3 shadow-sm">
+      <div className="animate-fade-in border-success/40 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--success)_10%,var(--card))_0%,var(--card)_100%)] relative overflow-hidden rounded-xl border p-3">
         <div className="flex items-start gap-2.5">
           <div className="bg-success/20 text-success ring-success/30 flex size-9 shrink-0 items-center justify-center rounded-full ring-1">
             <Check className="size-4.5" />
@@ -76,7 +76,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
   return (
     <div
       className={cn(
-        'animate-fade-in relative overflow-hidden rounded-xl border p-3 shadow-sm',
+        'animate-fade-in relative overflow-hidden rounded-xl border p-3',
         isFailed
           ? 'border-destructive/40 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--destructive)_8%,var(--card))_0%,var(--card)_100%)]'
           : 'border-primary/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_8%,var(--card))_0%,var(--card)_100%)]',
@@ -137,7 +137,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
               onClick={onConfirm}
               disabled={isExecuting || expired}
               className={cn(
-                'h-8 gap-1.5 px-3 text-xs font-semibold shadow-sm',
+                'h-8 gap-1.5 px-3 text-xs font-semibold',
                 !isFailed &&
                   !isExecuting &&
                   'bg-primary hover:bg-primary/90 hover:shadow-[0_4px_12px_-2px_color-mix(in_oklab,var(--primary)_40%,transparent)]',

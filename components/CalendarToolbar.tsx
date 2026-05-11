@@ -13,11 +13,11 @@ function ViewSwitcher({
   const btnClass = (active: boolean) =>
     `cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
       active
-        ? 'bg-primary text-primary-foreground shadow-sm'
+        ? 'bg-primary text-primary-foreground'
         : 'text-muted-foreground hover:text-foreground'
     }`;
   return (
-    <div className="border-border bg-card inline-flex rounded-xl border p-0.5 shadow-sm">
+    <div className="border-border bg-card inline-flex rounded-xl border p-0.5">
       <button onClick={() => onChange('month')} className={btnClass(view === 'month')}>
         Месяц
       </button>
@@ -40,7 +40,7 @@ function RangeNav({
   const iconBtn =
     'flex h-9 w-9 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground';
   return (
-    <div className="border-border bg-card inline-flex items-center overflow-hidden rounded-xl border shadow-sm">
+    <div className="border-border bg-card inline-flex items-center overflow-hidden rounded-xl border">
       <button onClick={onPrev} className={iconBtn} aria-label="Назад">
         <ChevronLeft size={16} />
       </button>
@@ -96,7 +96,7 @@ export function CalendarToolbar({
         <button
           onClick={onToday}
           disabled={isOnToday}
-          className="border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted cursor-pointer rounded-xl border px-3 py-2 text-xs font-semibold shadow-sm transition-all disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted cursor-pointer rounded-xl border px-3 py-2 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
           Сегодня
         </button>

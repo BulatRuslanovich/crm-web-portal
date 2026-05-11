@@ -23,11 +23,11 @@ export function DailyAreaChart({ data, periodDays }: { data: DailyPoint[]; perio
       <AreaChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 16 }}>
         <defs>
           <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.4} />
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.18} />
             <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="closedGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--success)" stopOpacity={0.45} />
+            <stop offset="0%" stopColor="var(--success)" stopOpacity={0.14} />
             <stop offset="95%" stopColor="var(--success)" stopOpacity={0} />
           </linearGradient>
         </defs>
@@ -49,18 +49,20 @@ export function DailyAreaChart({ data, periodDays }: { data: DailyPoint[]; perio
           dataKey="count"
           name="Всего"
           stroke="var(--primary)"
-          strokeWidth={2}
+          strokeWidth={1.5}
           fill="url(#totalGrad)"
-          activeDot={{ r: 5, strokeWidth: 2, stroke: 'var(--card)' }}
+          dot={false}
+          activeDot={{ r: 3.5, strokeWidth: 0, fill: 'var(--primary)' }}
         />
         <Area
           type="monotone"
           dataKey="closed"
           name="Закрыто"
           stroke="var(--success)"
-          strokeWidth={2}
+          strokeWidth={1.5}
           fill="url(#closedGrad)"
-          activeDot={{ r: 5, strokeWidth: 2, stroke: 'var(--card)' }}
+          dot={false}
+          activeDot={{ r: 3.5, strokeWidth: 0, fill: 'var(--success)' }}
         />
       </AreaChart>
     </ResponsiveContainer>

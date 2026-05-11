@@ -106,7 +106,7 @@ export function AssistantToolCard({
   const items = tool.resultJson ? parseResult(tool.name, tool.resultJson) : [];
 
   return (
-    <div className="border-border/60 bg-background/60 my-2 overflow-hidden rounded-lg border shadow-sm">
+    <div className="border-border/60 bg-background/60 my-2 overflow-hidden rounded-lg border">
       <div className="text-muted-foreground border-border/50 bg-muted/30 flex items-center gap-1.5 border-b px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide">
         <span className="bg-primary/15 text-primary flex size-4 items-center justify-center rounded">
           <Icon className="size-2.5" />
