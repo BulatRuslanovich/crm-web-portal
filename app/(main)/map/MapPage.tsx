@@ -30,11 +30,23 @@ export interface FlyToOrgTarget {
   nonce: number;
 }
 
+function hasValidCoords(org: OrgResponse): boolean {
+  return (
+    Number.isFinite(org.latitude) &&
+    Number.isFinite(org.longitude) &&
+    org.latitude !== 0 &&
+    org.longitude !== 0 &&
+    Math.abs(org.latitude) <= 90 &&
+    Math.abs(org.longitude) <= 180
+  );
+}
+
 export default function MapPage() {
   const [typeFilter, setTypeFilter] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'located' | 'missing'>('located');
   const [flyToOrg, setFlyToOrg] = useState<FlyToOrgTarget | null>(null);
+  const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
 
   const { data: orgsData, loading } = useApi('map-orgs', () =>
     orgsApi.getAll(1, 1000).then((r) => r.data),
@@ -53,11 +65,11 @@ export default function MapPage() {
   }, [orgsData, typeFilter, search]);
 
   const withCoords = useMemo(
-    () => filtered.filter((o) => o.latitude !== 0 && o.longitude !== 0),
+    () => filtered.filter(hasValidCoords),
     [filtered],
   );
   const missingCoords = useMemo(
-    () => filtered.filter((o) => o.latitude === 0 || o.longitude === 0),
+    () => filtered.filter((o) => !hasValidCoords(o)),
     [filtered],
   );
 
@@ -65,6 +77,7 @@ export default function MapPage() {
   const hasFilter = search !== '' || typeFilter !== null;
 
   function handleFlyTo(org: OrgResponse) {
+    setSelectedOrgId(org.orgId);
     setFlyToOrg((prev) => ({ org, nonce: (prev?.nonce ?? 0) + 1 }));
   }
 
@@ -184,7 +197,7 @@ export default function MapPage() {
           {loading ? (
             <Skeleton className="h-full w-full rounded-2xl" />
           ) : (
-            <MapClient orgs={withCoords} flyToOrg={flyToOrg} />
+            <MapClient orgs={withCoords} flyToOrg={flyToOrg} selectedOrgId={selectedOrgId} />
           )}
         </div>
 
@@ -260,15 +273,20 @@ export default function MapPage() {
                 <ul className="divide-border divide-y">
                   {withCoords.map((o) => {
                     const color = colorForType(o.orgTypeId);
+                    const selected = selectedOrgId === o.orgId;
                     return (
                       <li key={o.orgId}>
                         <button
                           onClick={() => handleFlyTo(o)}
-                          className="group hover:bg-muted/60 flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors"
+                          className={`group flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors ${
+                            selected ? 'bg-primary/10 hover:bg-primary/15' : 'hover:bg-muted/60'
+                          }`}
                         >
                           <span
-                            className="ring-border mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-2 transition-transform group-hover:scale-110"
-                            style={{ background: color }}
+                            className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ring-2 transition-transform group-hover:scale-110 ${
+                              selected ? 'ring-primary/50' : 'ring-border'
+                            }`}
+                            style={{ background: selected ? '#f97316' : color }}
                           >
                             <Building2 size={11} className="text-white" />
                           </span>
@@ -278,7 +296,7 @@ export default function MapPage() {
                             </div>
                             <div
                               className="mt-0.5 truncate text-[10px] font-semibold tracking-wider uppercase"
-                              style={{ color }}
+                              style={{ color: selected ? '#f97316' : color }}
                             >
                               {o.orgTypeName}
                             </div>
@@ -294,7 +312,9 @@ export default function MapPage() {
                           </div>
                           <Crosshair
                             size={14}
-                            className="text-muted-foreground/40 mt-1 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                            className={`mt-1 shrink-0 transition-opacity group-hover:opacity-100 ${
+                              selected ? 'text-primary opacity-100' : 'text-muted-foreground/40 opacity-0'
+                            }`}
                           />
                         </button>
                       </li>

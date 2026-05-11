@@ -10,6 +10,18 @@ import type { FlyToOrgTarget } from './MapPage';
 import type ymaps from 'yandex-maps';
 
 const YANDEX_API_KEY = process.env.NEXT_PUBLIC_YANDEX_MAPS_API_KEY ?? '';
+const DEFAULT_CENTER: [number, number] = [55.751244, 37.618423];
+
+function hasValidCoords(org: OrgResponse): boolean {
+  return (
+    Number.isFinite(org.latitude) &&
+    Number.isFinite(org.longitude) &&
+    org.latitude !== 0 &&
+    org.longitude !== 0 &&
+    Math.abs(org.latitude) <= 90 &&
+    Math.abs(org.longitude) <= 180
+  );
+}
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -32,14 +44,15 @@ function popupHtml(org: OrgResponse): string {
 interface Props {
   orgs: OrgResponse[];
   flyToOrg?: FlyToOrgTarget | null;
+  selectedOrgId?: number | null;
 }
 
-export default function MapClient({ orgs, flyToOrg }: Props) {
+export default function MapClient({ orgs, flyToOrg, selectedOrgId }: Props) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
   const validOrgs = useMemo(
-    () => orgs.filter((o) => o.latitude !== 0 && o.longitude !== 0),
+    () => orgs.filter(hasValidCoords),
     [orgs],
   );
 
@@ -48,14 +61,9 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
   const lastBoundsKey = useRef<string>('');
   const [busy, setBusy] = useState(false);
 
-  const defaultCenter = useMemo<[number, number]>(
-    () =>
-      validOrgs.length > 0 ? [validOrgs[0].latitude, validOrgs[0].longitude] : [55.751244, 37.618423],
-    [validOrgs],
-  );
-
   const containerRef = useRef<HTMLDivElement | null>(null);
   const clustererRef = useRef<ymaps.Clusterer | null>(null);
+  const placemarksRef = useRef<Map<number, ymaps.Placemark>>(new Map());
   const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
@@ -69,13 +77,15 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
 
       ymapsRef.current = api;
       const map = new api.Map(container, {
-        center: defaultCenter,
+        center: DEFAULT_CENTER,
         zoom: 10,
         controls: [],
-        type: isDark ? 'yandex#hybrid' : 'yandex#map',
+        type: 'yandex#map',
+      }, {
+        suppressMapOpenBlock: true,
       });
       map.controls.add(new api.control.ZoomControl({ options: { position: { right: 10, top: 10 } } }));
-      const typeSelector = new api.control.TypeSelector();
+      const typeSelector = new api.control.TypeSelector({ options: { panoramasItemMode: 'off' } });
       map.controls.add(typeSelector, { position: { right: 10, top: 110 } });
 
       const clusterer = new api.Clusterer({
@@ -93,11 +103,12 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
       disposed = true;
       setMapReady(false);
       clustererRef.current = null;
+      placemarksRef.current.clear();
       ymapsRef.current = null;
       mapRef.current?.destroy();
       mapRef.current = null;
     };
-  }, [defaultCenter, isDark]);
+  }, []);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -111,28 +122,38 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
     if (!ym || !clusterer) return;
 
     clusterer.removeAll();
+    placemarksRef.current.clear();
+
+    const placemarks = validOrgs.map((org) => {
+      const selected = selectedOrgId === org.orgId;
+      const placemark = new ym.Placemark(
+        [org.latitude, org.longitude],
+        {
+          balloonContentBody: popupHtml(org),
+          hintContent: org.orgName,
+        },
+        {
+          preset: selected ? 'islands#circleIcon' : 'islands#circleDotIcon',
+          iconColor: selected ? '#f97316' : colorForType(org.orgTypeId),
+          zIndex: selected ? 1000 : undefined,
+          zIndexHover: selected ? 1000 : undefined,
+          zIndexActive: selected ? 1000 : undefined,
+        },
+      );
+
+      placemarksRef.current.set(org.orgId, placemark);
+      return placemark;
+    });
+
     clusterer.add(
-      validOrgs.map(
-        (org) =>
-          new ym.Placemark(
-            [org.latitude, org.longitude],
-            {
-              balloonContentBody: popupHtml(org),
-              hintContent: org.orgName,
-            },
-            {
-              preset: 'islands#circleDotIcon',
-              iconColor: colorForType(org.orgTypeId),
-            },
-          ),
-      ),
+      placemarks,
     );
-  }, [mapReady, validOrgs]);
+  }, [mapReady, selectedOrgId, validOrgs]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || validOrgs.length === 0) return;
-    const key = validOrgs.map((o) => o.orgId).join(',');
+    const key = validOrgs.map((o) => `${o.orgId}:${o.latitude}:${o.longitude}`).join(',');
     if (key === lastBoundsKey.current) return;
     lastBoundsKey.current = key;
 
@@ -154,8 +175,10 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !flyToOrg) return;
-    map.setCenter([flyToOrg.org.latitude, flyToOrg.org.longitude], 15, { duration: 700 });
-  }, [flyToOrg]);
+    map.setCenter([flyToOrg.org.latitude, flyToOrg.org.longitude], 15, { duration: 700 }).then(() => {
+      placemarksRef.current.get(flyToOrg.org.orgId)?.balloon.open();
+    });
+  }, [flyToOrg, mapReady, selectedOrgId]);
 
   const handleLocate = useCallback(() => {
     const map = mapRef.current;
@@ -168,8 +191,10 @@ export default function MapClient({ orgs, flyToOrg }: Props) {
         const geom = res.geoObjects.get(0).geometry as ymaps.geometry.Point | null;
         const pos = geom?.getCoordinates();
         if (pos) map.setCenter(pos, 14);
-      })
-      .finally(() => setBusy(false));
+        setBusy(false);
+      }, () => {
+        setBusy(false);
+      });
   }, []);
 
   return (

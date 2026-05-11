@@ -99,9 +99,11 @@ export default function MapTrackClient({ points }: Props) {
         zoom: 11,
         controls: [],
         type: isDark ? 'yandex#hybrid' : 'yandex#map',
+      }, {
+        suppressMapOpenBlock: true,
       });
       map.controls.add(new api.control.ZoomControl({ options: { position: { right: 10, top: 10 } } }));
-      const typeSelector = new api.control.TypeSelector();
+      const typeSelector = new api.control.TypeSelector({ options: { panoramasItemMode: 'off' } });
       map.controls.add(typeSelector, { position: { right: 10, top: 110 } });
 
       mapRef.current = map;
