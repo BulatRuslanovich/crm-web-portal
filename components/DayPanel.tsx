@@ -45,7 +45,7 @@ function VisitRow({ activ, withBorder }: { activ: ActivResponse; withBorder: boo
           </p>
         )}
       </div>
-      <StatusBadge name={activ.statusName} />
+      <StatusBadge name={activ.statusName} statusId={activ.statusId} />
     </Link>
   );
 }

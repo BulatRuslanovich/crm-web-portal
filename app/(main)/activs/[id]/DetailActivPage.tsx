@@ -23,7 +23,7 @@ import { EntityHistoryFeed } from '@/components/EntityHistoryFeed';
 import { InfoBlock } from '@/components/InfoBlock';
 import { Hero } from '@/components/Hero';
 import { StatusStepper } from '@/components/StatusStepper';
-import { statusAccentGradient } from '@/lib/activ-helper';
+import { statusAccentGradientFor } from '@/lib/activ-helper';
 import { TimeSection } from '@/components/TimeSection';
 import { ActivQuickActions } from '@/components/ActivQuickActions';
 import { toast } from 'sonner';
@@ -78,7 +78,7 @@ export default function DetailActivPage({ params }: { params: Promise<{ id: stri
         <span className="text-muted-foreground ml-auto text-xs">#{activ.activId}</span>
       </div>
 
-      <Hero accentGradient={statusAccentGradient(activ.statusName)}>
+      <Hero accentGradient={statusAccentGradientFor(activ.statusId, activ.statusName)}>
         <ActivHeroContent activ={activ} />
       </Hero>
 
@@ -154,7 +154,7 @@ function ActivHeroContent({ activ }: { activ: ActivResponse }) {
             <h2 className="text-foreground truncate text-xl font-bold">{targetName}</h2>
           </div>
         </div>
-        <StatusBadge name={activ.statusName} />
+        <StatusBadge name={activ.statusName} statusId={activ.statusId} />
       </div>
 
       <div className="mt-5">

@@ -2,6 +2,7 @@ import { activsApi } from '@/lib/api/activs';
 import { MONTHS_ABBR } from '@/lib/ru-dates';
 import { startOfDay } from '@/lib/date';
 import { ActivResponse } from '@/lib/api/types';
+import { statusAccentGradientByStatus, statusStripeClassByStatus } from '@/lib/status-style';
 
 export async function syncDrugs(numId: number, diff: { toAdd: number[]; toRemove: number[] }) {
   await Promise.all([
@@ -96,6 +97,10 @@ export function statusStripeClass(statusName: string): string {
   return STATUS_STRIPE[statusName.toLowerCase()] ?? 'bg-border';
 }
 
+export function statusStripeClassFor(statusId: number, statusName: string): string {
+  return statusStripeClassByStatus(statusId, statusName);
+}
+
 const STATUS_ACCENT: Record<string, string> = {
   "запланирован": 'from-primary/15 via-primary/5 to-transparent',
   "открыт": 'from-warning/20 via-warning/5 to-transparent',
@@ -106,6 +111,10 @@ const STATUS_ACCENT: Record<string, string> = {
 
 export function statusAccentGradient(statusName: string): string {
   return STATUS_ACCENT[statusName.toLowerCase()] ?? 'from-success/30 via-success/10 to-transparent';
+}
+
+export function statusAccentGradientFor(statusId: number, statusName: string): string {
+  return statusAccentGradientByStatus(statusId, statusName);
 }
 
 function pad2(n: number): string {

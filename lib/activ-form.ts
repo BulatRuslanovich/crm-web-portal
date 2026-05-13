@@ -16,6 +16,13 @@ export const CREATE_ACTIV_DEFAULT_VALUES: CreateActivFormValues = {
   description: '',
 };
 
+export function createActivDefaultValues(): CreateActivFormValues {
+  return {
+    ...CREATE_ACTIV_DEFAULT_VALUES,
+    start: toDatetimeLocal(roundToNearestFiveMinutes(new Date())),
+  };
+}
+
 export interface EditActivFormValues {
   statusId: string;
   start: string;
@@ -84,4 +91,28 @@ export function activFormToUpdateRequest(
     end: canEditFields ? values.end || null : activ.end,
     description: values.description || null,
   };
+}
+
+function roundToNearestFiveMinutes(date: Date): Date {
+  const next = new Date(date);
+  const minutes = next.getMinutes();
+  const rounded = Math.round(minutes / 5) * 5;
+
+  if (rounded === 60) {
+    next.setHours(next.getHours() + 1, 0, 0, 0);
+  } else {
+    next.setMinutes(rounded, 0, 0);
+  }
+
+  return next;
+}
+
+function toDatetimeLocal(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

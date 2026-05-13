@@ -55,7 +55,7 @@ export function AssistantHistory({
   }, [conversations, query]);
 
   return (
-    <aside className="border-border bg-[linear-gradient(180deg,color-mix(in_oklab,var(--primary)_4%,var(--card))_0%,var(--card)_100%)] flex h-full w-64 shrink-0 flex-col border-r">
+    <aside className="border-border bg-card flex h-full w-64 shrink-0 flex-col border-r">
       <div className="border-border space-y-2 border-b p-2.5">
         <Button
           size="sm"
@@ -108,9 +108,7 @@ export function AssistantHistory({
                 <div
                   className={cn(
                     'group relative flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs transition-all',
-                    isActive
-                      ? 'bg-primary/10 text-foreground'
-                      : 'hover:bg-accent/60 text-foreground/80',
+                    isActive ? 'bg-muted text-foreground' : 'hover:bg-muted/60 text-foreground/80',
                   )}
                 >
                   {isActive && (
@@ -124,7 +122,7 @@ export function AssistantHistory({
                     <MessageSquare
                       className={cn(
                         'mt-0.5 size-3.5 shrink-0',
-                        isActive ? 'text-primary' : 'text-muted-foreground',
+                        isActive ? 'text-foreground' : 'text-muted-foreground',
                       )}
                     />
                     <div className="min-w-0 flex-1">

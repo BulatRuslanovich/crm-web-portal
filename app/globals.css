@@ -199,7 +199,7 @@ body {
     sans-serif;
   font-size: 14px;
   line-height: 1.55;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   font-feature-settings:
     'cv11' 1,
     'ss01' 1,
@@ -215,7 +215,7 @@ h1,
 h2,
 h3,
 h4 {
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 :focus-visible {

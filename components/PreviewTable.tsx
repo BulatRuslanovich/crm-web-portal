@@ -35,7 +35,7 @@ function Row({ activ }: { activ: ActivResponse }) {
         <TargetCell activ={activ} />
       </td>
       <td className="px-4 py-2.5">
-        <StatusBadge name={activ.statusName} />
+        <StatusBadge name={activ.statusName} statusId={activ.statusId} />
       </td>
       <td className="text-muted-foreground px-4 py-2.5 tabular-nums">{formatShort(activ.start)}</td>
       <td className="text-muted-foreground px-4 py-2.5">{activ.usrLogin}</td>

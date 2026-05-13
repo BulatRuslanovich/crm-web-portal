@@ -23,22 +23,30 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-const MAIN_NAV: NavItem[] = [
+const WORK_NAV: NavItem[] = [
   { href: '/dashboard', label: 'Главная', icon: LayoutDashboard },
   { href: '/activs', label: 'Визиты', icon: CalendarCheck },
   { href: '/calendar', label: 'Календарь', icon: CalendarDays },
+];
+
+const BASE_NAV: NavItem[] = [
   { href: '/orgs', label: 'Организации', icon: Building2 },
+  { href: '/physes', label: 'Врачи', icon: Stethoscope },
+];
+
+const CONTROL_NAV: NavItem[] = [
   { href: '/map', label: 'Карта', icon: MapPin },
   { href: '/map/track', label: 'Трекинг', icon: Route },
-  { href: '/physes', label: 'Врачи', icon: Stethoscope },
 ];
 
 const MANAGER_NAV: NavItem[] = [
   { href: '/analytics', label: 'Аналитика', icon: TrendingUp },
-  { href: '/reports', label: 'Отчёты', icon: FileDown },
+  { href: '/reports', label: 'Отчеты', icon: FileDown },
 ];
 
-const ADMIN_NAV: NavItem[] = [{ href: '/admin', label: 'Администрирование', icon: ShieldCheck }];
+const ADMIN_NAV: NavItem[] = [
+  { href: '/admin', label: 'Администрирование', icon: ShieldCheck },
+];
 
 export function buildNavGroups({
   canSeeReports,
@@ -47,7 +55,11 @@ export function buildNavGroups({
   canSeeReports: boolean;
   isAdmin: boolean;
 }): NavGroup[] {
-  const groups: NavGroup[] = [{ label: 'Основное', items: MAIN_NAV }];
+  const groups: NavGroup[] = [
+    { label: 'Работа', items: WORK_NAV },
+    { label: 'База', items: BASE_NAV },
+    { label: 'Контроль', items: CONTROL_NAV },
+  ];
   if (canSeeReports) groups.push({ label: 'Аналитика', items: MANAGER_NAV });
   if (isAdmin) groups.push({ label: 'Система', items: ADMIN_NAV });
   return groups;

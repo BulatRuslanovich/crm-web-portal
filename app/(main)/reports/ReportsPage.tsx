@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileDown, FileSpreadsheet } from 'lucide-react';
-import { BtnPrimary, BtnSuccess } from '@/components/ui';
+import { FileDown, FileSpreadsheet, FileText } from 'lucide-react';
+import { BtnPrimary, BtnSecondary, BtnSuccess } from '@/components/ui';
 import { useAuth } from '@/lib/auth-context';
 import { useRoles } from '@/lib/hooks/use-roles';
 import { useUserFilter } from '@/lib/hooks/use-user-filter';
@@ -13,13 +13,26 @@ import { PageTransition } from '@/components/motion';
 import { ListSkeleton } from '@/components/ui';
 import { UserFilter } from '@/components/UserFilter';
 import { defaultRange, matchPreset, rangeForPreset } from '@/lib/date';
-import { exportCsv, exportXlsx } from '@/lib/export';
+import {
+  DEFAULT_REPORT_EXPORT_COLUMN_IDS,
+  REPORT_EXPORT_COLUMNS,
+  exportCsv,
+  exportPdf,
+  exportXlsx,
+  normalizeReportExportColumnIds,
+  normalizeReportExportVisibleColumnIds,
+  type ReportExportColumnId,
+} from '@/lib/export';
 import { useReportsData } from '@/lib/use-reports-data';
 import { Hero } from '@/components/Hero';
 import { StatPills, type ReportStats } from '@/components/StatPills';
 import { FiltersCard } from '@/components/FiltersCard';
 import { PreviewTable } from '@/components/PreviewTable';
+import { ReportExportColumns } from '@/components/ReportExportColumns';
 import type { ActivResponse } from '@/lib/api/types';
+
+const REPORT_EXPORT_ORDER_KEY = 'reports.export.columnOrder';
+const REPORT_EXPORT_VISIBLE_KEY = 'reports.export.visibleColumns';
 
 function computeStats(activs: ActivResponse[]): ReportStats {
   const total = activs.length;
@@ -77,6 +90,27 @@ export default function ReportsPage() {
   const [dateTo, setDateTo] = useState(initial.to);
   const [statusFilter, setStatusFilter] = useState<number[]>([]);
   const [usrFilter, setUsrFilter] = useUserFilter();
+  const [columnOrder, setColumnOrder] = useState<ReportExportColumnId[]>(() => {
+    if (typeof window === 'undefined') return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    const saved = window.localStorage.getItem(REPORT_EXPORT_ORDER_KEY);
+    if (!saved) return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    try {
+      return normalizeReportExportColumnIds(JSON.parse(saved));
+    } catch {
+      return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    }
+  });
+  const [visibleColumnIds, setVisibleColumnIds] = useState<ReportExportColumnId[]>(() => {
+    if (typeof window === 'undefined') return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    const saved = window.localStorage.getItem(REPORT_EXPORT_VISIBLE_KEY);
+    if (!saved) return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    try {
+      const savedIds = JSON.parse(saved);
+      return normalizeReportExportVisibleColumnIds(savedIds);
+    } catch {
+      return DEFAULT_REPORT_EXPORT_COLUMN_IDS;
+    }
+  });
   const { users: pickerUsers } = usePickerUsers(canView);
   const usrIdParam = usrFilter ? Number(usrFilter) : undefined;
 
@@ -96,6 +130,19 @@ export default function ReportsPage() {
   const stats = useMemo(() => computeStats(filtered), [filtered]);
   const activePresetKey = useMemo(() => matchPreset(dateFrom, dateTo), [dateFrom, dateTo]);
   const hasCustomFilter = statusFilter.length > 0 || usrFilter !== '' || !activePresetKey;
+  const exportColumnIds = useMemo(
+    () => columnOrder.filter((id) => visibleColumnIds.includes(id)),
+    [columnOrder, visibleColumnIds],
+  );
+  const exportDisabled = loading || filtered.length === 0 || exportColumnIds.length === 0;
+
+  useEffect(() => {
+    window.localStorage.setItem(REPORT_EXPORT_ORDER_KEY, JSON.stringify(columnOrder));
+  }, [columnOrder]);
+
+  useEffect(() => {
+    window.localStorage.setItem(REPORT_EXPORT_VISIBLE_KEY, JSON.stringify(visibleColumnIds));
+  }, [visibleColumnIds]);
 
   function applyPreset(days: number) {
     const r = rangeForPreset(days);
@@ -108,11 +155,24 @@ export default function ReportsPage() {
   }
 
   function handleExportCsv() {
-    exportCsv(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.csv`);
+    exportCsv(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.csv`, exportColumnIds);
   }
 
   function handleExportXlsx() {
-    void exportXlsx(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.xlsx`);
+    void exportXlsx(
+      filtered,
+      `visity_${dateFrom || 'all'}_${dateTo || 'all'}.xlsx`,
+      exportColumnIds,
+    );
+  }
+
+  function handleExportPdf() {
+    void exportPdf(filtered, `visity_${dateFrom || 'all'}_${dateTo || 'all'}.pdf`, exportColumnIds);
+  }
+
+  function resetExportColumns() {
+    setColumnOrder(DEFAULT_REPORT_EXPORT_COLUMN_IDS);
+    setVisibleColumnIds(DEFAULT_REPORT_EXPORT_COLUMN_IDS);
   }
 
   function resetAll() {
@@ -141,15 +201,19 @@ export default function ReportsPage() {
           )
         }
         action={
-          <div className="flex shrink-0 items-center gap-2">
-            <BtnSuccess onClick={handleExportXlsx} disabled={loading || filtered.length === 0}>
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+            <BtnSuccess onClick={handleExportXlsx} disabled={exportDisabled}>
               <FileSpreadsheet size={15} />
               Excel
               <span className="bg-success-foreground/20 ml-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums">
                 {filtered.length}
               </span>
             </BtnSuccess>
-            <BtnPrimary onClick={handleExportCsv} disabled={loading || filtered.length === 0}>
+            <BtnSecondary onClick={handleExportPdf} disabled={exportDisabled}>
+              <FileText size={15} />
+              PDF
+            </BtnSecondary>
+            <BtnPrimary onClick={handleExportCsv} disabled={exportDisabled}>
               <FileDown size={15} />
               CSV
             </BtnPrimary>
@@ -187,6 +251,15 @@ export default function ReportsPage() {
         onToggleStatus={toggleStatus}
         onReset={resetAll}
         showReset={hasCustomFilter}
+      />
+
+      <ReportExportColumns
+        columns={REPORT_EXPORT_COLUMNS}
+        order={columnOrder}
+        visibleIds={visibleColumnIds}
+        onOrderChange={setColumnOrder}
+        onVisibleChange={setVisibleColumnIds}
+        onReset={resetExportColumns}
       />
 
       {loading ? (

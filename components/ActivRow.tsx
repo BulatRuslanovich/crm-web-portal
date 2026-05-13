@@ -6,7 +6,7 @@ import { StatusBadge } from '@/components/ui';
 import { MONTHS_ABBR, WEEKDAYS_SHORT } from '@/lib/ru-dates';
 import type { ActivResponse } from '@/lib/api/types';
 import React from 'react';
-import { statusStripeClass } from '@/lib/activ-helper';
+import { statusStripeClassFor } from '@/lib/activ-helper';
 
 interface Props {
   activ: ActivResponse;
@@ -20,17 +20,17 @@ export function ActivRow({ activ, first }: Props) {
   return (
     <Link
       href={`/activs/${activ.activId}`}
-      className={`group hover:bg-muted/60 relative flex items-stretch gap-4 px-4 py-3.5 transition-colors duration-150 ${
+      className={`group hover:bg-muted/60 relative flex items-stretch gap-4 px-4 py-3 transition-colors duration-150 ${
         first ? '' : 'border-border border-t'
       }`}
     >
       <span
-        className={`absolute top-3 bottom-3 left-0 w-[2px] ${statusStripeClass(activ.statusName)} opacity-80 transition-opacity duration-200 group-hover:opacity-100`}
+        className={`absolute top-3 bottom-3 left-0 w-[2px] ${statusStripeClassFor(activ.statusId, activ.statusName)} opacity-80 transition-opacity duration-200 group-hover:opacity-100`}
       />
       <DateBlock {...dateParts} />
       <ActivMeta activ={activ} target={target} time={dateParts.time} />
       <div className="flex shrink-0 items-center">
-        <StatusBadge name={activ.statusName} />
+        <StatusBadge name={activ.statusName} statusId={activ.statusId} />
       </div>
     </Link>
   );
@@ -75,7 +75,7 @@ function ActivMeta({
         </span>
         {activ.drugs.length > 0 && (
           <>
-            <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />;
+            <span className="bg-muted-foreground/40 h-1 w-1 rounded-full" />
             <span className="flex items-center gap-1">
               <Pill size={11} />
               {activ.drugs.length}

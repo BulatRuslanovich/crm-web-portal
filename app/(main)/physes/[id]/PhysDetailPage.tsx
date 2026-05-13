@@ -1,8 +1,10 @@
 'use client';
 
 import { use } from 'react';
+import type React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Stethoscope } from 'lucide-react';
+import { Building2, Mail, Phone, Stethoscope } from 'lucide-react';
 import { physesApi } from '@/lib/api/physes';
 import { useEntity } from '@/lib/hooks/use-entity';
 import { toast } from 'sonner';
@@ -70,20 +72,23 @@ function PhysDetailContent({ id }: { id: string }) {
       </Hero>
 
       <Card>
-        <div className="space-y-6 p-5">
-          <ContactsSection phys={phys} />
-          {phys.orgs.length > 0 && (
-            <ChipListSection
-              title="Организации"
-              items={phys.orgs.map((o) => ({ key: o.orgId, label: o.orgName }))}
-            />
-          )}
-          {isAdmin && (
-            <>
-              <hr className="border-border" />
-              <EntityHistoryFeed entityType="phys" entityId={numId} />
-            </>
-          )}
+        <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="space-y-5 p-5">
+            <ContactsSection phys={phys} />
+            {phys.orgs.length > 0 && (
+              <ChipListSection
+                title="Организации"
+                items={phys.orgs.map((o) => ({ key: o.orgId, label: o.orgName }))}
+              />
+            )}
+            {isAdmin && (
+              <>
+                <hr className="border-border" />
+                <EntityHistoryFeed entityType="phys" entityId={numId} />
+              </>
+            )}
+          </div>
+          <PhysDossierAside phys={phys} />
         </div>
 
         <AdminDetailFooter
@@ -121,6 +126,91 @@ function PhysHeroContent({ phys }: { phys: PhysResponse }) {
       </div>
     </div>
   );
+}
+
+function PhysDossierAside({ phys }: { phys: PhysResponse }) {
+  const phoneHref = phys.phone ? `tel:${phys.phone.replace(/\s/g, '')}` : undefined;
+  const emailHref = phys.email ? `mailto:${phys.email}` : undefined;
+
+  return (
+    <aside className="border-border bg-muted/20 space-y-4 border-t p-5 lg:border-t-0 lg:border-l">
+      <div>
+        <SectionLabel>Сводка</SectionLabel>
+        <div className="space-y-2">
+          <DossierFact icon={Stethoscope} label="Специальность" value={phys.specName} />
+          <DossierFact icon={Building2} label="Организаций" value={phys.orgs.length} />
+          <DossierFact icon={Phone} label="Телефон" value={phys.phone} href={phoneHref} />
+          <DossierFact icon={Mail} label="Email" value={phys.email} href={emailHref} />
+        </div>
+      </div>
+
+      {phys.orgs.length > 0 && (
+        <div>
+          <SectionLabel>Связанные организации</SectionLabel>
+          <div className="space-y-1.5">
+            {phys.orgs.slice(0, 6).map((org) => (
+              <Link
+                key={org.orgId}
+                href={`/orgs/${org.orgId}`}
+                className="border-border bg-card hover:bg-muted block rounded-md border px-3 py-2 text-sm font-medium transition-colors"
+              >
+                <span className="block truncate">{org.orgName}</span>
+                {org.address && (
+                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                    {org.address}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Link
+        href="/activs/create"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors"
+      >
+        Создать визит
+      </Link>
+    </aside>
+  );
+}
+
+function DossierFact({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value?: string | number | null;
+  href?: string;
+}) {
+  const content = (
+    <>
+      <p className="text-muted-foreground flex items-center gap-1.5 text-[10px] font-semibold tracking-wider uppercase">
+        <Icon size={11} />
+        {label}
+      </p>
+      <p className="text-foreground mt-1 truncate text-sm">
+        {value || <span className="text-muted-foreground/70">--</span>}
+      </p>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className="border-border bg-card hover:bg-muted block rounded-md border px-3 py-2"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return <div className="border-border bg-card rounded-md border px-3 py-2">{content}</div>;
 }
 
 function ContactsSection({ phys }: { phys: PhysResponse }) {

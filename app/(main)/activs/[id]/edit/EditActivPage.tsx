@@ -142,7 +142,7 @@ function EditHeader({ activ, backHref }: { activ: ActivResponse; backHref: strin
       backHref={backHref}
       kicker="Редактирование визита"
       title={targetName}
-      action={<StatusBadge name={activ.statusName} />}
+      action={<StatusBadge name={activ.statusName} statusId={activ.statusId} />}
     />
   );
 }

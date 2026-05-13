@@ -11,6 +11,7 @@ import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/u
 import { PageTransition } from '@/components/motion';
 import { PageHeader } from '@/components/PageHeader';
 import { SearchBar } from '@/components/SearchBar';
+import { RegistryToolbar } from '@/components/RegistryToolbar';
 import { useDebouncedSearch } from '@/lib/use-debounced-search';
 import { physFullName, physInitials } from '@/lib/initials';
 
@@ -59,13 +60,13 @@ export default function PhysesPage() {
         }
       />
 
-      <div className="border-border bg-card rounded-2xl border p-3">
+      <RegistryToolbar>
         <SearchBar
           value={input}
           onChange={setInput}
           placeholder="Поиск по ФИО, специальности или контактам..."
         />
-      </div>
+      </RegistryToolbar>
 
       {loading ? (
         <ListSkeleton rows={5} />
@@ -73,7 +74,7 @@ export default function PhysesPage() {
         <EmptyPhyses hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="border-border bg-card overflow-hidden rounded-2xl border">
+          <div className="border-border bg-card overflow-hidden rounded-xl border">
             {physes.map((phys, i) => (
               <PhysRow key={phys.physId} phys={phys} first={i === 0} />
             ))}
@@ -92,7 +93,7 @@ function PhysRow({ phys, first }: { phys: PhysResponse; first: boolean }) {
   return (
     <Link
       href={`/physes/${phys.physId}`}
-      className={`group hover:bg-muted/60 flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 ${
+      className={`group hover:bg-muted/60 flex items-center gap-4 px-4 py-3 transition-colors duration-150 ${
         first ? '' : 'border-border border-t'
       }`}
     >

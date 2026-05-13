@@ -44,7 +44,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
 
   if (isDone && action.result) {
     return (
-      <div className="animate-fade-in border-success/40 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--success)_10%,var(--card))_0%,var(--card)_100%)] relative overflow-hidden rounded-xl border p-3">
+      <div className="animate-fade-in border-success/30 bg-card relative overflow-hidden rounded-xl border p-3">
         <div className="flex items-start gap-2.5">
           <div className="bg-success/20 text-success ring-success/30 flex size-9 shrink-0 items-center justify-center rounded-full ring-1">
             <Check className="size-4.5" />
@@ -59,7 +59,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
             <Link
               href={`/activs/${action.result.activId}`}
               onClick={onNavigate}
-              className="text-primary hover:bg-primary/10 mt-2 inline-flex items-center gap-1 rounded-md px-2 py-1 -ml-2 text-xs font-medium transition-colors"
+              className="text-primary hover:bg-primary/10 mt-2 -ml-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors"
             >
               Открыть визит
               <ArrowUpRight className="size-3.5" />
@@ -76,18 +76,13 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
   return (
     <div
       className={cn(
-        'animate-fade-in relative overflow-hidden rounded-xl border p-3',
-        isFailed
-          ? 'border-destructive/40 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--destructive)_8%,var(--card))_0%,var(--card)_100%)]'
-          : 'border-primary/30 bg-[linear-gradient(135deg,color-mix(in_oklab,var(--primary)_8%,var(--card))_0%,var(--card)_100%)]',
+        'animate-fade-in bg-card relative overflow-hidden rounded-xl border p-3',
+        isFailed ? 'border-destructive/40' : 'border-primary/25',
       )}
     >
       <div
         aria-hidden
-        className={cn(
-          'absolute inset-y-0 left-0 w-1',
-          isFailed ? 'bg-destructive' : 'bg-primary',
-        )}
+        className={cn('absolute inset-y-0 left-0 w-1', isFailed ? 'bg-destructive' : 'bg-primary')}
       />
 
       <div className="flex items-start gap-2.5 pl-1.5">
@@ -104,7 +99,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <ACTIV_ICON className="text-muted-foreground size-3" />
-            <span className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">
+            <span className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
               {meta.doneLabel}
             </span>
             {isPending && !expired && (
@@ -138,9 +133,7 @@ export function AssistantActionCard({ action, onConfirm, onDismiss, onNavigate }
               disabled={isExecuting || expired}
               className={cn(
                 'h-8 gap-1.5 px-3 text-xs font-semibold',
-                !isFailed &&
-                  !isExecuting &&
-                  'bg-primary hover:bg-primary/90 hover:shadow-[0_4px_12px_-2px_color-mix(in_oklab,var(--primary)_40%,transparent)]',
+                !isFailed && !isExecuting && 'bg-primary hover:bg-primary/90',
               )}
             >
               {isExecuting ? (

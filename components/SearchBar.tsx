@@ -21,7 +21,7 @@ export function SearchBar({ value, onChange, placeholder, className }: Props) {
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border-border bg-background text-foreground placeholder:text-muted-foreground/70 focus:border-ring focus:ring-ring/40 h-10 w-full rounded-xl border pr-10 pl-10 text-sm transition-all duration-200 focus:ring-2 focus:outline-none"
+        className="border-border bg-background text-foreground placeholder:text-muted-foreground/70 focus:border-ring focus:ring-ring/40 h-9 w-full rounded-lg border pr-10 pl-10 text-sm transition-all duration-200 focus:ring-2 focus:outline-none"
       />
       {value && (
         <button

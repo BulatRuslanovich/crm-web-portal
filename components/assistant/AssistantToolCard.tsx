@@ -57,12 +57,14 @@ function parseResult(name: string, resultJson: string): ParsedItem[] {
 
     if (name === 'list_activs' || name === 'get_activ_details') {
       const id = (r.activId ?? r.id) as number | string;
-      const date = r.start ? new Date(String(r.start)).toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-      }) : '';
+      const date = r.start
+        ? new Date(String(r.start)).toLocaleString('ru-RU', {
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : '';
       const who = r.physName ?? r.orgName ?? '';
       const primary = `Визит #${id}${who ? ` · ${who}` : ''}`;
       const secondary = [date, r.statusName].filter(Boolean).join(' • ') || undefined;
@@ -87,7 +89,7 @@ export function AssistantToolCard({
 
   if (tool.status === 'running') {
     return (
-      <div className="border-primary/25 bg-primary/8 text-primary my-1.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium">
+      <div className="border-border bg-muted text-muted-foreground my-1.5 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium">
         <Loader2 className="size-3 animate-spin" />
         <span>{meta.runningLabel}</span>
       </div>
@@ -106,14 +108,14 @@ export function AssistantToolCard({
   const items = tool.resultJson ? parseResult(tool.name, tool.resultJson) : [];
 
   return (
-    <div className="border-border/60 bg-background/60 my-2 overflow-hidden rounded-lg border">
-      <div className="text-muted-foreground border-border/50 bg-muted/30 flex items-center gap-1.5 border-b px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide">
-        <span className="bg-primary/15 text-primary flex size-4 items-center justify-center rounded">
+    <div className="border-border bg-card my-2 overflow-hidden rounded-lg border">
+      <div className="text-muted-foreground border-border bg-muted/40 flex items-center gap-1.5 border-b px-2.5 py-1.5 text-[11px] font-semibold tracking-wide uppercase">
+        <span className="bg-background text-muted-foreground border-border flex size-4 items-center justify-center rounded border">
           <Icon className="size-2.5" />
         </span>
         <span>{meta.doneLabel}</span>
         {items.length > 0 && (
-          <span className="text-muted-foreground/70 bg-muted ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-medium normal-case tracking-normal">
+          <span className="text-muted-foreground/70 bg-muted ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-medium tracking-normal normal-case">
             {items.length}
           </span>
         )}
@@ -144,9 +146,7 @@ export function AssistantToolCard({
                   <Link
                     href={it.href}
                     onClick={onNavigate}
-                    className={cn(
-                      'group hover:bg-primary/5 block transition-colors',
-                    )}
+                    className={cn('group hover:bg-muted/60 block transition-colors')}
                   >
                     {inner}
                   </Link>

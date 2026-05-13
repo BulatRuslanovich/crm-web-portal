@@ -11,6 +11,7 @@ import { EmptyState, LinkButton, ListSkeleton, Pagination } from '@/components/u
 import { PageTransition } from '@/components/motion';
 import { PageHeader } from '@/components/PageHeader';
 import { SearchBar } from '@/components/SearchBar';
+import { RegistryToolbar } from '@/components/RegistryToolbar';
 import { useDebouncedSearch } from '@/lib/use-debounced-search';
 import { orgInitials } from '@/lib/initials';
 
@@ -45,13 +46,13 @@ export default function OrgsPage() {
         }
       />
 
-      <div className="border-border bg-card rounded-2xl border p-3">
+      <RegistryToolbar>
         <SearchBar
           value={input}
           onChange={setInput}
           placeholder="Поиск по названию, ИНН или адресу..."
         />
-      </div>
+      </RegistryToolbar>
 
       {loading ? (
         <ListSkeleton rows={5} />
@@ -59,7 +60,7 @@ export default function OrgsPage() {
         <EmptyOrgs hasFilter={hasFilter} canCreate={isAdmin} />
       ) : (
         <>
-          <div className="border-border bg-card overflow-hidden rounded-2xl border">
+          <div className="border-border bg-card overflow-hidden rounded-xl border">
             {orgs.map((org, i) => (
               <OrgRow key={org.orgId} org={org} first={i === 0} />
             ))}
@@ -75,7 +76,7 @@ function OrgRow({ org, first }: { org: OrgResponse; first: boolean }) {
   return (
     <Link
       href={`/orgs/${org.orgId}`}
-      className={`group hover:bg-muted/60 relative flex items-center gap-4 px-4 py-3.5 transition-colors duration-150 ${
+      className={`group hover:bg-muted/60 relative flex items-center gap-4 px-4 py-3 transition-colors duration-150 ${
         first ? '' : 'border-border border-t'
       }`}
     >

@@ -64,3 +64,25 @@ export function useDashboardActivs(usrId: number | undefined) {
 
   return { data: data?.items ?? [], loading, meta: data };
 }
+
+export function useDashboardWorkQueue(usrId: number | undefined) {
+  return useApi(['dashboard-work-queue', usrId], () => {
+    const from = startOfDay(new Date());
+    from.setDate(from.getDate() - 7);
+
+    const to = startOfDay(new Date());
+    to.setDate(to.getDate() + 14);
+    to.setHours(23, 59, 59, 999);
+
+    return activsApi
+      .getAll({
+        pageSize: 100,
+        sortBy: 'start',
+        sortDesc: false,
+        dateFrom: from.toISOString(),
+        dateTo: to.toISOString(),
+        usrId,
+      })
+      .then((res) => res.data);
+  });
+}

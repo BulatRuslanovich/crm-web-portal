@@ -70,6 +70,19 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
       onChange?.('');
     }
 
+    function handleToday() {
+      const now = new Date();
+      commit(now, hours, minutes);
+    }
+
+    function handleNow() {
+      const now = new Date();
+      const next = roundToNearestFiveMinutes(now);
+      setHoursVal(next.getHours());
+      setMinutesVal(next.getMinutes());
+      onChange?.(toDatetimeLocal(next));
+    }
+
     return (
       <>
         <input type="hidden" name={name} value={value ?? ''} ref={ref} />
@@ -139,18 +152,25 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
                     'h-9 w-9 rounded-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer',
                   selected:
                     '[&_.rdp-day_button]:bg-primary [&_.rdp-day_button]:text-primary-foreground [&_.rdp-day_button]:hover:bg-primary/90 [&_.rdp-day_button]:font-medium',
-                  today: '[&_.rdp-day_button]:border [&_.rdp-day_button]:border-primary',
+                  today:
+                    '[&_.rdp-day_button]:border [&_.rdp-day_button]:border-primary [&_.rdp-day_button]:bg-primary/10 [&_.rdp-day_button]:text-foreground',
                   outside:
                     '[&_.rdp-day_button]:text-muted-foreground [&_.rdp-day_button]:opacity-40',
                 }}
               />
 
-              <div className="flex items-center gap-3 border-t px-3 py-2.5">
-                <Clock size={15} className="text-muted-foreground shrink-0" />
-                <div className="flex items-center gap-1">
-                  <TimeSelect value={hours} max={23} onChange={handleHoursChange} />
-                  <span className="text-muted-foreground">:</span>
-                  <TimeSelect value={minutes} max={59} step={5} onChange={handleMinutesChange} />
+              <div className="space-y-2 border-t px-3 py-2.5">
+                <div className="flex items-center gap-3">
+                  <Clock size={15} className="text-muted-foreground shrink-0" />
+                  <div className="flex items-center gap-1">
+                    <TimeSelect value={hours} max={23} onChange={handleHoursChange} />
+                    <span className="text-muted-foreground">:</span>
+                    <TimeSelect value={minutes} max={59} step={5} onChange={handleMinutesChange} />
+                  </div>
+                </div>
+                <div className="flex gap-1.5 pl-7">
+                  <QuickButton onClick={handleToday}>Сегодня</QuickButton>
+                  <QuickButton onClick={handleNow}>Сейчас</QuickButton>
                 </div>
               </div>
             </Popover.Content>
@@ -161,6 +181,24 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
   },
 );
 DateTimePicker.displayName = 'DateTimePicker';
+
+function QuickButton({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-sm border px-2 py-1 text-xs font-medium transition-colors"
+    >
+      {children}
+    </button>
+  );
+}
 
 function TimeSelect({
   value,
@@ -195,4 +233,18 @@ function TimeSelect({
       ))}
     </select>
   );
+}
+
+function roundToNearestFiveMinutes(date: Date): Date {
+  const next = new Date(date);
+  const minutes = next.getMinutes();
+  const rounded = Math.round(minutes / 5) * 5;
+
+  if (rounded === 60) {
+    next.setHours(next.getHours() + 1, 0, 0, 0);
+  } else {
+    next.setMinutes(rounded, 0, 0);
+  }
+
+  return next;
 }

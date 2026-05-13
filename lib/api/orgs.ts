@@ -25,5 +25,9 @@ export const orgsApi = {
 
 export async function searchOrgOptions(query: string) {
   const { data } = await orgsApi.getAll(1, 20, query || undefined);
-  return data.items.map((o) => ({ value: String(o.orgId), label: o.orgName }));
+  return data.items.map((o) => ({
+    value: String(o.orgId),
+    label: o.orgName,
+    sublabel: o.address || o.orgTypeName,
+  }));
 }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { forwardRef } from 'react';
 import { ArrowLeft, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -10,19 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Input as ShadInput } from '@/components/ui/input';
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { statusDotClass } from '@/lib/status-style';
 
-const STATUS_DOT: Record<string, string> = {
-  "запланирован": 'bg-primary',
-  "открыт": 'bg-warning',
-  "сохранен": 'bg-muted-foreground',
-  "закрыт": 'bg-success',
-  "отменен": 'bg-destructive',
-};
 
-export function StatusBadge({ name }: { name: string }) {
+export function StatusBadge({ name, statusId }: { name: string; statusId?: number | null }) {
   const lower = name.toLowerCase();
-  const dot = STATUS_DOT[lower] ?? 'bg-muted-foreground';
-  const isOpen = lower === 'открыт';
+  const dot = statusDotClass(statusId, name);
+  const isOpen = lower === 'РѕС‚РєСЂС‹С‚';
   return (
     <span className="border-border text-muted-foreground inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium tracking-tight">
       {isOpen ? (
@@ -75,7 +69,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'border-border bg-card text-card-foreground overflow-hidden rounded-xl border',
+        'border-border bg-card text-card-foreground overflow-hidden rounded-lg border',
         className,
       )}
     >
@@ -86,7 +80,7 @@ export function Card({
 
 export function CardFooter({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-muted/40 flex justify-end gap-2 rounded-b-xl border-t px-5 py-4">
+    <div className="bg-muted/40 flex justify-end gap-2 rounded-b-lg border-t px-5 py-4">
       {children}
     </div>
   );
@@ -236,7 +230,7 @@ export function BackButton({ href, onClick }: { href?: string; onClick?: () => v
   const content = (
     <>
       <ArrowLeft />
-      Назад
+      РќР°Р·Р°Рґ
     </>
   );
   if (href) {
@@ -299,7 +293,7 @@ export function EmptyState({
   hint?: string;
 }) {
   return (
-    <div className="animate-fade-in border-border bg-card flex flex-col items-center justify-center rounded-2xl border px-6 py-20 text-center">
+    <div className="animate-fade-in border-border bg-card flex flex-col items-center justify-center rounded-lg border px-6 py-20 text-center">
       {Icon && (
         <Icon size={28} className="text-muted-foreground/50 mb-5" strokeWidth={1.5} />
       )}

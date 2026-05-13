@@ -3,7 +3,7 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
-import { AlertCircle, Sparkles, User } from 'lucide-react';
+import { AlertCircle, Bot, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChatMessage } from '@/lib/hooks/use-assistant-chat';
 import { AssistantActionCard } from './AssistantActionCard';
@@ -16,12 +16,7 @@ interface Props {
   onDismissAction?: (messageId: string, actionId: string) => void;
 }
 
-export function AssistantMessage({
-  message,
-  onNavigate,
-  onConfirmAction,
-  onDismissAction,
-}: Props) {
+export function AssistantMessage({ message, onNavigate, onConfirmAction, onDismissAction }: Props) {
   const isUser = message.role === 'user';
   const isStreaming = message.status === 'streaming' || message.status === 'tool_running';
 
@@ -34,23 +29,25 @@ export function AssistantMessage({
     >
       <div
         className={cn(
-          'flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
+          'flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-semibold',
           isUser
             ? 'bg-muted text-muted-foreground ring-border ring-1'
-            : 'bg-[radial-gradient(circle_at_30%_25%,color-mix(in_oklab,var(--primary)_85%,white)_0%,var(--primary)_60%,color-mix(in_oklab,var(--primary)_70%,black)_100%)] text-primary-foreground ring-primary/20 ring-1',
+            : 'bg-card text-muted-foreground ring-border ring-1',
         )}
       >
-        {isUser ? <User className="size-4" /> : <Sparkles className="size-4" />}
+        {isUser ? <User className="size-3.5" /> : <Bot className="size-3.5" />}
       </div>
 
-      <div className={cn('flex min-w-0 max-w-[85%] flex-col', isUser ? 'items-end' : 'items-start')}>
+      <div
+        className={cn('flex max-w-[85%] min-w-0 flex-col', isUser ? 'items-end' : 'items-start')}
+      >
         {(message.content || message.tools.length > 0 || (isStreaming && !message.content)) && (
           <div
             className={cn(
-              'rounded-2xl px-3.5 py-2 text-sm transition-shadow',
+              'rounded-xl px-3.5 py-2 text-sm transition-shadow',
               isUser
                 ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                : 'bg-muted/70 text-foreground border-border/40 rounded-tl-sm border',
+                : 'bg-card text-foreground border-border rounded-tl-sm border',
             )}
           >
             {message.tools.length > 0 && (
@@ -67,12 +64,12 @@ export function AssistantMessage({
                   'prose prose-sm max-w-none break-words',
                   isUser ? 'prose-invert' : 'dark:prose-invert',
                   '[&_p]:my-1 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0',
-                  '[&_ul]:my-1.5 [&_ol]:my-1.5 [&_li]:my-0',
+                  '[&_li]:my-0 [&_ol]:my-1.5 [&_ul]:my-1.5',
                   '[&_a]:underline [&_a]:underline-offset-2',
-                  '[&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[0.85em] [&_code]:font-mono dark:[&_code]:bg-white/10',
+                  '[&_code]:rounded [&_code]:bg-black/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em] dark:[&_code]:bg-white/10',
                   '[&_pre]:bg-background/60 [&_pre]:border-border [&_pre]:my-2 [&_pre]:rounded-lg [&_pre]:border [&_pre]:p-2.5',
                   '[&_pre_code]:bg-transparent [&_pre_code]:p-0',
-                  isUser && '[&_code]:bg-black/25 [&_a]:text-primary-foreground',
+                  isUser && '[&_a]:text-primary-foreground [&_code]:bg-black/25',
                 )}
               >
                 {isUser ? (

@@ -18,9 +18,9 @@ import { DateTimeField } from '@/components/DateTimeField';
 import { useMultiPicker } from '@/lib/hooks/use-multi-picker';
 import { syncDrugs } from '@/lib/activ-helper';
 import {
-  CREATE_ACTIV_DEFAULT_VALUES,
   activFormToCreateRequest,
   buildTargetIds,
+  createActivDefaultValues,
   type CreateActivFormValues,
 } from '@/lib/activ-form';
 
@@ -32,7 +32,7 @@ export default function CreateActivPage() {
   const submitAction = useSubmitAction({ fallbackError: 'Ошибка создания визита' });
   const drugPicker = useMultiPicker([]);
 
-  const form = useForm<CreateActivFormValues>({ defaultValues: CREATE_ACTIV_DEFAULT_VALUES });
+  const form = useForm<CreateActivFormValues>({ defaultValues: createActivDefaultValues() });
 
   function switchTarget(kind: TargetKind) {
     setTargetKind(kind);
